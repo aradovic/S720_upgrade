@@ -1,0 +1,18 @@
+---
+title: "Uvod"
+output: html_document
+---
+
+ 
+
+
+Teèaj *Upoznavanje sa sintaksom jezika R i njegova primjena u osnovnoj statistièkoj i grafièkoj analizi podataka (S720)* obraðuje osnove rada u okruženju programskog jezika R te njegovo korištenje u pripremi, vizualizaciji i statistièkoj analizi podataka. Ovaj teèaj osmišljen je s ciljem upoznavanja sudionika s moguænostima sustava, dajuæi generalni pregled tema i podruèja važnih za osobe koje se bave znanostima o podacima. Teèaj je namijenjen najširoj publici i raznolikim strukama. Pojedine æe teme sudionicima biti od veæeg ili manjeg znaèaja za njihovo specifièno podruèje, a proizašle su iz višegodišnjeg iskustva autorice teèaja kao nužne. Polaznicima je pokušano dati što bolji temelj i informacije o dijelovim sustava o kojima je barem bitno znati da postoje kako bi se njihove te funkcionalnosti potražile i koristile prema potrebi. Savladavanjem gradiva teèaja polaznici æe u potpunosti biti u moguænosti pratiti nadogradnje putem drugih teèajeva Srca vazanih uz sustav R i manipulacije podacima te reproducibilno istraživanje.
+
+Teèaj je namijenjen polaznicima koji se po prvi puta susreæu kako s okruženjem programskog jezika R tako i s analizama podataka.
+
+Za pohaðanje ovog teèaja potrebno je poznavanje osnova rada s raèunalom i operacijskim sustavom MS Windows (iako veæina napisanog vrijedi i za npr. Ubuntu sustav) te poznavanje osnova rada na Internetu. Takoðer, pasivno poznavanje engleskog jezika nužno je u radu sa sustavom R.
+
+Preporuèamo samostalno upoznavanje s materijelima on-line teèaja Srca "Zašto uèiti R?" na lms.srce.hr.
+
+Minimalno iskustvo programiranja je prednost.
+

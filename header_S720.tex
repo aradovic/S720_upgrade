@@ -1,0 +1,116 @@
+
+
+\usepackage{lscape}
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+
+\usepackage{geometry}
+\geometry{a4paper,footskip=1 cm,twoside} %kako bi funkcioniralo odd i even što se tiče strana i što se tiče LE, RO
+
+\usepackage[width=.9\textwidth]{caption} %ovo je za podesiti širinu tablice u odnosu na tekst
+%\usepackage{floatrow} da ga natjeramo da stavi caption dole
+%\floatsetup[table]{capposition=bottom}  %da se natjera caption da bude dole jer to mu inače nije prirodno (ne treba s xtable opcijom ali xtable ne radi u wordu)
+
+\usepackage[dvipsnames,table]{xcolor} %da možee raditi background color i font color u pixiedust paketu u R-u
+
+\usepackage{longtable}
+
+\usepackage{rotating}
+\usepackage{multicol}
+
+\usepackage{tablestyles}
+\disablealternatecolors
+
+
+\usepackage{hyperref} %ovdje nije bilo potrebno ali ovo je ako slučajno pokupi druge boje linkova
+\hypersetup{colorlinks = false}
+
+\usepackage{layout}
+\usepackage{array}
+
+\usepackage{titling}
+
+\usepackage{lmodern} %dodatni fontovi
+
+\usepackage{graphicx} 
+
+\usepackage{fancyhdr}
+
+\usepackage{wrapfig}
+
+\usepackage{placeins}
+
+\usepackage{sectsty} %paket pomoću kojeg definiramo boje određenih razina teksta
+\definecolor{srcecrvena}{RGB}{192,0,0}
+\chapterfont{\color{srcecrvena}} 
+\sectionfont{\color{srcecrvena}}
+\subsectionfont{\color{srcecrvena}}
+\subsubsectionfont{\color{srcecrvena}}
+
+\usepackage{tabularx}
+
+\usepackage{multicol}%za staviti onu crtu kod CC
+
+\usepackage[titletoc]{appendix} %paket da nam radi drugačije numeriranje appendix-a
+
+\setlength{\columnseprule}{1.5pt}
+\def\columnseprulecolor{\color{black}}
+
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+
+\usepackage{titling}
+
+
+
+\pagestyle{fancy}
+
+\fancyhf{} %ovim ubijemo sve postavke fancy pagestyle-a da bi mogli staviti nove
+%\fancyhead[L]{\nouppercase{Upoznavanje sa sintaksom jezika R i njegova primjena u osnovnoj statističkoj i grafičkoj analizi podataka (S72000)}}
+
+
+\usepackage{tabularx}
+
+
+\lhead{Upoznavanje sa sintaksom jezika R i njegova primjena u osnovnoj statističkoj i grafičkoj analizi podataka (S200)}
+
+\rhead{Upoznavanje sa sintaksom jezika R i njegova primjena u osnovnoj statističkoj i grafičkoj analizi podataka (S200)}
+
+
+
+%\cfoot{\includegraphics[width = .05\textwidth]{srce_400x400}}
+
+%\rfoot{\thepage}
+
+
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+
+\fancyhf{}
+\fancyhead[RO]{\nouppercase{\rightmark}}
+\renewcommand{\rightmark}{\normalsize Upoznavanje sa sintaksom jezika R i njegova primjena u osnovnoj statističkoj i grafičkoj analizi podataka (S200) }
+%\,\textbar\,
+%\includegraphics[width = .05\textwidth]{srce_header}}
+\fancyhead[LE]{\nouppercase{\rightmark}}
+\renewcommand{\leftmark}{\normalsize Upoznavanje sa sintaksom jezika R i njegova primjena u osnovnoj statističkoj i grafičkoj analizi podataka (S200) }
+
+
+\cfoot{\includegraphics[width = .05\textwidth]{srce_400x400}}
+\fancyfoot[R]{\thepage}
+
+
+
+
+\renewcommand{\figurename}{Slika }
+\renewcommand{\contentsname}{Sadržaj}
+\renewcommand{\tablename}{Tablica }
+
+
+
+
+
+
+
+
+	
+
+

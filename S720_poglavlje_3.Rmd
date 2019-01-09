@@ -1,0 +1,887 @@
+---
+title: "Uvod u grafièke sustave u R-u"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Uvod u grafièke sustave u R-u
+
+```{r eval=T,  message=F, echo=FALSE, cache=F}
+if (Sys.getenv("JAVA_HOME")!="")
+Sys.setenv(JAVA_HOME="")
+library(xlsx)
+razredi <- read.xlsx("dva_razreda_iq_long.xlsx", 
+                     as.data.frame=T, stringsAsFactors = T,  
+                     sheetIndex=1, encoding="UTF-8" )
+#setwd("D:\\SRCE_razno\\Moji_tecajevi\\S720_upgrade")
+load("podaci_smoothScatter.RData")
+```
+
+
+
+Statistièka vizualizacija podataka i rezultata analize jedan su od najvažnijih elemenata cjelokupnog procesa analize podataka. R je programski jezik otvorenoga kôda za statistièku analizu i grafiku. R ima iscrpne i moène grafièke moguænosti koje su usko povezane s njegovim analitièkim moguænostima. Iz tog razloga nužno je upoznati se s osnovama grafièkih sustava koje omoguæava R.
+
+Unutar sustava R postoji nekoliko gotovo potpuno odvojenih sustava grafièke prezentacije objekata. Tijekom ovog teèaja upoznat æemo se s osnovama rada u dva sustava. 
+
+
+## Grafika osnovnog sustava (engl. *base*)
+
+Grafika osnovnog (engl. *base*) sustava nalazi se automatski u sustavu po njegovoj instalaciji. Funkcije ovog paketa nalaze se u osnovnom paketu graphics, a ukljuèuju funkcije kao što su *plot()*, *hist()* za izradu histograma, *boxplot()* za Box-Whiskers plot i još mnoge druge.
+
+```{r, eval=F,comment=NA, echo = T}
+help(package=graphics)
+```
+
+Ako zovemo funkciju paketa base *plot()* i nemamo otvoren grafièki prozor (engl. *plotting device*), ona ga automatski otvara. Ako želimo imati veæi broj otvorenih grafièkih prozora možemo sami otvoriti novi grafièki prozor funkcijom *dev.new()*. Ovo nije sluèaj ukoliko radite s RStudiom. 
+
+
+Ako u konaènici izraðujemo neku grafiku radi prezentacije u nekom dokumentu bolje je otvoriti datoteèni ureðaj (engl. *file device*) nego ekran (engl. *screen device*).
+Grafièki sustavi u sustavu R uglavnom se ne mogu miješati iako se posljednjih godina intenzivno razvijaju paketi koji omoguæavaju integracije razlièitih sustava. Izrada grafike u sustavu base uglavnom se može podijeliti na nekoliko segmenata:
+	 - odreðujemo podruèje crtanja
+	 - dodajemo (funkcija *add()* ) razlièite dijelove grafike (toèke, crte, anotaciju, legendu, naslove te grafièke osi - ova funkcija uglavnom prati misaoni proces stvaranja slike.
+
+```{r, eval=F,comment=NA, echo = T}
+#osiguravamo svima jednak rezultat
+set.seed(1000)
+
+#stvaramo dvije sluèajne varijable, x i y
+#izvlaèimo po 500 brojeva iz normalne raspodjele
+x<-rnorm(500)
+y <- rnorm(500)
+
+#generièka grafièka funkcija visoke razine
+#x predstavlja vrijednosti x koordinate, a y - y koordinate
+
+#pozivamo grafièku funkciju visoke razine koje inicira dijagram
+plot(x,y) 
+
+#nadopunjavamo postojeæi dijagram naslovom korištenjem funkcije niske razine
+title(main="Dijagram raspršenja dvaju generiranih sluèajnih varijabli x i y")
+```
+
+Prilikom poziva neke grafièke funkcije visoke razine  otvara se i grafièki prozor u sustavu R. Pažljivo pogledajte nekoliko slijedeæih linija i prokomentirajte naèin korištenja grafièkih funkcija niske razine prilikom izrade dijagrama.
+
+```{r, eval=F,comment=NA, echo = T}
+#radimo sekvencu koju æemo crtati
+z <- seq(min(x),max(x),length=500)
+
+#primjer druge grafièke funkcije visoke razine 
+#specijalizirane za izrade histograma
+hist(x, main="Gustoæa varijable generirane prema sluèajnoj raspodjeli", freq=F)
+
+#usporeðujemo histogram s normalnom distribucijom pa trebamo visine na svakom x-u
+y <- dnorm(z)
+
+#nadopuna dijagrama prema želji
+legend( 1.7,90, c("dnorm x"),
+       text.col = "green4", lty =2 , 
+       bg = "gray80")
+
+points(-1, 0.8, col = 3)
+abline(1, 1)
+lines(z, y, col="blue", lwd=2)
+```
+
+
+
+S narednih nekoliko primjera i naredbi æemo se upoznati s osnovama grafièkog sustava koji dolazi instalacijom R-a, tzv. *base* grafikom, najèešæim grafièkim parametrima, grafièkim funkcijama te korištenjem boja u sustavu R. Ovo je doista veoma bazièan uvod u naèin rada s najvažnijim grafièkim funkcijama i ureðajima u sustavu. 
+
+
+
+Osnovni (engl. *base*) grafièki sustav omoguèava odreðivanje velikog broja parametara na grafu. Popis svih aktivnih parametara može se pronaæi putem upita *?par()* ili *help(par)*.
+
+Globalni grafièki parametri utjecat æe na izglede svih grafova koji se izraðuju tijekom jedne seanse, a odreðuju se funkcijom *par()*, uz izbor najkorisnijih argumenata u nastavku. 
+
+U samom pozivu nekog grafa moguæe je neku od ovih moguænosti promijeniti:
+
+- **pch** - vrsta simbola automatski crta otvoreni krug
+- **lty** - vrsta crte
+- **lwd** - debljina crte
+- **col** - boje korištene u crtanju (mogu se definirati uz pomoæ teksta (engl. string), broja ili heksadecimalnog broja. 
+- **las** - orijentacija osi na grafikonu
+- **bg** - boja pozadine
+- **mar** - odreðuje širinu margina brojem linija teksta kao vektor èetiri vrijednosti redom: donja, lijeva, gornja i desna margina. Alternativa je mai koja definira širinu margina u inèima
+- **oma** - vanjske margine; važno jedino kod višestrukih plotova (alternativno mai u inèima)
+- mfrow** - broj grafike u jednom retku (popunjava se unutar retka)
+- **mfcol** - broj grafike u jednom stupcu (popunjava se unutar stupca).
+
+
+
+Provjerite zadane vrijednosti unutar sustava za neke od navedenih grafièkih parametara:
+
+
+```{r, eval=F,comment=NA, echo = T}
+#lista svih grafièkih parametara i njihovih vrijednosti
+par()
+
+#vrijednost parametra u sustavu
+par("lty")
+par("pch")  
+```
+
+```{r fig.width=7, fig.height=7,echo=FALSE,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Organizacija veæeg broja grafikona, dva redka i dva stupca", cache=F}
+#proizvoljni podaci za crtanje - iris
+
+#ukoliko želimo 4 grafa, po dva u dva retka
+par(mfrow=c(2,2)) 
+
+#èetiri prozvoljna grafikona
+plot(iris$Sepal.Length, iris$Sepal.Width) 
+plot(iris$Sepal.Length, iris$Species) 
+plot(iris$Petal.Width, iris$Species) 
+plot(iris$Petal.Length, iris$Petal.Width) 
+```
+
+
+```{r fig.width=7, fig.height=4,echo=FALSE,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Organizacija veæeg broja grafikona, jedan redak i èetiri stupca", cache=F}
+
+#ukoliko želimo 4 grafa, po dva u dva retka
+par(mfrow=c(1,4)) 
+
+#èetiri prozvoljna grafikona
+plot(iris$Sepal.Length, iris$Sepal.Width) 
+plot(iris$Sepal.Length, iris$Species) 
+plot(iris$Petal.Width, iris$Species) 
+plot(iris$Petal.Length, iris$Petal.Width)
+```
+
+
+### Grafièki ureðaji
+
+Kolokvijalno reèeno, grafièki ureðaj je medij na kojem želimo prikazati neku grafiku. Primjeri ureðaja su grafièki prozor programa (grafièki prozor RStudija - RStudioGD), *JPG*, *PNG*, *PDF*, *TIFF* i mnogi drugi.
+
+Ukoliko radimo na Windows platformi i pozovemo neku od funkcija koja stvara neku grafiku, grafièki prozor æe se automatski otvoriti. Ukoliko želimo otvoriti novi grafièki prozor bez pozivanja takve funkcije moramo koristiti funkciju windows(). U Rstudiju rad s višestrukim grafikonima nešto je drugaèiji i s njime æemo se upoznati tijekom rada u programu.	
+
+
+U primjeru koji slijedi dan je generalni naèin pohrane ili eksporta grafièkih prikaza na željeni grafièki ureðaj. Pokazujemo primjer za grafièki ureðaj *JPG* ali proces je jednak i za bilo koji drugi željeni ureðaj. Svakako, prije korištenja novih funkcija, potrebno je upoznati se s njihovom sintaksom otvaranjem informacijske kartice za ureðaj *?jpg*.
+
+Generalno, proces ima tri faze:
+
+ - otvaranje željenog grafièkog ureðaja s postavkama
+ - izrada drafa (base, lattice, ggplot grafika...)
+ - zatvaranje grafièkog ureðaja
+	
+
+```{r, eval=F,comment=NA, echo = T}
+#otvaramo željeni medij - jpg
+jpeg('moj_graf.jpg') 
+
+#crtamo na ureðaj
+plot()       
+
+#zatvaramo ureðaj
+dev.off()    
+```
+
+
+
+Najvažnije funkcije unutar osnovnog sustava grafike su sljedeæe:
+
+- **plot()** - generièka funkcija radi dijagram raspršenja (engl. *scatterplot*) ili druge vrste grafikona u ovisnosti o vrsti objekta na kojem je pokrenuta. To je grafièka funkcija visoke razine èiji rezultat kasnije možemo, prema željama upotpunjavati funkcijama niske razine kao što su primjerice:
+	
+- lines()** veæ izraðenom grafikonu dodaje crte - ako je funkcija pokrenuta na dvodimenzionalnoj matrici ova funkcija jednostavno povezuje toèke
+
+- **points()**  - dodaje toèke na postojeæi grafikon
+
+- **text()** - dodaje oznake na zadane koordinate
+
+- **title()** - dodaje  naslove i podnaslove
+
+- **mtext()** - dodaje proizvoljan tekst na margine grafa
+
+- **axis()** -  dodaje oznake na osima, itd.
+	
+	
+
+U ovome dijelu æemo se upoznati s najèešæe korištenim grafièkim parametrima.
+
+
+
+```{r ,echo=T, warning=NA,message=F, cache=F, comment=F}
+#pomoæ oko parametara
+#help(par)
+#trenutne postavke  grafièkih parametara
+#koje su nam trenutne postavke grafièkih parametara  - prvih 5 u listi
+par()[1:5] 
+```
+
+
+Èesto je korisno napraviti kopiju starih postavki kako bismo ih kasnije mogli pozvati bez zatvaranja sesije te na taj naèin povratka na predodreðene vrijednosti.
+ 
+```{r ,echo=T, warning=NA,message=F, cache=F, comment=F}
+opar <- par()   
+
+# definiramo željenu boju za ispis labela na x i y osi
+#ova promjena odnosit æe se na sve grafièke prikaze dok postavke ne promijenimo
+par(col.main="darkred") 
+
+par("col.main") 
+```
+
+
+```{r fig.width=4, fig.height=4,echo=F,encoding = "ISO8859_2", warning=FALSE,message=F,include=TRUE,fig.cap="Grafièki prikaz s promijenjenim postavkama funkcijom par()", cache=F}
+par(col.main="darkred", cex=0.6)
+
+#napravimo crtež sa promijenjenim postavkama
+hist(razredi$VISINA, 
+     col="gray",
+     main="Histogramski prikaz visina, \nnove postavke koje vrijede za sve grafikone do opoziva") 
+```
+
+
+
+```{r fig.width=4, fig.height=4,echo=F,encoding = "ISO8859_2", warning=FALSE,message=F,include=TRUE,fig.cap="Grafièki prikaz s vraæenim starim postavkama", cache=F}
+#prema potrebi vratimo stare postavke sustava
+par(opar) 
+
+#novi grafièki prikaz ali vraæene stare postavke
+hist(razredi$IQ, main="Histogramski prikaz IQ, stare postavke") 
+```
+
+Ukoliko želimo dobiti informaciju informaciju o specifiènom grafièkom parametru njegov naziv stavimo kao argument funkcije *par()*.
+
+```{r ,echo=T, warning=NA,message=F, cache=F, comment=NA}
+#trenutna postavka vrijednost parametra, tip linije i tip crtanja toèaka
+par("lty")          
+par("pch")          
+```
+
+Postojeæi grafikon možemo doraditi funkcijama niske razine u zasebnoj naradbi. U primjeru koji slijedi grafièki parametar æe biti promijenjen samo za izradu ovog grafikona i neæe se primjenjivati na ostale grafikone izraðene u sesiji kao što je sluèaj kada grafièke postavke mijenjemo putem funkcije *par()*. 
+
+```{r fig.width=4, fig.height=4,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Crtanje s promijenjenim postavkama grafièkih parametara unutar grafièke funkcije visoke razine", cache=F}
+# promjena grafièkog parametra u pozivu funkcije, funkcija
+hist(razredi$IQ, 
+     col.axis="darkseagreen", 
+     col.main="gray",
+     col="lightblue",
+     cex=2.5)
+```
+
+Na grafikama veoma èesto želimo kombinirati matematièke simbole i tekst. Slijedi primjer, slika \ref{fig:mat simboli}, kombinacije proizvoljnog teksta i matematièkih oznaka kao labelama osi grafikona. Mnoge osobe koje rade analitiku podataka barem su u nekoj mjeri upoznate s jezikom *Tex* u kojem je pisanje kompleksih matematièkih izraza znatno jednostavnije i èije su moguænosti u matematièkoj notaciji ogromne. Ukoliko želite neki od Tex izraza prebaciti u format R-a, izraz, engl. *expression* upoznajte se s paketom *latex2exp*. 
+
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:mat simboli}Kombinacija teksta i matematièkih simbola", cache=F}
+#primjer na skupu podataka paketa DAAG
+library(DAAG)
+data(ais)
+
+#nova funkcija expression
+plot(hg ~ rcc, data=ais, pch=19, col="darkseagreen",
+     xlab=expression("Eritrociti ("* 10^12 * italic(l)^{-1}* ")" ),
+     ylab=expression("Hemaglobin ("* g*dot(" ")* daL^{-1} * ")" ),
+     main="Primjer kombiniranja teksta \ni matematièkih simbola")
+```
+
+
+Za one koji žele znati kako se u sustavu koriste ostale matematièke notacije dodatne informacije mogu se pronaæi na poveznici http://vis.supstat.com/2013/04/mathematical-annotation-in-r/. 
+
+Najèešæe grafièke funkcije base grafike: *plot()*, *boxplot()*, *barplot()*, *stars()*, *pairs()*, *hist()*, *image()*, *contour()*. S nekim prikazima æemo se upoznati kasnije u teèaju prilikom upoznavanja s vizualizacijom distribucije, raspodjele, jedne sluèajne varijable.
+
+Funkcija *plot()* je najosnovnija grafièka funkcija. To je generièka funkcija i izgled grafike koju daje ovisi o tipu argumenta zadanih funkciji.
+
+```{r fig.width=7, fig.height=4.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Crtanje dijagrama raspršenja", cache=F}
+#podaci
+set.seed(1) #reproducibilan primjer
+var1 <- rnorm(200)
+var2 <- var1 + 2 * rnorm(200)
+
+#crtamo funkcijom plot dvije kontinuirane varijable
+#dijagram raspršenja engl. scatterplot
+
+plot(var1, var2)
+var3 <- var2 + 2 * rnorm(100)
+
+#nadodajemo toèke na postojeæi graf, funkcija points()
+points(var1, var3, pch = 20)
+
+#nadodajemo legendu na postojeæi graf, funkcija legend
+legend(-2.3, 6, c("var2", "var3"), pch= c(1, 20))
+
+#natodajemo naslov
+title("Neke toèke")
+```
+
+```{r fig.width=7, fig.height=4.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Crtanje trigonometrijskih funkcija", cache=F}
+#podaci
+#funkcija plot - crtanje trigonometrijskih funkcija
+x <- seq(-10, 10, length = 1000)
+
+#crtanje, pozivamo funkciju visoke razine, stvaranje novog grafikona
+plot(x, 
+     sin(x), 
+     xlab = "x-vrijednosti", 
+     ylab = "f(x)", 
+     type = "l")
+
+#dorada grafikona funkcijama niske razine, dodavanje linija 
+lines(x, 
+      cos(x), 
+      lty = 3,
+      lwd=2)
+
+#dorada grafikona funkcijama niske razine, dodavanje naslova
+title("Trigonometrijske funkcije sin(x) i cos(x)")
+```
+
+Unutar funkcije *plot()* moguæe je definirati toèke za koje æe funkcija izraèunati gustoæe - pozivanje *densCols()* funkcije iz paketa *grDevices*. U sljedeæem primjeru unutar funkcije *plot()* moguæe je dodati faktor prozirnosti putem parametra *col* - èetvrti broj, prva tri rgb boja.
+
+```{r eval=T, fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer izrade dijagrama raspršenja s velikim brojem toèaka, prilagodna prozirnosti boje", cache=F}
+plot(podaci$X,
+     podaci$Y, 
+     col=rgb(0.3,0.5,0.3,0.3), 
+     pch=19,
+     main="Gustoæa toèaka prozirno")
+```
+
+```{r, eval=T,comment=NA, echo = T}
+str(razredi)
+```
+
+
+
+Kada funkciji *plot()* kao argumente zadamo jednu kontinuiranu i jednu kategorijsku (factor) varijablu, dobijemo box-plot prikaz. Ukoliko želimo boxplot za samo jednu varijablu, bez razdjeljivanja:
+
+Generièka funkcija *plot()* koja daje boxplot prikaz ukoliko smo kao argumente funkciji dali jednu kontinuiranu i jednu kategorijsku varijblu.
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Generièka funkcija plot, boxplot", cache=F}
+plot(razredi$IQ~ razredi$RAZRED, 
+     mian="Box-plot prikaz napravljen funkcijom plot()", 
+     col=c("lightgray", "lightblue"))
+```
+
+Ipak, za Box-Whisker prikaz postoji i specijalizirana funkcija:
+
+```{r fig.width=3, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Generièka funkcija plot, jedinstvena varijabla", cache=F}
+boxplot(razredi$IQ, 
+        col="lightgray",
+        main="Box-plot prikaz varijable IQ",
+        xlab="RAZRED",
+        ylab="IQ")
+```
+
+
+\clearpage
+\newpage
+
+Funkcija *hist()* prikazuje histogramski prikaz kontinuiranog skupa podataka:
+
+```{r fig.width=6, fig.height=4.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Histogramski prikaz, predodreðene postavke", cache=F}
+hist(razredi$IQ) #osnovni graf
+```
+
+Promjena grafièkih parametara unutar funkcije visoke razine nadopuna grafikona funkcijom niske razine, *main()*.
+
+```{r fig.width=6, fig.height=4.55,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Histogramski prikaz, promjena grafièkih postavki koje vrijede samo na ovom crtežu s dodavanjem naslova", cache=F}
+hist(razredi$IQ,
+     br=12,
+     col="blue",
+     xlab="IQ",
+     ylab="Frekvencija",
+     freq=TRUE,
+     main="Histogram, IQ uèenika")
+
+#nova funkcija rug nadodaje vrijednosti na graf
+#funkcija niske razine
+rug(razredi$IQ)
+```
+
+
+\clearpage
+
+\newpage
+
+Za vizualizaciju kategorijskih podataka prikladan je grafièki prikaz stupièasti dijagram, funkcija *barchart()*.
+
+```{r, eval=F,comment=NA, echo = T}
+#barplot, diskretni podaci
+#upoznajmo se s funkcijom
+?barplot
+```
+
+```{r, eval=T,comment=NA, echo = T}
+#skup diskretnih vrijednosti
+x <- c(3,2,6,8,7,7,5,9,4,2,10,6,4,12,11, 
+       12, 11, 5,5,9,11, 12, 12,4,4,4,10,
+       7,8,8,6,9,2,5,7,9,1,11,9,7,7,8,9)
+```
+
+Prije vizualizacije kategorijskih podataka potrebno je izraèunati frekvencije pojedine vrijednosti.
+```{r, eval=F,comment=NA, echo = T}
+#nova funkcija table
+?table
+```
+
+```{r, eval=T,comment=NA, echo = T}
+x_crtam <- table(x)
+```
+
+Ili s veæim brojem parametara:
+
+```{r fig.width=7, fig.height=4.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer barplot prikaza za diskretne podatke", cache=F}
+#crtamo diskretne 
+barplot(x_crtam, border="black",
+        col ="lightblue",
+        names.arg=c("Sij","Velj","Ožu","Tra",
+                    "Svi", "Lip", "Srp", "Kol", "Ruj", "Lis", "Stu", "Pro"),
+        angle=90,
+        xlab="Mjesec",
+        ylab="Broj") #kraj slike
+```
+
+\clearpage
+\newpage
+
+U nastavku slijede primjer vizualizacije parova varijabli korištenjem funkcije *pairs()*. Funkcija daje grafièki prikaz dvije po dvije varijable, kombinacije svih parova varijabli u skupu podataka. Demonstrirat æemo funkciju na skupu podataka koji dolazi instalacijom sustava R, *trees*.
+
+
+```{r fig.width=7, fig.height=4.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer funkcije pairs", comment=NA, cache=F}
+#skup podataka trees
+data(trees)
+
+#prvih nekoliko podataka
+head(trees)
+
+#funkcija pairs koja vizualizira veze parova varijabli iz objekta
+pairs(trees)
+```
+
+ 
+
+##Boje u R-u
+
+
+Pravilnom uporabom boja moguæe je u znatnoj mjeri predoèiti vezu unutar podataka koje crtamo. Sustav boja unutar sustava R je izuzetno dobro razvijen. U okviru ovog teèaja dat æemo samo kratak uvod u naèin dodjeljivanja boja podacima te izboru i definiranju odgovarajuæih paleta u ovisnosti o vrsti podataka za koje radimo vizualizaciju.
+Boje koje su predodreðene u sustavu R nisu zadovoljavale korisnike pri izradi raznolikih, kvalitetnih prikaza podataka. Zbog toga, u posljednjih se desetak godina sustavno radilo na razvoju, upravljanju i specifikaciji boja na grafikonima. Danas postoji niz kontribuiranih paketa koji rad s bojama èine vrlo jednostavnim i praktiènim.
+
+Standardan naèin uporabe boja u sustavu R, prilikom poziva grafa radi se na naèin da sustav najprije koristi prvu boju u standardnoj paleti boja, zatim nastavlja s drugom bojom u standardnom nizu i tako dalje, koliko je boja potrebno u odreðenoj grafici. Prva boja u nizu, boja 1, u sustavu R je crna (col=1), boja 2 je crvena, boja 3 je zelena itd. 
+
+Èesto u pripremi vlastite grafike sami želimo odrediti paletu boja kojom æemo prikazati naše podatke. Sustav R u ovom je segmentu izuzetno fleksibilan i dozvoljava veliku kreativnost. 
+Za vizualizaciju razlièitih tipova podataka potrebne su i razlièite palete, generalno tako postoje tri vrste paleta:
+
+* sekvencijalne za kontinuirane varijable
+*	divergentne za varijable koje divergiraju nekoj vrijednosti ili imaju raspon od negativnih prema pozitivnim vrijednostima te
+* kvalitativne za varijable koje su mjerene na nominalnoj skali.
+
+
+Upoznat æemo se s ogranièenim brojem funkcija paketa *grDevices* Funkcija *colours()* ili *colors()* daje nam vektor  imenovanih boja unutar sustava R.
+
+
+
+```{r, eval=F,comment=NA, echo = T}
+#prije provoðenja - upoznajmo se sa svakom funkcijom
+?colors
+```
+
+
+Ukoliko želimo imena  svih imenovanih boja u sustavu:
+
+```{r, eval=T,comment=NA, echo = T}
+colors()[1:5] #ispis samo za prvih pet
+```
+
+
+Kada želimo vidjeti koja je trenutno aktivna paleta na našem sustavu:
+```{r, eval=T,comment=NA, echo = T}
+palette()    
+```
+
+Istom funkcijom s danim argumentima možemo definirati novu paletu sustava:
+```{r, eval=T,comment=NA, echo = T}
+palette(rainbow(6))
+```
+
+Povratak postavki na prvobitnu paletu:
+
+```{r, eval=T,comment=NA, echo = T}
+palette("default") 
+palette()
+```
+
+Izraðujemo paletu od 16  sivih nijansi :
+```{r, eval=F,comment=NA, echo = T}
+#interpolacija izmeðu graniènih vrijednosti
+gray(0:15/15)
+```
+
+
+```{r fig.width=6, fig.height=3.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Vizualizacija palete terrain.colors() sustava R te korisnièki napravljene palete sivih boja s 15, obje palete od 15 nijansi", cache=F}
+par(mfrow=c(1,2), mar=c(0,0,0,0))
+#vizualizacija paleta
+#unaprijed pripremljene funkcije u sustavu
+#terrain.colors - uzimamo 15 boja
+#grafièki prikaz pite - samo za vizualizaciju palete!
+pie(rep(1,15), col=terrain.colors(15)) 
+pie(rep(1,15), col=gray(0:15/15)) 
+```
+
+U nastavku æemo se upoznati s najèešæim naèinima izrade vlastitih shemama boja, vlastitih paleta unutar sustava R.
+
+```{r, eval=T,comment=NA, echo = T}
+#želimo izraditi svoju paletu boja
+#radimo paletu izmeðu graniènih boja crvene (neg. "red") i plave (eng. "blue")
+#preciznije - radimo funkciju koja æe raèunati interpolaciju 
+#na traženim lokacijama unutar zadanih rubnih boja
+pal <- colorRamp(c("red", "blue"))
+
+#rezultat funkcije colorRamp je funkcija koju smo proizvoljno nazvali pal
+pal
+```
+
+Pogledajmo vrijednosti palete na njezinim rubovima:
+```{r, eval=T,comment=NA, echo = T}
+#vrijednost funcije na poèetku
+#maksimum od 255 na crvenoj komponenti, ostalo 0 =crvena
+pal(0)
+```
+
+```{r, eval=T,comment=NA, echo = T}
+#vrijednost funkcije na kraju raspona
+##kolone predstavljaju RGB komponente boje
+pal(1)
+```
+
+```{r, eval=T,comment=NA, echo = T}
+#vrijednost funkcije (boja) na 1/10 razdaljine izmeðu granica
+pal(0.1)
+
+#ukoliko želimo npr. paletu od 15 boja zatražit æemo sljedeæe:
+#izradimo sekvencu vrijednosti na kojima želimo izraèunati vrijednost boje
+col <- pal(seq(0,1, len=15))
+
+#ispišemo dobiveni objekt, pogledamo njegovu strukturu
+col
+```
+
+Veoma važna i korisna funkcija *colorRampPalette()* koja kao rezultat daje novu funkciju kojom æemo interpolirati boje izmeðu zadanih graniènih vrijednosti.
+
+```{r, eval=T,comment=NA, echo = T}
+pal2 <- colorRampPalette (c("red", "yellow"))
+```
+Sada s pripremljenom funkcijom *pal2* možemo tražiti interpolaciju željenog broja boja unutar zadanih granica. Na primjeru koji slijedi tražimo 15 boja koje se ravnomjerno nalaze izmeðu granica crvene i žute. 
+
+```{r, eval=T,comment=NA, echo = T}
+col2 <- pal2(15)
+
+col2
+```
+
+
+```{r, eval=T,comment=NA, echo = T}
+pal3 <- colorRampPalette (c("red4", "darkgray"))
+col3 <- pal3(15)
+
+pal4 <- colorRampPalette (c("darkseagreen", "lightblue"))
+col4 <- pal4(15)
+```
+
+
+Iako ih nikako ne preporuèamo kao prikaz podataka, strukturni dijagrami, popularne pite, veoma su korisne za vizualizacije pripremljenih paleta boja.
+```{r fig.width=4.5, fig.height=4.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Vizualizacija palete interpoliranih boja izmeðu zadanih granica", cache=F}
+par(mfrow=c(1,3), mar=c(0,0,0,0))
+#prva
+pie(rep(1,15), col=col2) 
+
+#druga
+pie(rep(1,15), col=col3)
+
+#treæa
+pie(rep(1,15), col=col4) 
+```
+
+
+
+Primjer vizualizacije numerièke matrice, koristimo skup podataka iz sustava R, *volcano* (https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/volcano.html). Koristit æemo jedan od trenutno najpopularnijih paketa za izradu vlastitih paleta, paket *RColorBrewer*. Ukoliko nemate instaliran paket, prije uèitavanja u radni prostor paket je potrebno instalirati s repozitorija CRAN. Najprije, pogledajmo podatke:
+
+```{r, eval=T,comment=NA, echo = T}
+#pozivamo podatke
+#u novijim verzijama R-a dovoljno samo napisati ime objekta
+data(volcano)
+
+#upoznajmo se s podacima
+str(volcano)
+
+#provjerimo klasu objekta koji æemo vizualizirati
+class(volcano)
+```
+
+Pogledat æemo sve palete koje nam nudi paket *RColoroBrewer*:
+
+
+```{r fig.width=6, fig.height=6.5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Palete paketa RColorBrewer", cache=F}
+#instalacija s CRAN-a
+#install.packages("RColorBrewer")
+#uèitamo funkcionalnosti paketa u radni prostor
+library(RColorBrewer)
+
+#prikaz postojeæih paleta paketa
+display.brewer.all()
+```
+
+Pripremamo željenu paletu:
+
+```{r, eval=T,comment=NA, echo = T}
+#biramo pet boja iz palete Blues, plave boje
+boje <- brewer.pal(5,"Blues")
+
+#izraðujemo vlastitu paletu od 20 nijansi plavih boja 
+#koje se temelje na bojama izvuèenim iz palete Blues paketa RColorBrewer
+boje20<-colorRampPalette(brewer.pal(5,"Blues"))(20)
+
+#ili ovako
+boje20<-colorRampPalette(boje)(20)
+
+boje20
+```
+
+
+Vizualiziramo matricu s numerièkim vrijednostima, mjerenjima nadmorske visine u na æeliji koristeæi grafièku funkciju visoke razine *image()* te usporedite prikaz korištenjem inverzne palete, funkcija *rev()*.
+
+```{r fig.width=8, fig.height=10,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer vizualizacije matrice s a) prvobitnom i b) inverznom paletom", cache=F}
+par(mfrow=c(2,1))
+#?image
+
+#prvi prikaz
+image(volcano, col=boje20,
+      main="Primjer vizualizacije matrice, paleta od 20 boja")
+#drugi prikaz
+image(volcano, 
+      col=rev(boje20),
+      main="Primjer vizualizacije matrice, inverzne boje")
+```
+
+Èesto prilikom vizualizacije multivarijatnih podataka želimo razlièite kategorije neke varijable obojati razlièitim bojama te na taj naèin unjeti dodatnu informaciju na grafièki prikaz. U primjeru koji slijedi, slika \ref{fig:vizualizacija, faktor}, želimo svaku pojedinu jedinku, stablo, obojati drugom bojom kako bi bili prepoznatljivi na prikazu. Skup podataka koji koristimo, *Orange*, dolazi instalacijom sustava R, a sastoji se od kvantitativnih varijabli koje mjere starost i opseg drveta te identifikatora svakog pojedinog stabla, varijabla *Tree*.
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:vizualizacija, faktor}Primjer odavanja informacije o faktorskoj varijabli", cache=F}
+data(Orange)
+plot(Orange$circumference, Orange$age, col=Orange$Tree,
+     pch=19, cex=1.3,
+     main="Dijagram raspršenja s dodatnom \ninformacijom o nivoima faktora varijable Tree")
+```
+
+
+Palete koje napravimo ili standardne palete, u sustavu R slobodno koristimo u bilo kojem našem grafikonu.
+S veæim brojem prikaza upoznat æemo se kada æemo govoriti o deskriptivnoj statistici u drugome dijelu teèaja.
+
+**Pitanja za ponavljanje**
+
+1) Poznavanjem svega što ste nauèili odgovorite koja je boja pridruženo kojem stablu (*Orenge$Tree*)? 
+
+2) Na koji naèin su izabrane boja na prikazu?
+ 
+## *Lattice* (osnova paket *grid*) 
+
+
+*Lattice* sustav u potpunosti je neovisan neovisan od sustava osnovne grafike.  Mnogi ga smatraju naprednijim i fleksibilnijim grafièkim sustavom od sustava base radi moguæe vizualizacije više varijabli i njihovih zavisnosti istovremeno. Ukljuèuje funkcije kao što su *xyplot()*, *levelplot()*. Grafièki sustavi u jeziku R ne mogu se miješati, iako napredniji sustavi u sebi nose ugraðene neke dijelove sustava base. Korisnici uglavnom zapoèinju rad s osnovnom grafikom, a kasnije u ovisnosti o vrsti analiza i podataka kojima barataju koriste dijelove ostalih grafièkih sustava. Paket lattice èini osnovu ovog grafièkog sustava. Važan paket je paket iz osnovne instalacije sustava R, *grDevices*, koji u sebi nosi moguænost izvoza grafike iz sustava R u velik broj grafièkih formata kao što su X11, PDF, PostScript, PNG i mnogi drugi. Sustav *lattice* radi na naèin da se svi detalji neke grafike daju u obliku jedne jedine naredbe. Sustav R automatski izraèunava velièinu slova i slièno, tamo gdje je potrebna prilagodba.
+
+Osnovna struktura funkcije u grafici lattice ima ove argumente:
+
+	_formula (npr. y ~ x | factor1*factor2)_
+
+Grafika *lattice*, za razliku od *base* sustava, sve što smo zadali u naredbi pohranjuje u objekt klase *trellis* i u kasnije crta pripremljeni objekt. Znaèi, nakon izvršenja funkcije može se snimiti cijeli objekt, no ipak je bolje snimiti kôd koji je proizveo graf, jednako kao i u grafici base.
+
+
+
+*Lattice* prikaz se sastoji od razlièitih elemenata koji su koordinirani razlièitim parametrima kako bi dali smislene rezultate. Kljuèni elementi *lattice* prikaza su:
+
+* **primarni prikaz** - panel
+
+* **oznaka osi**
+
+* **oznaka trake** (opisuje proces uvjetovanja)
+
+* **legende** (tipièno opisuju proces grupiranja).
+
+Korisnik može kontrolirati svaki element kao je to potrebno. Postoji moguænost pružanja dodatnih argumenata pozivanjima funkcija visoke razine kako bi se aktivirale zadane vrijednosti ili putem kreiranja funkcija koje korisnik proizvoljno definira.
+
+
+*Trellis* prikazi su definirani vrstom grafike i ulogom koju razlièite varijabe u njoj igraju. Svaka vrsta prikaza povezana je s odgovarajuæom funkcijom visoke razine (histogram, dijagram gustoæe itd.). Moguæe uloge ovise o vrsti prikaza ali, su tipiène: 
+
+* **primarne varijable:** one koje definiraju primarni prikaz
+
+* **uvjetujuæe varijable:** dijele podatke na podskupine, svaka od njih predstavlja razlièite panele
+
+* **grupirajuæe varijable:** podskupine se porede unutar panela tako da se prikazuju u odgovarajuæim prikazima.
+
+
+
+Generalan izgled funkcije u *lattice*-u:
+
+**graph_type(formula, data=)**
+
+gdje je graph_type odabran iz prethodno navedenih. Formula precizira varijablu(e) koje æe se prikazati i bilo koje uvjetujuæe varijable. Na primjer:
+
+* **~x|A** - prikaz numerièke varijable x za svaku razinu faktora A
+
+* _y~x | A*B_ - prikaz odnosa izmeðu numerièkih varijabli y i x odvojeno za svaku kombinaciju razine faktora A i B
+
+* **~x** znaèi prikaz same numerièke varijable x. 
+
+
+
+Nacrtat æemo pripremljeni skup podataka ali se najprije s podacima moramo upoznati:
+
+```{r, eval=T,comment=NA, echo = T}
+str(OrchardSprays)
+summary(OrchardSprays$treatment)
+```
+
+Pogledajmo prije crtanja koliko nivoa ima varijabla *treatment*, funkcija *nlevels()* te koji su to nivoi funkcija *levels()* na faktoraskoj varijabli:
+
+```{r, eval=T,comment=NA, echo = T}
+nlevels(OrchardSprays$treatment)
+```
+
+```{r, eval=T,comment=NA, echo = T}
+#eksplicitan upit o nivoima faktora
+levels(OrchardSprays$treatment)
+```
+
+Najopæenitija grafièka funkcija visoke razine iz paketa *lattice* je funkcija *xyplot()* kojom možemo napraviti velik broj prikaza:
+
+
+```{r fig.width=6, fig.height=7,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable", cache=F}
+xyplot(decrease ~ rowpos | treatment, OrchardSprays, 
+       main="Primjer podjele multivarijatnih podataka \n korištenjem grafièkih moguænosti paketa lattice",
+       cex.main=0.8) 
+```
+
+ 
+Malo prilagodbe grafikona:
+
+```{r fig.width=7, fig.height=9,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable", cache=F}
+library(lattice) 
+xyplot(decrease ~ rowpos | treatment, OrchardSprays, 
+		panel = function(x,y,...){
+		panel.xyplot(x,y,...)
+		#panel.abline(h=median(y), lty=3)
+		panel.lmline(x,y, col=1)
+					})
+```
+
+Kao argumente funkcije *panel()* definiramo jedino one varijable koje želimo crtati na panelima i dodajemo dodatne uvjete. Za moguænosti unutar ove, jedne od najvažnijih funkcija u paketu *lattice*, potrebno je u konzolu unijeti sljedeæi upit *?xyplot*. Opæenito, ukoliko želimo specificirati odreðenu funkciju (npr. *xyplot()* iz paketa lattice potrebno je unijeti sljedeæe: *lattice::xyplot*.
+
+Ukratko, èesto korištene funkcije u paketu lattice mogu se podijeliti prema vrsti podataka i to na naèin da imamo funkcije za vizualizaciju: 
+
+- jedne varijable: *histogram()*, *densityplot()*, *bwplot()*, *stripplot()*
+-	kvantili za jednu ili više varijabli: *qqmath()*, *qq()*
+-	grafika za imenovane podatke: *barchart()*, *dotplot()*
+-	vizualizacija dvodimenzionalnih varijabli: *xyplot()* te mnoge druge.
+
+Kroz nekoliko primjera æemo vidjeti prednosti *lattice* grafike.
+
+
+```{r, eval=T,comment=NA, echo = T}
+#Uèitavanje ranije pripremljenog R objekta
+load("podaci_lattice_grafika.Rdata")
+```
+
+Histogrami 
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Histogramski prikaz varijable cjelokupno ", cache=F}
+#histogram cjelokupne varijable
+histogram( ~ urod , podaci_lattice_grafika, main="Varijabla urod ukupno")
+```
+
+```{r fig.width=7, fig.height=9,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Histogramski prikaz varijable razdijeljene prema nivoima faktorske varijable", cache=F}
+#razdijeljeno na panele prema nivoima varijable varijetet
+histogram( ~ urod | varijetet, podaci_lattice_grafika)
+```
+
+*Box-Whisker* graf
+
+
+```{r fig.width=6, fig.height=6,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Usporedni Box-Whiskers prikaz varijable urod prema plohama", cache=F}
+bwplot(ploha ~ urod, podaci_lattice_grafika)
+```
+
+
+```{r fig.width=6, fig.height=6,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable godina", cache=F}
+bwplot(ploha ~ urod | godina, podaci_lattice_grafika)
+```
+
+
+
+Gustoæe
+
+Na jednak naèin funkcioniraju i drugi tipovi prikaza varijabli, u ovome dijelu neparametarsko zaglaðivanje (engl. *Kernel Density Plots*). Nakon što ste se upoznali sa sintaksom funkcije te posebno argumenta *plot.points* isprobajte opciju TRUE te prokomentirajte razliku u prikazu.
+
+```{r fig.width=6, fig.height=6,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable", cache=F}
+densityplot( ~ urod, podaci_lattice_grafika, plot.points = FALSE)
+```
+
+Pokušajte reæi na koji biste naèin u *base* grafici napravili ovakav prikaz *Kernel Density*, neparametarsko zaglaðivanje podataka?
+
+Stupèasti dijagram
+
+Na primjeru stupèastih dijagrama pokazat æemo podatke razdijeljene po plohama dok æe varijeteti biti razlièito obojani. Koji argument kontrolira obojanost prema varijabli *varijetet*?
+
+```{r fig.width=7, fig.height=8,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable", cache=F}
+barchart(urod ~ varijetet | ploha, data = podaci_lattice_grafika,
+         groups = godina, layout = c(1,6), stack = TRUE,
+         auto.key = list(space = "right"),
+         #ylab = "Urod u tonama",
+         scales = list(x = list(rot = 90)))
+```
+
+```{r fig.width=7, fig.height=8,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable", cache=F}
+barchart(urod ~ varijetet | godina, data = podaci_lattice_grafika,
+         groups = ploha, layout = c(1,2), stack = TRUE,
+         auto.key = list(space = "right"),
+         #ylab = "Urod u tonama",
+         scales = list(x = list(rot = 90)))
+```
+
+```{r fig.width=7, fig.height=8,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Primjer podjele prikaza na onoliko panela koliko postoji nivoa faktorske varijable", cache=F}
+barchart(urod ~  varijetet, data = podaci_lattice_grafika,
+         groups = ploha, layout = c(1,1), stack = TRUE,
+         auto.key = list(space = "right"),
+         #ylab = "Urod u tonama",
+         scales = list(x = list(rot = 90)))
+```
+
+
+
+Za konaèan izgled prikaza potrebno je podatke aggregirati prema godinama. Iako na ovome teèaju neæe biti govora o razlièitim naèinima manipulacije podacima (engl. *data wrangling*) samo demonstracija važnosti manipulacije podacima funkcijom *aggregate()*. 
+
+
+```{r, eval=T,comment=NA, echo = T}
+#nova funkcija aggregate
+podaci.agg_godina<- aggregate(podaci_lattice_grafika["urod"], by = list(podaci_lattice_grafika$varijetet, podaci_lattice_grafika$ploha),FUN =sum , na.rm = F)
+names(podaci.agg_godina) <- c("varijetet", "ploha", "urod")
+```
+
+
+```{r fig.width=7, fig.height=8,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="Vizualizacija agregiranih podataka uroda po gpdinama", cache=F}
+barchart(urod ~  varijetet, data = podaci.agg_godina,
+         groups = ploha, layout = c(1,1), stack = TRUE,
+         auto.key = list(space = "right"),
+         ylab = "Urod u tonama",
+         scales = list(x = list(rot = 90)))
+```
+
+Kako je ovo teèaj na kojem se pokušavamo upoznati s veoma velikim brojem pojmova kako iz samog sustava R tako i iz statistike u daljnjim primjerima tijekom teèaja grafièke prikaze æemo davati samo u jednom grafièkom sustavu. Kako je za potrebe gradiva *base* sustav znatno fleksibilniji, primjeri æe biti raðeni uz pomoæ *base* grafike. Srce ima specijalizirane teèajeve o grafièkim sustavima u R-u. 
+
+Radi izuzetno velike popularnosti najnovijeg grafièkog sustava koji se temelji na gramatici grafike (engl. *Grammar of graphics*, Wilkinson 2005) spominjemo i treæi sustav *ggplot* te izuzetno popularan paket *ggplot2* kojim æemo se detaljno upoznati na nekom drugom teèaju.
+
+
+**Napomena:**
+Ukoliko eksplicitno zovemo funkciju nekog paketa pišemo to sintaksom: *paket::funkcija*. Radi veoma velikog broja funkcija, moguæe je ponavljanje  neke funkcije u nekoliko kontribuiranih paketa. Na ovaj naèin kontrolirano zadamo funkciju željenog paketa.
+
+**ZADACI ZA SAMOSTALNI RAD:**
+
+Smostalno provjerite nauèeno radom na sljedeæim zadacima:
+
+```{r, eval=F,comment=NA, echo = T}
+#ZADATAK 1: Konstruirajte toèke na naèin da prate funkciju sin(x)/x, 
+#na podruèju od -10 - 10. Nacrtajte rezultat. Stavite odgovarajuæi naslov. 
+#Neka vrijednosti na osi y budu orjentirane jednako kao na osi x. Liniju 
+#na grafu definirajte kao iscrtkanu, tamno sive boje, debljine 2. Snimite 
+#graf kao png datoteku 300 dpi na tvrdi disk.
+
+
+#ZADATAK 2:Nacrtajte dijagram raspršenja (scatterplot) varijabli Length i 
+#Sepal.Width iz skupa podataka koji dolazi u sustavu iris na naèin da su toèke 
+#obojane razlièito u ovisnosti o vrsti biljeke, Species.
+
+```

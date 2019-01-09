@@ -1,0 +1,2350 @@
+---
+date: '`r Sys.time()`'
+mainfont: Arial
+output:
+  pdf_document:
+    fig_caption: yes
+    highlight: tango
+    includes:
+      after_body: after_body_S720.tex
+      before_body: before_body_S720.tex
+      fontsize: 12pt
+      in_header: header_S720.tex
+    latex_engine: xelatex
+    number_sections: yes
+    pandoc_args:
+    - --bibliography
+    - bibliografija.bib
+    - advances-in-geosciences.csl
+    toc: yes
+    toc_depth: 5
+  html_document:
+    toc: yes
+  word_document:
+    fig_caption: yes
+    reference_docx: TS_predlozak_demo_RM_1.docx
+    toc: yes
+    toc_depth: 5
+---
+
+
+
+```{r library(lattice, cluster, reshape2,plyr, stargazer, knitr,stringr),warning=FALSE,message=F, echo=FALSE, cache=F}
+if (Sys.getenv("JAVA_HOME")!="")
+Sys.setenv(JAVA_HOME="")
+library(xlsx)
+library(knitr)
+library(lattice)
+library(png)
+#library(stringr)
+#library(vcd)
+#library(arcdiagram)
+#library(statnet)
+#library(igraph)
+#library(rCharts)
+#library(corrplot)
+#library(reshape2)
+#library(ggplot2)
+#library(xtable)
+#library(RColorBrewer)
+
+#install.packages('latex2exp')
+library('latex2exp')
+#podaci
+load("ames.RData")
+
+load("podaci_smoothScatter.RData")
+razredi <- read.xlsx("dva_razreda_iq_long.xlsx", 
+                     as.data.frame=T, stringsAsFactors = T,  
+                     sheetIndex=1, encoding="UTF-8" )
+#setwd("D:\\SRCE_razno\\Moji_tecajevi\\S720_upgrade")
+setwd("C:\\Users\\hd\\PODACI\\SRCE_razno\\Moji_tecajevi\\S720_upgrade")
+```
+
+```{r, eval=T, echo = FALSE}
+pdf.options(encoding = 'ISOLatin2')
+```
+
+
+```{r, eval=F, echo = FALSE}
+pdf.options(encoding = 'CP1250')
+```
+
+
+\newpage
+```{r, eval=F, echo = FALSE}
+\thispagestyle{empty}
+```
+
+
+
+\newpage
+\thispagestyle{empty}
+
+\clearpage
+
+
+\setcounter{page}{1}
+ 
+
+
+
+```{r eval=T,child = 'S720_uvod.Rmd'}
+```
+
+
+
+
+```{r eval=T,child = 'S720_poglavlje_1.Rmd'}
+```
+
+
+
+```{r eval=T, child = 'S720_poglavlje_2.Rmd'}
+```
+
+
+```{r eval=T,child = 'S720_poglavlje_3.Rmd'}
+```
+
+
+
+```{r eval=F, child = 'S720_poglavlje_4.Rmd'}
+```
+
+
+
+\clearpage
+\newpage
+
+
+
+
+
+# Uvod u statistiku uz sustav R
+
+Pojam statistike uglavnom je povezan s analizom numerièkih podataka ali se pod pojmom statistike èesto misli i na jednostavno sumiranje skupova podataka. Statistika se kao znanstvena disciplina bavi razvojem metoda prikupljanja, opisivanja i analiziranja podataka te primjenom tih metoda u procesu donošenja zakljuèaka. 
+
+Primijenjena statistika je znanost uèenja iz podataka na naèin da kontrolira i komunicira nesigurnost u zakljuècima te na taj naèin pruža bitne smjernice za upravljanje znanstvenim i društvenim napretkom. U svakodnevnom životu rijeè statistika koristimo kada brojèanim vrijednostima pokušavamo opisati bitne karakteristike nekog skupa podataka (populacija / uzorak). 
+
+Naèin na koji dolazimo do zakljuèka koristeæi podatke mjerenja ili opažanja zovemo statistièka metoda. Statistièke metode su znanstvena disciplina, dio primijenjene matematike, a ukljuèuju naèine prikupljana, organizacije, sistematizaciranja, analize i interpretacije podataka.
+
+Primjena statistièkih metoda veoma je široka. Nema znanstvene discipline i istraživanja koja ne koriste statistiku prilikom donošenja zakljuèaka.
+
+Statistièari primjenjuju statistièke metode i naèin razmišljanja u raznim znanstvenim, društvenim i poslovnim podruèjima kao što su astronomija, biologija, obrazovanje, ekonomija, inženjerstvo, genetika, marketing, medicina, psihologija, javno zdravstvo, sport i drugo. 
+
+
+Svrha mjerenja ili sakupljanja podataka, moguænost donošenja zakljuèaka o mjerenoj pojavi.
+"Najbolja stvar u bavljenju statistikom je ta da statistièar ima priliku igrati se u svaèijem dvorištu." (John Tukey, Bell Labs, Sveuèilište Princeton).
+
+
+
+
+## Osnovni pojmovi u statistici
+
+### Statistièka populacija
+
+U statistici, populacija je ukupan skup jedinki koje su predmet našeg interesa i o kojima želimo donositi zakljuèke. Populacija može biti konaèna ili beskonaèna. 
+
+
+
+Primjeri statistièkih populacija:
+
+Ako želimo znati prosjeènu masu svih 20-godišnjaka u Hrvatskoj, onda populaciju od interesa èine svi pojedinci stari 20 godina koji žive u Hrvatskoj.
+Ako želimo znati udio sredovjeènih muškaraca koji nemaju srèani udar nakon što su konzumirali odreðeni lijek, onda populaciju èine svi sredovjeèni muškarci koji su primali ovu terapiju.
+Ako želimo znati postotak loše istokarenih dijelova nekog aparata u odreðenoj seriji proizvoda tada populaciju èine svi istokareni dijelovi iz odreðene serije.
+Ako želimo znati prosjeèan prihod pop pjevaèa na domaæoj estradnoj sceni tada je populacija skup svih pop pjevaèa, itd.
+Buduæi je mjerenje svih jedinki u populaciji najèešæe nemoguæe, populacija se uzorkuje procesom selekcije podskupa. Uzorak se odabire na naèin da bude reprezentativan za populaciju koja se istražuje.
+
+![Populacija i uzorak](populacija_uzorak.png){ width=110% }
+
+
+\clearpage
+\newpage 
+
+### Statistièko zakljuèivanje
+
+Statistièko zakljuèivanje je zakljuèivanje o populaciji od interesa, a osniva se na reprezentativnom uzorku iz populacije. Proces zakljuèivanja može se prikazati ovako:
+
+
+
+![Statistièko zakljuèivanje](uzorak_statistika_populacija.png){ width=90% }
+
+ 
+### Uzorak
+
+Uzorak je skup jedinki izvuèen iz populacije prema jsano odreðenoj proceduri. Jedinice uzorka još zoveno opservacijama ili jedinicama uzorka. Uzorci se dijele na nevjerojatnosne i vjerojatnosne, koji se koriste pri statistièkom zakljuèivanju. 
+
+
+
+#### Uzorci bez definirane vjerojatnosti (ne-vjerojatnosni uzorci)
+
+
+Ne-vjerojatnosni uzorci su uzorci dobiveni razlièitim naèinima ali za koje vrijedi da postoje dijelovi populacije za koje ne postoji šansa (šansa = 0) da budu izabrani u uzorak ili oni gdje se šansa izbora jedinke (elementa, opservacije) ne može precizno odrediti.
+
+Ne-vjerojatnosni uzorci koriste se u pilot studijama, kvalitativnim istraživanjima, razvojima hipoteza i ne smiju se koristiti u statistièkom zakljuèivanju.
+
+Elementi se u uzorak odabiru temeljem pretpostavki o populaciji koja nas zanima kao osnovnom kriteriju za izbor. Iz razloga što elementi nisu izabirani na sluèajan naèin, na ne-vjerojatnosni uzorcima ne možemo izraèunati i odrediti pogrešku uzorkovanja (engl. *sampling error*) kao jednu od najvažnijih mjera u statistici. To je i razlog radi èega zakljuèke donesene na ovakvom tipu uzoraka ne bismo smjerli ekstrapolirati na populaciju tj. donositi zakljuèke o populaciji.
+
+Metode za dobivanje ne-vjerojatnosnih uzoraka su prigodno uzorkovanje (engl. *convenience sampling*), *quota* uzorkovanje (kombinacija stratificiranog i prigodnog) te namjensko (engl *purposive*) uzorkovanje koje je takoðer karakterizirano kao selektivno, subjektivno uzorkovanje. O ovim tipovima uzoraka neæe biti više govora u ovome teèaju.
+
+#### Vjerojatnosni uzorci
+
+
+Osnovna karakteristika vjerojatnosnih uzoraka je vjerojatnost veæa od nule da budu izabrani u uzorak i ta vjerojatnosti se može jasno odrediti. Ovo omoguæuje nepristran (engl. *unbiased*) izraèun populacijskih parametara ponderiranjem vrijednosti proporcionalno vjerojatnosti izbora jedinke u uzorak.
+
+
+
+
+##### Jednostavan sluèajni uzorak 
+
+
+Sluèajno izabiremo n jedinki iz populacije velièine N pri æemu svaka jedinka ima jednaku šansu (vjerojatnost) da bude izabrana u uzorak. Iz ovoga proizlazi da je vjerojatnost izbora svakog para jedinki, trojki itd. jednaka. Ovo svojstvo minimizira pogrešku i varijanca izmeðu jedinki uzorka veoma dobro procjenjuje cjelokupnu varijancu populacije, a time i preciznost rezultata.
+
+PREDNOSTI: jednostavnost
+NEDOSTATCI: postoji šansa da uzorak nije dovoljno precizan; uzorak može biti preskup.
+
+![Vjerojatnosni uzorci - jednostavan sluèajni uzorak](jednostavan_slucajni_uzorak.png){ width=100% }
+
+Može se dogoditi da potpuno sluèajnim odabiromjedinki u uzorak on ne reflektira pravo stanje populacije. Takoðer, veoma se lako može dogoditi da izbor jedinki prema nekom svojstvu bude prevelik / premalen te da izabrani uzorak ne reprezentira strukturu populacije. Ovo se rješava stratificiranim uzorkovanjem.
+
+Potpuno sluèajni uzorak može biti veoma nezgodan za provedbu ukoliko ga želimo izvesti na izrazito velikim populacijama što ga èini i veoma skupim i teškim za provedbu. Buduæi su istraèivaèka pitanja, ipak, najèešæe vezana za neke subpopulacije, to æe i ovaj problem potpuno sluèajnog jednostavnog uzorka biti riješen stratificiranim uzorkovanjam.
+
+
+
+
+
+
+##### Sistematski (sustavni) uzorak 
+  
+Prva jedinka koja ulazi u uzorak izabire se sluèajno; nakon toga izabiremo svaku n-tu jedinku iz populacije velièine N (npr. svaku desetu, svaku šestu). Broj n još se naziva i interval uzorka ili pomak (engl *skip*) Ovaj naèin izbora uzorka uvjetuje da svi elementi populacije imaju jednaku i poznatu vjerojatnost biti izabrani u uzorak.
+
+
+PREDNOSTI: jednostavno za objašnjenje i sprovoðenje
+NEDOSTATCI: netoèan ukoliko postoji obrazac u podacima koji se ponavlja ciklièki.
+
+Buduæi su jedinice uzorkovanja u sistematskom uzorku uniformno rasporeðene ovakav naèin uzorkovanja nije dobar ukoliko unutar populacije postoji bilo kakav obrazac. 
+
+
+![Vjerojatnosni uzorci - sistematski sluèajni uzorak](sistematski_uzorak_1.png){width=100%}
+
+![Vjerojatnosni uzorci - sistematski sluèajni uzorak 2](sistematski_uzorak_2.png){width=100%}
+
+
+##### Stratificirani uzorak
+
+
+Zahtijeva podjelu populacije u nepreklapajuæe podskupove (stratume). Nakon stratifikacije svaki se stratum može uzorkovati kao posebna subpopulacija. U ovisnosti o velièini podskupova, iz svakog se podskupa izabire sluèajni uzorak odgovarajuæe velièine. Naèin izbora uzorka unutar stratum može varirati (potpuno sluèajni, sustavni)
+
+PREDNOSTI: toènost
+
+Izborom stratificiranog uzorka preciznost naèih procjena o populaciji mogu biti bolje od zakljuèaka dobivenih temeljem jednostavnog sluèajnog uzorka.
+
+NEDOSTATCI: zahtijeva odreðeno predznanje o populaciji koja se uzorkuje (broj i velièina stratuma), odabir varijable za stratificiranje ponekad nije jednostavan, skup za provoðenje, nije koristan ukoliko ne postoje homogene subpopulacije.
+
+Postoje potencijalni nedostatci prilikom stratificiranog uzorkovanja. Uz to što poveæava kompleksnost izbora uzorka poveæava se i kompleksnost izraèuna procjena populacijskih parametara. Dodatno, podjela populacija na stratume prema jednom svojstvu ne mora nužno reflektirati stanje stratuma u nekom drugom. 
+
+Svakako se preporuèa korištenje stratificiranog uzorka ukoliko vrijedi sljedeæe:
+ 
+ * Varijabilnost unutar stratuma je mala
+ * Varijabilnost izmeðu stratuma je velika
+ * Varijabla od interesa snažno je korelirana s varijablom prema kojoj smo stratificirali populaciju.
+ 
+![Vjerojatnosni uzorci - stratificirani sluèajni uzorak](stratificirani_uzorak.png){width=100%}
+
+###### Poststratifikacija
+
+Ukoliko se stratificiranje uzorka radi nakon njegova izbora, proces nazivamo poststratifikacijom. Najèešæe se provodi radi nedostatnog znanja o poulacijijskim stratumima prije izbora potpuno sluèajnog uzorka. Uvoðenje ponderiranja makar i uz sve nedostatke post-hoc procesa èesto daje bolje procjene populacijskih parametara od korištenja potpuno sluèajnog uzorka.
+
+
+
+
+##### Klaster uzorak
+ 
+Zahtijeva sluèajan izbor klastera, nakon èega slijedi uzorkovanje svih jedinica unutar odabranih klastera. Slièno stratificiranom uzorku, zahtijeva podjelu populacije na nepreklapajuæe klastere.
+
+PREDNOSTI: manji troškovi
+NEDOSTATCI: neprecizan ukoliko postoji velika varijabilnost meðu klasterima.
+
+![Vjerojatnosni uzorci - klaster sluèajni uzorak](klaster_uzorak.png){width=100%}
+
+
+##### Kombinirani uzorak
+ 
+Klaster uzorak, pri èemu se iz svakog sluèajno odabranog klastera izabire sluèajni ili sistematski uzorak. 
+
+![Vjerojatnosni uzorci - kombinirani sluèajni uzorak](kombinirani_uzorak.png){width=100%}
+
+Ukoliko imamo neki od vjerojatnosnih uzoraka tada proces statistièkog zakljuèivanja možemo detaljnije opisati kao sljedeæi proces:
+
+
+ ![Proces statistièkog zakljuèivanja](proces_uzorak_rezultat_populacija.png){width=100%}
+ 
+ 
+ 
+#### Zavisnost i nezavisnost dva uzorka
+
+#####	Nezavisni uzorci
+
+Ako mjerenja svojstva od interesa na jednom uzorku ne daju nikakve informacije o mjerenjima iste osobine na drugom uzorku (u nezavisnim uzorcima nalaze se razlièite jedinke). Nezavisni uzorci su uzorci prikupljeni iz dviju populacija gdje je proces selekcije jedinki u uzorak neovisan o procesu selekcije u drugoj populaciji.
+
+#####	Zavisni uzorci
+
+Zavisni uzorci su uzorci izabrani iz dvije populacije na naèin da ili 1) elementi uzorkovani su dijelovi obje populacije ili 2) izabrane jedinke (elementi) su slièni u karakteristikama ili se mogu upariti s elementima izabranim iz prve populacije. Drugaèije reèeno, zavisni uzorci su uparena mjerenja osobine od interesa na istom skupu jedinki ili ukoliko su mjerenja u jednom uzorku na neki naèin povezana s mjerenjima u drugom uzorku.
+
+Primjer nezavisnih uzoraka:
+
+Sluèajnim izborom, na poèetku semestra biramo 50 studenata sa druge godine, izabranog smjera i fakulteta Sveuèilišta u Zagrebu i testiramo njihovo znanje iz matematike.
+
+Sluèajnim izborom, na kraju semestra, biramo 50 studenata sa druge godine izabranog smjera i fakulteta Sveuèilišta u Zagrebu i testiramo njihovo znanje iz matematike.
+
+Primjer zavisnih uzoraka:
+
+Sluèajnim izborom, na poèetku semestra, biramo 50 studenata sa druge godine izabranog smjera i fakulteta Sveuèilišta u Zagrebu i testiramo njihovo znanje iz matematike.
+
+Na kraju semestra, na istih 50 studenata sa druge godine izabranog smjera i fakulteta Sveuèilišta u Zagrebu testiramo znanje iz matematike.
+
+
+
+**PITANJA ZA PONAVLJANJE:**
+
+Radi li se u sljedeæim primjerima o zavisnim ili nezavisnim uzorcima? 
+
+1) Istraživaè je proveo pokus kako bi utvrdio da li specifiène vježbe oka mogu popraviti periferni vid kod djece. Sluèajnom odabiru 10 osoba izmjerena je kvaliteta perifernog vida.Program vježbi je odraðen tijekom dva tjedna te je po završetku ponovno testirana kvaliteta perifernog vida na svim osobama.
+
+2) Da li se u Dalmaciji riba lakše ulovi s broda ili obale? Jednak broj sati pokušaja ulova ribe s broda i obale napravilo je dvadeset dobrovoljaca jednom tijekom svakog mjeseca u godini.
+
+3) Pretpostavimo da su izabrane dvije grupe ispitanika, studenata Sveuèilišta u Zagrebu, sluèajnim izborom 2010. i 2012. godine kako bi odgovorili na anketu o zadovoljstvu uslugom studentske prehrane. U oba uzorka ste izvuèeni i Vi. 
+
+
+
+
+### Varijable
+
+Varijabla je svojstvo ili stanje èije vrijednosti variraju. Vrijednosti varijable se mijenja u skladu s razlièitim èimbenicima. Vrijednosti nekih varijabli se mijenjaju brzo, poput vrijednosti dionica na burzi, dok se vrijednosti drugih varijable mijenjaju rijetko, primjerice promjena  iste osobe tijekom života. 
+
+Konceptualno, varijable dijelimo na nezavisne i zavisne (ponekad zvane varijablama ishoda). Nezavisne varijable zovu se eksperimentalne kada se njima manipulira u istraživanju, ili prediktorske varijable kojima se ne manipulira u istraživanju. Cilj je ustanoviti utjecaj nezavisnih na zavisnu varijablu. 
+
+**PRIMJER:** Uèitelja matematike zanimaju faktori (varijable) koji utjeèu na rezultate testova matematike njegovih uèenika. Iz iskustva (poznavanje fenomena) pretpostavlja da bi na rezultate mogla utjecati kolièina vremena uložena u rješavanje zadataka te opæa inteligencija uèenika (IQ).
+
+Varijable: 	Nezavisne (eksperimentalne/prediktorske): vrijeme uèenja, IQ
+Zavisna (varijabla ishoda): ishod testa iz matematike.
+
+Prema vrijednostima koje varijabla može poprimiti varijable mogu biti:
+
+* kvalitativne (atributivne, kategorijske): nominalne i ordinalne.
+
+Kvalitativne varijable su one èiji se podaci ne mjere ili broje. Primjer kvalitativne varijable bio bi boja oèiju, spol, mjesto stanovanja, pripadnost vjerskoj zajednici itd. Ponekad se za pripadnost nekoj kategoriji ili klasi koriste i brojevi ali treba biti svjestan da to oni u svojoj suštini nisu. 
+
+*	kvantitativne (numerièke): diskretne i kontinuirane.
+
+Kvantitativne varijable su one èije se vrijednosti mogu mjeriti ili brojati. Kvalitativne varijable su one mjerena na nominalnoj i ordinalnoj skali (s mjernim skalama upoznat æemo se kasnije u teèaju).
+
+#### Mjerenje varijabli
+
+
+Kako bismo mogli zakljuèivati o odnosima izmeðu varijabli, varijable se najprije moraju mjeriti. Mjerenje je konceptualizacija - pridruživanje brojeva vrijednostima varijable. Povezivanje koncepta (ideje) s mjerenjem (tehnika) èini vrijednosti varijable empirijski vidljivim. Proces mjerenja varijabli zahtijeva skale mjerenja koje možemo shvatiti kao shemu za numerièku reprezentaciju vrijednosti varijable. 
+
+Mjerenje može biti direktno za varijable kao što su visina, temperatura, težina ili pak indirektno kao što su primjerice varijable motivacija, inteligencija, pogodnost staništa za vrstu, znanje itd. U ovisnosti koji tip varijable mjerimo moramo izabrati adekvatno oruðe, mjerni instrument, kao što su primjerice vaga, mjerka, test, upitnik, termometar, upitnik osobnosti i drugi.
+
+
+
+ 
+
+
+
+##### Tipovi mjernih skala
+
+Skale se razlikuju po tipu varijabli koje predstavljaju te svojstvima i interpretaciji brojeva sadržanih u skali. Vrsta skale kojom smo mjerili varijable odreðuje koje statistièke postupke možemo koristiti prilikom njihove analize. Primjeri korištenja nominalne skale prikazani su na slici \ref{fig:nominalna}.
+
+**Nominalna skala**
+
+Vrijednosti dodijeljene varijabli predstavljaju opisne kategorije, ali nemaju ureðene numerièke vrijednosti u odnosu na velièinu. Sluèe samo za kategorizaciju jedinki u konaèni broj grupa koje se meðusobno ne preklapaju (disjunktne grupe).
+
+**PRIMJERI:** ime osobe, tip proizvoda, spol, religijsko opredjeljenje, nacionalnost.
+**RAÈUNSKE OPERACIJE:** prebrajanje jedinki unutar grupa.
+
+
+![Primjer korištenja nominalne skale \label{fig:nominalna}](nominalna_1.png){width=120%}
+
+
+
+
+**Ordinalna skala**
+
+Podatke je moguæe poredati po velièini ili prema intenzitetu. Pokazuju relativan položaj elemenata u grupi.  Primjeri korištenja nominalne skale prikazani su na slici \ref{fig:ordinalna}.
+
+**PRIMJER:** ocjena, stupanj obrazovanja, kvaliteta proizvoda.
+
+**RAÈUNSKE OPERACIJE:** >,<
+
+
+
+![Primjer korištenja ordinalne skale \label{fig:ordinalna}](ordinalna_1.png){width=100%}
+
+
+
+**Intervalna skala**
+
+Vrijednosti varijable su numerièke, na kontinuiranoj skali (realni brojevi). Jednake razlike u izmjerenim vrijednostima varijable predstavljaju jednake razlike mjerenog svojstva; ne postoji apsolutna nula.  Primjeri korištenja nominalne skale prikazani su na slici \ref{fig:intervalna}.
+
+**PRIMJER:** vodostaj rijeke, temperatura u na Fehrenheit ili Celzijus skali, nadmorska visina.
+
+**RAÈUNSKE OPERACIJE:** oduzimanje, zbrajanje i ostalo, ali ne i omjeri vrijednosti
+
+
+![Primjer korištenja intervalne skale \label{fig:intervalna}](intervalna_1.png){width=30%}
+
+**Omjerna skala**
+
+Skala posjeduju apsolutnu nulu koja predstavlja odsutnost mjernog svojstva. Primjeri korištenja nominalne skale prikazani su na slikama \ref{fig:omjerna} i \ref{fig:omjerna2}.
+
+
+**PRIMJER:** masa, visina, temperatura u na Kelvin skali.
+
+**RAÈUNSKE OPERACIJE:** uz ranije navedeno omjeri vrijednosti varijable imaju smisla.
+
+![Primjer korištenja omjerne skale \label{fig:omjerna}](omjerna_1.png){width=100%}
+
+ ![Primjer korištenja omjerne skale \label{fig:omjerna2}](omjerna_2.png){width=100%}
+ 
+
+Generalno, skale možemo poredati prema njihovoj kompleksnosti kako je prikazano na slici \ref{fig:odnos skala}.
+
+![Odnos skala mjerenja varijabli \label{fig:odnos skala}](skale.png){width=60%}
+
+
+\clearpage
+
+\newpage
+
+### Podaci
+
+Izmjerena svojstava od interesa dobivena na jedinkama tijekom istraživanja nazivamo podacima. Cilj je statistike pomoæi istraživaèima i praktièarima u organizaciji, analizi i interpretaciji rezultata analize podataka. 
+
+
+
+ 
+**PITANJA ZA PONAVLJANJE:**
+
+
+1) Ukoliko vrijednosti mjerene na jednom uzorku ukazuju na neko svojstvo u drugom uzorku takav uzorak nazivamo:
+
+2) Definirajte kojem tipu varijabli pripadaju slijedeæa obilježja:
+
+*	  broj èlanova obitelji
+*	  gospodarska djelatnost
+*   status studenta
+*	  temperatura u stupnjevima C
+*	  brojevi na dresovima nogometaša
+*	  starost
+*	  stil u plivanju
+*	  ocjena na testu
+*	  radni staž
+*	  braèni status
+*	  nacionalnost
+*	  školska sprema
+*	  duljina skoka
+*	  mjesto boravka
+*	  poredak u utrci
+*	  temperatura u stupnjevima K
+
+## Deskriptivna vs. inferencijalna statistika
+
+Statistièke metode povezane su s dva tipa istraživanja:
+
+* Opis skupa podataka - opisna ili deskriptivna statistika
+* Izbor uzorka iz veæeg skupa i njihovo korištenje za zakljuèivanje o èitavom skupu. Takvi zakljuèci nazivaju se statistièki zakljuèci.
+
+* Deskriptivna statistika 
+
+Deskriptivna statistika buhvaæa postupke ureðivanja, tabliènog i grafièkog prikazivanja podataka, te izraèunavanje opisnih statistièkih pokazatelja.
+
+* Inferencijalna statistika
+
+Inferencijalna - temelji se na teoriji vjerojatnosti i prouèava metode kojima se pomoæu dijela informacija (reprezentativni uzorak) donose zakljuèci o cjelini (populacija).
+
+Veoma èesto želimo donijeti zakljuèke o veoma velikim skupovima, populacijama, koji su veoma èesto i neprebrojivi. Jedan od naèina je uzimanje adekvatnog sluèajnog uzorka te donošenje adekvatnih statistièkih zakljuèaka o populaciji temeljem izabranog uzorka.
+
+### Deskriptivna statistika
+
+Metodama deskriptivne statistike opisujemo odabrani uzorak / populaciju što ukljuèuje raèunanje statistièkih pokazatelja (statistika / parametara) poput aritmetièke sredine (prosjek), maksimuma, minimuma i dr. Generalizacija zakljuèaka nije moguæa. 
+
+Metode deskriptivne statistike služe za organizaciju, sumiranje i vizualizaciju podataka. Podatke organiziramo u obliku tablica i / ili grafova dok deskriptivni pokazatelji (npr. prosjek), služe za sumiranje podataka. Sumarni pokazatelj za cijelu populaciju naziva se parametar dok se sumarni pokazatelj uzorka naziva statistika, slika \ref{fig:parametar statistika}. 
+
+Analiza podataka veoma èesto završava samo deskriptivnom statistikom, bilo zbog nereprezentativnog uzorka ili nedovoljnog znanja praktièara.
+
+Istraživaèi koriste deskriptivnu statistiku kako bi izvještavali o svom uzorku / populaciji. Sumirajuæi informacije, deskriptivna statistika ubrzava i pojednostavljuje proces razumijevanja karakteristika bilo populacije ili dijela populacije.
+ 
+Tablice podataka (tabele) mogu biti jednostavne i prikazivati jedan statistièki niz (jedno obilježje) i skupne tj. prikazivati dva ili više nizova (dva ili više obilježja). Kombinirane  tablice ili tablice kontingencije - prikazuju jedan niz promatran prema dva ili više obilježja.
+
+  ![Parametar populacije nasuprot statistike uzorka \label{fig:parametar statistika}](parametar_statistika.png){width=120%}
+
+
+#### Distribucija frekvencija jedne varijable
+
+Distribucija frekvencija varijable daje ureðeni prikaz varijable (njezinih uzlazno sortiranih vrijednosti); ovisi o tipu varijable. 
+
+**Kvalitativna / diskretna kvantitativna varijabla:**
+
+Distribucija frekvencija kvalitativne (kategorijske) ili diskretne kvantitativne varijable definirana je brojem (frekvencijom f) jedinki po svakoj kategoriji / diskretnoj vrijednosti varijable. 
+
+- Suma frekvencija po svim pojedinim vrijednostima varijable jednaka je velièini uzorka N.
+- Relativna frekvencija (proporcija) - p=f/N
+- Postotak (%=p*100)
+- Suma svih proporcija iznosi 1
+- Suma svih postotaka iznosi 100.
+
+
+**Kvantitativna / kontinuirana varijabla**
+
+Raspon vrijednosti kontinuirane varijable jednak je razlici izmeðu najveæe i najmanje vrijednosti.
+
+Raspon se dijeli na konaèan broj intervala koji se dodiruju (ali ne preklapaju).
+
+- Frekvencija (f) je broj pojavljivanja jedinki u pojedinom intervalu
+- Relativna frekvencija (proporcija) - p=f/N
+- Postotak (%=p*100)
+- Suma svih proporcija iznosi 1
+- Suma svih postotaka iznosi 100.
+
+
+Distribucija frekvencija može se prikazati numerièki i grafièki. 
+
+Numerièki prikaz distribucije frekvencija daje tablica frekvencija koja sadrži: frekvencije, proporcije, postotke i kumulativne postotke po pojedinaènim vrijednostima ili intervalima vrijednosti varijable (ovisno o tipu).
+
+
+Primjer tablice frekvencije (pojedinaène vrijednosti) dan je u tablici \ref{tab:Tablica pojedinacno}.
+
+ ![Primjer tablice frekvencije \label{tab:Tablica pojedinacno}](tablica_frekvencije_1.png){width=70%}
+
+ 
+Primjer tablice frekvencije (intervali vrijednosti)  dan je u tablici \ref{tab:Tablica intervali}.
+
+
+ ![Primjer tablice frekvencije, intervali vrijednosti \label{tab:Tablica intervali}](tablica_frekvencije_2.png){width=100%}
+ 
+
+\clearpage
+\newpage
+
+### Grafièke metode za prikaz kvantitativnih varijabli
+
+ 
+
+U nastavku su dani najèešæi grafièki prikazi gustoæe/frekvencije jedne sluèajne varijable.
+
+
+#### Grafièki prikazi distribucije frekvencije jedne varijable
+
+Kako bismo se upoznali s najèešæim grafièkim prikazima uèitat koristit æemo skup podataka o izmišljenoj djeci iz dva razreda \ref{tab: Dva razreda long} koji nosi informacije o pripadnosti razredu, visini i spolu.
+
+
+```{r, eval=T,comment=NA, echo = F}
+#pozivamo podatke
+razredi <- read.xlsx("dva_razreda_iq_long.xlsx", 
+                     as.data.frame=T, stringsAsFactors = T,  
+                     sheetIndex=1, encoding="UTF-8" )
+p<- razredi
+kable(p[1:10,], format = "pandoc", digits=1, padding = 0,  align=c('c','r', 'r', 'c'),caption="\\label{tab: Dva razreda long} Podaci na kojima æemo se upoznati s grafièkim prikazima frekvencije jedne varijable")
+```
+
+
+
+##### Histogram  
+
+
+Histogram je najrašireniji oblik prikaza kontinuiranih kvantitativnih varijabli. Histogram predstavlja raspodjelu frekvencija nekog skupa podataka nakon što se podaci svrstaju u intervalne klase ili razrede (engl. *bin*). Histogramskim prikazom možemo prikazati frekevencije i relativne frekvencije.
+
+Histogramski prikaz radimo na naèin da na os x nanosimo intervale vrijednosti, a na os y frekvencije (ili relativne frekvencije). Visina stupca je broj jedinki u pojedinom intervalu. Obratite pažnju na sliku \ref{fig: Problemi s histogramskim prikazima} kako izgled histograma varira ovisno o širini intervala (izabranoj podjeli). 
+
+
+Za izradu Unutar sustava R funkcija *hist()*, funkcija *histogram()* paketa *lattice*.
+
+
+Prije primjera crtanja  histogramskog prikaza jedne kontinuirane varijable upoznajmo se s funkcijom *hist()* te strrukturom nastalog objekta koji crtamo. Prouèite razlike izmeðu prikaza na slici \ref{fig: Problemi s histogramskim prikazima}.
+
+
+Prema želji/potrebi, prilikom izrade histograma moguæe je prilagoditi broj klasa ili napraviti specifiène intervale korištenjem argumenta *breaks*. Bilo koji dio objekta nastalog provoðenjem funkcije *hist()* (rezultat objekt klase *list*) moguæe je izluèiti kao zaseban objekat.
+
+
+```{r fig.width=7, fig.height=5,encoding = "ISO8859_2",echo=F, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig: Problemi s histogramskim prikazima} Dva histogramska prikaza jednakog skupa podataka, razlièit broj intervalnih klasa", cache=F}
+par(mfrow=c(1,2))
+#prvi grafikon
+hist(razredi$IQ, 
+     breaks=5,
+     col="lightblue", 
+     xlab="Visina", 
+     ylab="Frekvencije", 
+     main="Visina uèenika dva razreda, \npet intervala")
+
+#drugi grafikon, drugaèiji rasponi
+hist(razredi$IQ, 
+     breaks=20,
+     col="lightblue", 
+     xlab="Visina", 
+     ylab="Frekvencije", 
+     main="Visina uèenika dva razreda, \ndvadeset intervala")
+```
+
+
+Histogramski prikazi su neizbježni u prikazima usporedbi uzorka s teoretskim distribucijama, primjera na slici \ref{fig: Histogramski prikaz, usporedba normalna} prikazani su podaci o IQ uèenika dva razreda kao relativne frekvencije standardiziranih vrijednosti sa superponiranom standardnom normalnom distribucijom.
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=F, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig: Histogramski prikaz, usporedba normalna} Histogramskih prikaz, usporedba podataka sa standardnom normalnom", cache=F}
+#crtamo histogramski prikaz relativnih frekvencija
+hist(razredi$VISINA, 
+     freq=F,
+     breaks=20,
+     col="lightblue", 
+     xlab="Visina vrijednost", 
+     ylab="Relativne frekvencije", 
+     main="Visina uèenika dva razreda")
+
+#nadodajemo krivulju normalne distribucije
+curve(dnorm(x, mean=150, sd=12), 
+      col="darkblue", 
+      lwd=2, add=TRUE, yaxt="n")
+
+#nadodajemo podatke
+rug(razredi$VISINA)
+```
+
+
+
+
+   
+##### Stupèasti dijagram 
+
+Adekvatan grafièki prikaz za skup mjerenja koji se sastoji od diskretnih vrijednosti mjerenja ili kategorijskih podataka je stupèasti dijagram (engl. *barplot*). Crtamo objekt koji dobijemo funkcijom *table()* kojom prebrojimo pojavljivanje u kategorijama. Primijetite da su stupci u prikazu meðusobno odvojeni, za razliku od histogramskog prikaza, iako se i na histogramskom prikazu intervali, klase, mogu dodatno razmaknuti prema želji. Tada histogramski prikaz veoma slièi stupèastom dijagramu.
+
+
+U sljedeæem primjeru korištenjem funkcije *table()* možemo izraèunati frekvenciju svake pojedine zabilježene vrijednosti varijable te potom dobivene frekvencije nacrtati. 
+
+```{r, eval=T,comment=NA, echo = T}
+#frekvencije pojavljivanja pojedine vrijednosti u skupu podataka
+kategorije <- table(razredi$IQ)
+kategorije
+```
+
+Ponekad nije moguæe napraviti, ili ne želimo napraviti, frekvencije svake pojedine izmjerene vrijednosti kategorijske varijable veæ i u ovome sluèaju raspon izmjerenih vrijednosti želimo klasificirati na manji broj nepreklapajuæih klasa. To je moguæe napraviti funkcijom *cut()* za što sljedi primjer. Jedan od primjera za ovakvu klasifikaciju zamislite da ste studentima dali ispit na kojem su mogli prikupiti neki broj bodova u rasponuu od 0-100. Osim što možete vidjeti frekvencije svakog od moguæih 101 varijanti, korisno nam je dobivene bodove podijeliti u intervale za koje æemo pridružiti ocjene koje su u rasponu od 1-5.
+
+```{r, eval=T,comment=NA, echo = T}
+kategorije2 <- cut(razredi$IQ, 
+                   breaks=c(min(razredi$IQ), median(razredi$IQ), max(razredi$IQ)),
+                   include.lowest=T)
+kategorije2
+```
+
+Dodatno, veoma èesto želimo neki skup vrijednosti klasificirati relativno u odnosu na cjelokupan skup. U primjeru koji slijedi raspon varijable koja nosi informaciju o visini uèenika razdijelit æemo u kategorije u ovisnosti o mjerama deskriptivne statistike cjelokupnog skupa podataka, rezultata funkcije *summary()*.
+
+```{r, eval=T,comment=NA, echo = T}
+#funkcija cut za pripajanje pojedinoj kategoriji, intevalu
+kategorije3 <- cut(razredi$VISINA, summary(razredi$VISINA))
+#ispis
+kategorije3
+```
+
+Primjer stupèastog dijagrama, slika \ref{fig:Barplot2}.
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=F, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig: Barplot2} Barplot, kategorijski podaci", cache=F}
+barplot(table(kategorije3), main="Stupèasti dijagram, table", xlab="IQ kategorije", ylab="Broj pojavljivanja" , density=c(90, 70, 50, 40, 30)) 
+```
+
+
+Unutar sustava R funkcija *barplot()* iz paketa *base* ili funkcija *bwplot()* paketa *lattice*.
+ 
+ 
+ 
+##### Strukturni dijagram (engl. *pie*)
+
+Strukturni dijagrami, tzv. pite, veoma su su popularni, ali ih mnogi analitièari/statistièari ne smatraju pogodnim za prezentaciju podataka. Jedan od razloga je moguænost manipuliranja uèincima korištenjem boja, poèetnim kutom, sjenèanjem ili 3D vizualiziranjem strukturnog dijagrama. 
+
+
+```{r , echo=F , message=F, comment=NA,tab.caption="", cache=F} 
+#izrada podataka
+pie_podaci <- c(26, 45, 13, 62, 40, 27)
+
+#izraèun postotaka
+postotak <- round(pie_podaci/sum(pie_podaci)*100)
+
+#labele u variabli Oznaka
+lab <- c("US", "UK", "HR", "DE", "FR", "IT")
+
+#dodavanje postotka labelama
+lab_1 <- paste(lab, postotak) 
+
+#dodajemo oznaku % labelama
+lab_2 <- paste(lab_1,"%",sep="") 
+```
+
+
+```{r fig.width=4, fig.height=4,encoding = "ISO8859_2",echo=F, warning=FALSE,comment=NA, message=F,include=TRUE,fig.cap="\\label{Pita dijagram}Strukturni dijagram", cache=F}
+pie(pie_podaci,
+    init.angle=45,
+    labels = lab_2,
+    col= c("lightpink3", "darkseagreen4", "lightblue2", "ivory3", "lavender", "lightgray"),
+    main="Strukturni dijagram podataka")
+```
+
+Strukturni dijagram unutar sustava R možemo izraditi funkcijom *pie()*.
+
+
+ 
+##### Graf *stabljika - list* (engl. *stem and leaf*) 
+
+Grafièki prikaz *stabjika - list* unutar sustava R  možemo napraviti funkcijom *stem()*.
+
+Svako opažanje podijeli se na dva dijela (stabljiku i list). Stabljika su višedecimalne znamenke, a list niše decimalne znamenke. Stabljike se ispišu u stupac i poredaju po velièini od najmanje do najveæe. Odgovarajuæi list svakog opažanja se napiše u redak kod odgovarajuæe stabljike, slika \ref{fig:Stem and leaf}.
+
+
+
+
+```{r fig.width=4.5, fig.height=4,encoding = "ISO8859_2",echo=F, message=NA,warning=FALSE,message=F,comment=NA,include=TRUE,fig.cap="\\label{fig:Stem and leaf}Grafièki prikaz stabljika-list", cache=F}
+stem(razredi$IQ)
+```
+
+ \clearpage
+ \newpage
+ 
+##### Grafièki prikaz kutija i brk (engl. *Box-Whisker*)  
+
+Na ovom izuzetno popularnom i èestom grafièkom prikazu imamo gotove sve mjere deskriptivne statistike na jednom grafu i možemo reæi da prikazuje distribuciju kvantitativne varijable, slika \ref{fig:bw plot}. Ovo je, vjerojatno, najèešæi naèin prikaza sumarnih mjera distribucije jedne varijable koji æete pronaæi u knjigama i/ili znanstvenim radovima. Funkcija unutar sustava R kojom radimo ovu vrstu grafièkog prikaza je *boxplot()* iz paketa *base* ili funkcija *bwplot()* iz paketa *lattice*.
+
+
+
+
+```{r fig.width=6, fig.height=3.5,echo=F,encoding = "ISO8859_2", warning=FALSE,message=F,include=TRUE,fig.cap="Box-Whisker graf s oznaèenim važnim vrijednostima", cache=F}
+par(mfrow=c(1,1), mar=c(0,0,2,0))
+boxplot(razredi$VISINA, 
+        horizontal = TRUE, 
+        axes = FALSE, 
+        staplewex = 1, 
+        main="Boxplot podataka o visinama uèenika u dva razreda",
+        cex=0.8)
+
+#dodavanje teksta
+text(x=fivenum(razredi$VISINA), labels =fivenum(razredi$VISINA), y=1.3)
+text(x=fivenum(razredi$VISINA), labels =c("min", "25 per", "median", "75 per", "max"), y=1.4)
+```
+
+
+![Shema Box-Whisker grafièkog prikaza \label{fig:bw plot}](boxplot_oznake.png){ width=50% }
+
+
+
+Prisjetimo se podataka o IQ uèenika dva razreda na kojima æemo, takošer, izraditi, Box_Whisker prikaze:
+
+```{r, eval=T, echo = T, comment=NA}
+#sumarna statistika varijable
+summary(razredi$IQ)
+
+#sumarna statistika varijableIQ za svaki razred
+tapply(razredi$IQ, razredi$RAZRED, summary)
+```
+
+```{r fig.width=4, fig.height=9,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:box-plot}Box-plot prikaz a) cjelokupne varijable, b) boxplot prikaz za svaki razerd posebno , c) horizontalni boxplot prikaz za svaki razerd posebno ", cache=F}
+par(mfrow=c(3,1), mar=c(0.7,0.7,0.7,0.7))
+#nacrtamo boxlot svih podataka
+boxplot(razredi$IQ, horizontal=F)
+
+#priprema labela
+sumarna_statistika <- summary(razredi$IQ)
+
+#stavljamo željeni tekst na zadane koordinate
+text(rep(1.35,5), sumarna_statistika, 
+     labels=c('minimum', '1st Qu.', 'median', 'mean', '3rd Qu.', 'maximum'),
+     cex=.9)
+
+#boxplot prikaz za svaki razerd posebno
+boxplot(razredi$IQ ~ razredi$RAZRED, horizontal=F)
+
+#horizontalni boxplot prikaz za svaki razerd posebno
+boxplot(razredi$IQ ~ razredi$RAZRED, horizontal=T)
+```
+
+
+
+\clearpage
+\newpage
+
+##### Kumulativne relativne frekvencije
+
+
+Za razliku od teoretskih cumulativnih funkcija distrubucije (**p** funkcija), ponekad želimo nacrtati empirijske kumulativne frekvencije
+
+
+```{r fig.width=7, fig.height=4,echo=FALSE,encoding = "ISO8859_2", warning=FALSE,message=F,include=TRUE,fig.cap="Kumulativna funkcija distribucije", cache=F}
+plot(ecdf(razredi$VISINA),
+   main="Visine uèenika dva razreda",  
+   xlab="Visine uèenika", 
+   ylab="Kumulatine frekvencije") 
+```
+
+
+
+### Deskriptivna statistika - numerièko sumiranje podataka
+
+Sumiranje podataka o nekom skupu (populaciji / uzorku) možemo podijeliti na mjere:
+
+**centralne tendencije podataka** kao što su
+
+-	srednja vrijednost - sredina - prosjek
+-	medijan
+-	mod i 
+
+**varijabilnosti podataka** kao što su
+
+* apsolutna varijabilnost
+
+-	standardna devijacija
+-	varijanca
+-	raspon
+-	interkvartilni raspon
+
+
+* relativna varijabilnost
+
+-	koeficijent varijacije i 
+
+**mjere relativnog položaja** kao što su 
+
+- percentili 
+
+- z-vrijednost.
+
+
+
+Unutar sustava R postoji više funkcija kojima možemo dobiti sumarne statistike jedne varijable; unutar osnovnog paketa *base* to je funkcija *summary()* ili funkcija *by()* kada želimo sumarnu statistiku za jednu varijablu po kategorijama neke druge varijable.
+
+
+#### Mjere centralne tendencije
+
+Prosjek ili aritmetièka sredina je srednja vrijednost varijable. Funkcija kojom je raèunamo u R-u je *mean()*.
+
+Prosjek sluèajne varijable još se naziva i njezinim oèekivanjem koje se oznaèava $$\mathbb{E}X$$.
+
+
+
+$$\bar{x} = \frac{\sum x_{i}}{n}$$
+
+
+ 
+#### Medijan
+
+Medijan je ona vrijednost varijable koja ukupni broj vrijednosti varijable dijeli na dva jednako velika dijela nakon što smo vrijednosti varijable sortirali (rangirali). Odreðuje se u ovisnosti o broju vrijednosti varijable koji može biti paran ili neparan. 
+
+Ukoliko raèunamo medijan na skupu s neparnim brojem èlanova:
+
+![Odreðivanje medijana na skupu s neparnim brojem èlanova](neparni_medijan.png){width=80%}
+
+
+Primjer raèunanja medijana na skupu s parnim brojem èlanova:
+
+![Odreðivanje medijana na skupu s parnim brojem èlanova](parni_medijan.png){width=80%}
+ 
+ 
+#### Mod 
+
+Mod je najèešæa vrijednost u skupu podataka ili drugaèije reèeno ona vrijednost u skupu koja ima najveæu frekvenciju, slika \ref{fig:mod}.
+ 
+![Mod - priblièno odreðivanje grafièkim prikazom \label{fig:mod}](mod.png){width=80%}
+ 
+
+
+
+
+
+
+###### Neke karakteristike mjera centralne tendencije
+
+Srednja vrijednost, aritmetièka sredina veoma je osjetljiva na ekstremne (netipiène) vrijednosti varijable (engl. *outlier*), prouèite slike \ref{fig:sredina} i \ref{fig:medijan}
+PRIMJER: Distribucija plaæa u državi:
+
+
+ ![Neke karakteristike mjera centralne tendencije, prvi dio \label{fig:sredina}](karakteristike_srednje_1.png){width=100%}
+
+ ![Neke karakteristike mjera centralne tendencije \label{fig:medijan}](karakteristike_srednje_2.png){width=100%}
+
+
+Medijan nije osjetljiv na ekstremne vrijednosti (engl. *outlier*) kao što je to bia srednja vrijednost. Prouèite sliku \ref{fig:skewed position} i prokomentirajte.
+
+
+
+![Utjecaj simetriènosti distribucije na mjere centralne tendencije podataka \label{fig:skewed position}](skewed_polozaj_mean_mode.png){width=100%} 
+
+
+
+\clearpage
+\newpage
+
+
+### Mjere varijabilnosti podataka
+
+
+#### Devijacija
+
+Devijacije se definira kao odstupanje pojedinaène vrijednosti varijable od prosjeka varijable.
+
+
+
+$$d = \sum\limits_{i=1}^{n} \left(x_{i} - \bar{x}\right)$$
+
+Svojstvo apsolutne devijacije je to da je suma devijacija varijable uvijek 0.
+
+
+####  Varijanca 
+
+Varijanca je mjera raspršenja (disperzije) u skupu podataka i jedna je od najvažnijih mjera u statistici. Matematièki je definirana kao prosjeèna kvadrirana udaljenost izmeðu svakog pojedinog mjerenja od prosjeka skupa ali drugaèije reèeno prosjeèna kvadrirana devijacija od sredine.
+
+
+Varijanca  je prosjeèna suma kvadriranih devijacija, suma kvadriranih odstupanja od prosjeka varijable.
+
+##### Varijanca populacije nasuprot varijanci uzorka
+
+
+Varijanca populacije odnosi se na vrijednost varijance koja se izraèunava iz podataka o populaciji, a varijanca uzorka je varijanca izraèunata iz uzorka. Zbog ove vrijednosti nazivnika u formuli za varijancu u sluèaju podataka o uzorku je "n-1", a to je "N" za podatke o populaciji. Kao rezultat toga, i varijance i standardna devijacija izvedena iz podataka o uzorku su veæe nego onih dobivenih na populaciji.
+
+
+Kako je naèin izraèuna standardne devijacije i varijance za populaciju (populacijski parametar) i uzorak (statistika na uzorku) je razlièit te se razlièito i oznaèava. 
+
+
+VARIJANCA POPULACIJE: 
+
+$$\sigma^{2} = \frac{\sum_{i=1}^{n} \left(x_{i} - \mu\right)^{2}} {n}$$
+
+VARIJANCA UZORAKA:   
+
+$$s^{2} = \frac{\sum_{i=1}^{n} \left(x_{i} - \bar{x}\right)^{2}} {n-1}$$
+
+ 
+Funkcija unutar sustava R kojom raèunamo varijancu uzorka je *var()*. Napominjemo da veæina statistièkih programa pretpostavlja izraèune na uzorku te sumu dijeli s $n-1$.
+ 
+Izgled normalne distribucije (razdiobe) jednake sredine i razlièite varijance podataka.
+ 
+![Primjer dvije normalne raspodjele jednake srednje vrijednosti ali razlièitih varijanci](distribucije_veæa_manja_varijanca.png){width=100%}
+
+ 
+Pogledajte tablicu \\ref{tab:devijacija problem} i prokomentirajte radi èega nam mjera devijacije nije dobra mjera raspršenja te moramo kvadrirati udaljenosti od srednje vrijednosti? 
+
+
+![\label{tab:devijacija problem} Svojstvo devijacije sumiranjem daje nulu](devijacija_problem.png){width=100%}
+ 
+ 
+
+ 
+ 
+#### Standardna devijacija
+
+Standardna devijacija raèuna se kao drugi korijen iz varijance varijable. Ova mjera raspršenja vrijednosti varijable od prosjeka izražena je u istim jedinicama mjerenja kao i varijabla pa ju je lakše interpretirati nego varijancu koja je izražena u kvadriranim jedinicama mjerenja. Funkcija unutar sustava R kojom raèunamo standardnu devijaciju je *sd()* ili korištenjem dviju funkcija *sqrt(var())*.
+
+Jednako kao i prilikom definiranja varijance, matematièki se standardna devijacija populacije $\sigma$ raèuna drugaèije za populaciju i zorak. Za populaciju vrijedi:
+
+
+$$\sigma = \sqrt{\frac{\sum\limits_{i=1}^{n} \left(x_{i} - \mu\right)^{2}} {N}}$$
+
+gdje je $N$ velièina populacije, dok se na uzorku vrijedi:
+
+
+$$s = \sqrt{\frac{\sum\limits_{i=1}^{n} \left(x_{i} - \bar{x}\right)^{2}} {n}}$$
+
+gdje je $n$ velièina uzorka.
+
+#### Raspon podataka
+
+Generalno raspon podataka je razlika izmeðu najveæe i najmanje vrijednosti u skupu.
+
+$$raspon = minimum - maksimum$$
+
+#### Interkvartilni raspon (IQR)
+
+Kvartili dijele podatke u èetiri jednako brojna skupa. 
+
+Interkvartilni raspon (IQR)= Q3 - Q1 je razlika 3. kvartila (ispod kojeg leži 75% vrijednosti varijable) i 1. kvartila (ispod kojeg leži 25% vrijednosti varijable). Unutar IQR-a nalazi se 50% vrijednosti varijable. Unutar sustava R intekvartilni raspon podataka možemo dobiti korištenjem funkcije *IQR()*.
+
+$$IQR = quantile(x, 3/4) - quantile(x, 1/4)$$
+
+
+
+![Shematski prikaz podataka prema kvartilima](IQR_shema.png){ width=90% }
+
+
+
+#### Koeficijent varijacije
+
+Koeficijent varijacije je relativna mjera varijabilnosti izražena u postotcima. Ovakav naèin prikaza varijabilnosti èesto je lakša za poimanje od apsolutnih vrijednosti.
+
+$$Koeficijent \hspace{1mm}varijacije \hspace{1mm}(CV) = \frac{\sigma }{\mu } \ast 100$$
+
+
+
+
+#### Mjere relativnog položaja
+
+U mjere relativnog položaja spadaju percentili i z- vrijednosti.
+
+Percentil, $p$, podatajka je vrijednost opažanja $p_{i}$, takvog da je 100$p$% opažanja manje od $y_{i}$ i 100(1-$p$)% opažanja veæe od $y_{i}$.
+
+ 
+**PITANJA ZA PONAVLJANJE:**
+
+1) Dodajte naziv mjere deskriptivne statistike uz sljedeæe definicije:
+	srednja vrijednost opservacija koja rangirane vrijednosti od najmanje do najveæe dijeli na dva jednako brojna skupa podataka;
+	najèešæe zabilježena vrijednost u skupu podataka;
+	suma vrijednosti podijeljena s brojem opservacija.
+
+2) Prilikom organizacije izmjerenih podataka (dolje) korištena je _____________ tablica. Nadopunite imena stupaca u tablici odgovarajuæim rijeèima:
+
+ ![](tablica_zadatak.png){width=90%}
+
+3) Izraèunajte devijaciju te standardnu devijaciju za sljedeæi skup podataka: 1: 3, 5, 7, 10, 10, 6.
+
+4) Kreirajte rang varijablu sljedeæe distribucije? (25, 17, 23, 23, 24, 25, 23) ______________
+	Koja je tvrdnja o varijanci toèna? (izaberite jednu tvrdnju):
+	raèuna se kao suma kvadriranih devijacijai svake opservacije od prosjeka varijable. 
+	raèuna se kao suma devijacija svake opservacije od prosjeka varijable.
+	je drugi naziv za standardnu devijaciju.
+	to je prosjeèna vrijednost zabilježene varijable.
+
+5) Koji je mod sljedeæe distribucije? (25, 17, 23, 23, 24, 25, 23) ______________
+
+6)	Medijan je bolji pokazatelj centralne tendencije podataka od prosjeka kada je distribucija:
+	  simetrièna
+	  asimetrièna
+	  normalna
+	  bimodalna
+
+
+
+U dijelu koji slijedi upoznat æemo se kako dobiti/izraèunati željene mjere deskriptivne statistike unutar sustava R na probnom skupu podataka.
+
+```{r, eval=T, echo = T, comment=NA}
+#uèitamo korisnièke pakete s repozitorija CRAN koji su nam potrebni
+library("xlsx")
+#funkcija getwd nam daje informacije o trenutnom radnom direktoriju
+getwd()
+```
+
+Funkcija setwd postavlja radni direktorij prema našim specifikacijama.
+
+```{r, eval=F, echo = T, comment=NA}
+setwd("~/S720")
+```
+
+
+
+Veoma korisna funkcija za ispis datoteka željenog direktorija i formata:
+
+
+```{r, eval=T, echo = T, comment=NA}
+list.files(getwd(), pattern="xlsx")
+```
+
+Uèitat æemo podatke s kojima æemo se èesto sustretati tijekom teèaja. Rijeè je o podacima o uèenicima dva izmišljena razreda s informacijama o njihovoj propadnosti razredu, inteligenciji, visini i spolu.
+
+```{r, eval=T, echo = T, comment=NA}
+#?read.xlsx
+razredi<- read.xlsx("dva_razreda_iq_long.xlsx", as.data.frame=T, stringsAsFactors = F,  sheetIndex=1, encoding="Latin-1" )
+```
+
+Uvijek, prije poèetka bilo kakve analize, pogledajmo strukturu podataka.
+
+```{r, eval=T, echo = T, comment=NA}
+str(razredi)
+```
+
+```{r, eval=T, echo = T, comment=NA}
+#pogledajmo  imena varijabli
+names(razredi)
+```
+
+Kategorijske varijable u R-u nazivaju se faktori (eng. "factor"):
+
+```{r, eval=T, echo = T, comment=NA}
+#definiramo varijablu RAZRED kao faktorsku varijablu
+#primijetite da "recikliramo" staru varijablu koja je bila tipa "character" 
+razredi$RAZRED <- factor(razredi$RAZRED, levels=c("A", "B"))
+
+#frekvencija pojavljivanja za svaku pojedinu vrijednost IQ
+table (razredi$IQ)
+```
+
+
+Opis, deskripcija varijable:
+```{r, eval=T, echo = T, comment=NA}
+#minimalna vrijednost
+min(razredi$IQ)
+
+#maksimalna vrijednost
+max(razredi$IQ)
+
+#sumarna statistika
+summary((razredi$IQ))
+```
+
+Upoznat æemo se kako doæi do mjera centralne tendencije u sustavu R.
+
+Medijan podatka:
+```{r, eval=T, echo = T, comment=NA}
+median(razredi$IQ)
+```
+Srednja vrijednost
+```{r, eval=T, echo = T, comment=NA}
+mean(razredi$IQ)
+```
+
+Varijanca:
+```{r, eval=T, echo = T, comment=NA}
+#raèuna varijancu uzorka
+var(razredi$IQ)
+```
+
+Standardna devijacija:
+```{r, eval=T, echo = T, comment=NA}
+sd(razredi$IQ)
+```
+
+Raspon:
+```{r, eval=T, echo = T, comment=NA}
+range(razredi$IQ)
+```
+
+
+Interkvartilni raspon:
+```{r, eval=T, echo = T, comment=NA}
+IQR(razredi$IQ)
+```
+
+Željeni kvantili:
+```{r, eval=T, echo = T, comment=NA}
+#predodreðeni kvantili
+quantile(razredi$IQ)
+
+#tražimo zadani percentil, 70percentil
+quantile(razredi$IQ, 0.73)
+```
+
+Za statistièku obradu podataka neobièno je važno znati na pravilan naèin koristiti specifiène R petlje. Jedna od najbitnijih *tapply()* kako smo veæ rekli, raèuna proizvoljnu zadanu funkciju na skupu podataka za svaki nivo neke druge faktorske varijable. Na primjeru koji slijedi na podacima o dva zamišljena razreda, dobit æemo izraèune za svaki razred. Zamislite da ste dobili tablicu s više desetaka tisuæa redaka, rezultati ispita iz matematike na državnoj maturi te da želite izraèunati sumarnu statistiku za svaki razred ili školi posebno. 
+
+```{r, eval=T, echo = T, comment=NA}
+#raspon podataka za svaki razred posebno
+tapply(razredi$IQ, razredi$RAZRED, range)
+```
+
+Funkcija koju primjenjujemo je proizvoljna funkcija iz sustava R ali i bilo koja funkcija koju je pripremio korisnika a odgovara podacima na kojih ih želimo primijeniti.
+
+```{r, eval=T, echo = T, comment=NA}
+#interkvartilni raspon, svaki razred posebno
+tapply(razredi$IQ, razredi$RAZRED, IQR)
+```
+
+Koeficijent varijacije:
+
+
+Koeficijent varijacije je relativna mjera varijabilnosti jedne varijable izražena u postotkom. To je korisna vrijednost jer nam dopušta izravnu usporedbu varijabilnosti u uzorcima izmjerenim razlièitim jedinicama ili s vrlo razlièitim sredstvima. Na primjer, s koeficijentima varijacije možemo usporediti relativnu varijabilnost duljine i visine. Ponekad se još naziva i relativna standardna devijacija (RSD), a definirana je kao standardna devijacija podijeljena s prosjekom:
+
+$$c_{v}= \frac{\sigma}{\mu}$$
+
+
+Unutar sustava R koeficinet varijacije možemo izraèunati funkcijom *cv()* paketa *raster* ili napraviti korisnièku funkciju kako je prikazano u primjeru:
+
+
+```{r, eval=T, echo = T, comment=NA}
+library(raster)
+x<- c(27.75, 24.5, 25.5, 26, 25, 27.75, 26.5, 27, 26.75, 26.75, 27.5)
+
+#zamislite samo promjenu mjernih jedinica
+x2 <- x*10
+
+#promjer glave djeteta 
+y <- c(17.5, 17.1, 17.1,17.3, 16.9, 17.6, 17.3, 17.5, 17.3, 17.5, 17.5)
+```
+
+Prokomentirajte dobivene koeficijente varijacije.
+
+```{r, eval=T, echo = T, comment=NA}
+cv(x)
+```
+
+
+
+```{r, eval=T, echo = T, comment=NA}
+cv(x2)
+```
+
+```{r, eval=T, echo = T, comment=NA}
+cv(y) 
+```
+
+Koja varijabla jaèe varira? 
+
+Koeficijent varijacije možemo izraèunati i jednostavnom korisnièkom funkcijom:
+
+```{r, eval=T, echo = T, comment=NA}
+#korisnièka funkcija
+CV <- function(mean, sd){
+  (sd/mean)*100
+} 
+CV(mean(x), sd(y))
+CV(mean(y), sd(x))
+```
+
+
+
+
+
+**ZADACI ZA SAMOSTALAN RAD:**
+
+```{r, eval=F, echo = T, comment=NA}
+# ZADATAK 1): Pripremite podatke i izradite struktirni dijagram, 
+#popularnu pitu za varijablu IQ.
+
+# ZADATAK 2): Izradi ne istom skupu podataka graf stabljike i lista.
+
+#ZADATAK 3): Napravite objekt imena naša_raspodjela i u njega unesite relativne
+#frekvencije svake vrijednosti varijable IQ koristeæi funkciju hist().
+
+#ZADATAK 4): Izradite stupèasti dijagram varijable IQ na naèin da vrijednosti 
+#varijable kategorizirate prema mjerama deskriptivne statistike koristeæi funkciju
+#cut() na naèin da prvi interval bude od minimuma do 25 percentila, drugi od 26-75 
+#percentila te treæi od 76 - maksimuma.
+```
+ 
+#Inferencijalna statistika
+
+Inferencijalna statistika ukljuèuje metode kojima na osnovu sumarnih mjera dobivenih na reprezentativnom uzorku donosimo zakljuèke o populaciji. Buduæi je uzorak kojim raspolažemo samo dio populacije, on nam daje ogranièenu informaciju o populaciji. Statistika izraèunata na uzorku radi toga nesavršeno procjenjuje populacijski parametar. Prouèite sliku \ref{fig:dva uzorka} i prokomentirajte.
+
+ ![Uzorkovanje iz populacije, primjer dva sluèajna uzorka i statistika izraèunatih iz njih \label{fig:dva uzorka}](uzorak_iz_populacije.png){width=90%}
+ 
+
+
+ 
+## Sluèajna varijabla
+
+Sluèajna varijabla je varijabla èije vrijednosti variraju na sluèajan naèin. Sluèajna varijabla može poprimiti skup moguæih razlièitih vrijednosti, svaku s pridruženom vjerojatnošæu. 
+
+
+Pojam vjerojatnosti vezan je uz pojam sluèajnog eksperimenta. Eksperiment je proces opažanja ili mjerenja, èiji ishod tek treba odrediti; sluèajan znaèi da je ishod eksperimenta neizvjestan. 
+
+Ishodi sluèajnog eksperimenta mogu biti jednostavni i / ili složeni. Jednostavni ishodi se ne mogu dekomponirati, a kombinacijom jednostavnih ishoda dobivaju se svi moguæi ishodi sluèajnog eksperimenta. 
+
+Uz svaki ishod sluèajnog eksperimenta vezana je šansa (vjerojatnost) pojavljivanja tog ishoda. 
+
+Vjerojatnost mora zadovoljavati sljedeæa svojstva:
+
+- Vjerojatnost ($P$) odreðenog jednostavnog ishoda je broj u intervalu $[0,1]$ koji mjeri šansu da ishod sluèajnog eksperimenta bude upravo taj odreðeni ishod
+- Suma vjerojatnosti svih jednostavnih ishoda sluèajnog eksperimenta je 1
+- Vjerojatnost nemoguæeg ishoda je 0
+- Vjerojatnost sigurnog ishoda je 1.
+
+U analizi podataka, obièno, moramo se ogranièiti na ispitivanje (reprezentativnog) uzorka ove skupine i procjenu svojstava populacije iz ovog uzorka.
+
+
+Sluèajna varijabla može biti:
+
+**Diskretna** - varijabla koja poprima konaèan broj vrijednosti ili prebrojivo mnogo njih.
+
+Primjer diskretne sluèajne varijable: živ/mrtav, bacanje kockice, ocjena u školi.
+
+
+**Kontinuirana** - varijabla koja poprima bilo koju vrijednost iz nekog intervala realnih vrijednosti.
+
+Primjer kontinuirane sluèajne varijable: Temperatura, krvni tlak, masa, brzina, realni brojevi od 1-25.
+
+Uz svaku sluèajnu varijablu vezene u dvije funkcije: **funkcija vjerojatnosti** i **kumulativna funkcija distribucije** ako se radi o **diskretnoj varijabli**, odnosno **funkcija gustoæe vjerojatnosti** i **kumulativna funkcija distribucije** ako se radi o kontinuiranoj varijabli.
+
+
+
+
+**Kumulativna funkcija distribucije (CDF)** sluèajne varijable $X$ oznaèava se s $F(x)$, pri èemu je $F(x) = P(x\leq X)$, za  $-\infty <x< \infty$  ili  $a\leq x \leq b$. Funkcija nam daje vjerojatnost da varijabla $X$ poprimi bilo koju vrijednost manju ili jednaku od $x$. Funkcija unutar sustava R koja daje vjerojatnost $p$ za dani $x$ je *pnorm(x)* za standardnu normalnu distribuciju i njoj inverzna *qnorm(p)* koja za dani $p$ vraèa kvantil $x$.
+
+Funkcija unutar sustava R koja crta empirijsku (iz uzorka) kumulativnu distribuciju frekvencija je funkcija *ecdf()*.
+ 
+**Funkcija gustoæe vjerojatnosti (PDF)** sluèajne varijable X oznaèava se s $f(x)$ pri èemu se f(x) dobiva iz pripadne CDF.
+
+Svojstva $f(x)$:
+-	 $f(x) > 0$  za svaki $x$,  $a\leq x \leq b$, 
+-	 ukupna površina (vjerojatnost) ispod funkcije $f(x)$ izmeðu $a$ i $b$ iznosi 1.
+ 
+### Kontinuirana sluèajna varijabla
+
+Kontinuirana sluèajna varijabla može poprimiti neizmjerno beskonaèan broj moguæih ishoda. Generalno, oèekivanje (srednja vrijednost) sluèajne varijable iznosi:
+$$\mathbb{E}X = \int{x_{i}p(x_{i})dx}$$
+
+Prouèite sliku \ref {fig:oèekivanje, kontinuirana} s oznaèenim oèekivanjem kontinuirane funkcije $f(x)$.
+
+![Oèekivanje kontinuirane sluèajne varijable \label{fig:oèekivanje, kontinuirana}](kontinuirana_ocekivanje.png){width=80%}
+
+#### Neke važne kontinuirane distribucije
+
+##### Normalna (Gaussova) distribucija
+
+Najvažnija od svih teorijskih distribucija (u klasiènoj statistici). Funkcija je definirana na intervalu $[-\infty,\infty]$, a funkcija gustoæe distribucije dana je formulom:
+
+$$f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-(x-\mu)^2/2\sigma^2}$$ 
+ 
+
+Distribucija ima karakteristièan zvonolik oblik oko sredine:
+ 
+Svaka teorijska normalna krivulja ima vertikalnu os simetrije koja dijeli zvonoliki oblik na dvije identiène polovine.
+ 
+ 
+Svojstva normalne distribucije:
+
+*	Medijan, mod i sredina su jednaki
+
+ ![Normalna distribucija, srednja vrijednost (srednjak)](N_medijan_mode_mu.png){width=90%}
+
+ 
+*	Standardna devijacija normalne distribucije je horizontalna udaljenost od sredine do jedne od toèaka pregiba kako je prikazano na slici \ref{fig:standardna devijacija grafièki}.
+
+ ![\label{fig:standardna devijacija grafièki}  Grafièko odreðivanje standardne devijacije](sd_graficki.png){width=60%}
+ 
+*	Pravilo 68-95-99.7 - U svakoj normalnoj distribuciji približno 68% vrijednosti dolazi izmeðu 1 $sd$ od sredine distribucije $-1<z<1$.
+ 
+
+![Postotak vrijednosti koji se nalazi unutar jedne, dvije i tri standardne devijacije u normalnoj distribuciji](N_pravilo_68_95_99.png){width=100%}
+
+
+
+
+**Standardiziranje normalne distribucije i Z-vrijednost**
+
+Standardiziranje normalne varijable $X$ je proces kojim izražavamo koliko je svaka vrijednost varijable udaljena od sredine $\mu$ koristeæi standardnu devijaciju $\sigma$ kao jedinicu mjerenja.
+ 
+####Standardna normalna distribucija
+ 
+Standardna normalna distribucija je normana distribucija sa sredinom 0 i standardnom devijacijom $sd=1$. Svaku normalnu distribuciju moguæe je transformirati u standardnu normalnu $Z$ transformacijom.
+
+
+
+
+Kontinuirana sluèaja varijabla odreðena je funkcijom gustoæe
+
+
+$$f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-(x-\mu)^2/2\sigma^2}$$ 
+
+
+
+Funkcija je definirana na intervalu kao i normalna distribucija $[-\infty,\infty]$, a funkcija gustoæe distribucije dana je formulom:
+
+$$f(x) = \frac{1}{\sqrt{2\pi}\times{1}}e^{-(x-0)^2/2\times{1}}$$ 
+
+
+ 
+
+
+
+
+##### Z vrijednost (Z skor)
+ 
+ 
+$Z$ skor je	mjera udaljenosti pojedinog mjerenja izražena u jedinicama standardne devijacije ($\sigma$). Pri tome vrijedi sljedeæe:
+
+* Z skor = 0 oznaèava sredinu
+*	Pozitivan Z skor oznaèava vrijednost desno od sredine
+*	Negativan Z skor oznaèava vrijednost lijevo od sredine
+*	Z skor = 1: jedna SD desno od sredine
+*	Z skor -2: dvije SD lijevo od sredine.
+
+
+
+Kumulativna funkcija distribucije sluèajne varijable $Z$ zadana je kao:
+
+$$\Phi(z) = \int_{-\infty}^z \frac{1}{\sqrt{2}}e^{-x^2/2}\;dx$$
+
+
+Na slici \ref{fig:z transformacija, primjer} shematski je prikazana transformacija  normalne distribucije srednje vrijednosti 100 i standardne devijacije 10 $N(100,10)$ u standardnu normalnu distribuciju $N(0,1)$. Na slici \ref{fig:z transformacija, NZ} prokomentirajte znaèenje vrijednosti $Z$.
+
+
+
+
+ 
+
+ ![Transformacija normalne distribucije u standardnu normalnu \label{fig:z transformacija, primjer}](z_transformacija.png){width=100%}
+
+
+
+
+![Rezultat transformacije normalne distribucije u standardnu normalnu \label{fig:z transformacija, NZ}](N_Z.png){width=65%}
+
+**Korištenje standardnih normalnih tablica**
+ 
+Na slici \ref{fig:z tablica} dan je primjer traženja kumulativne vjerojatnosti za zadani $Z$. Z tablice možemo koristiti i inverzno na naèin da za zadanu površinu, kumulativnu vjerojatnost tražimo kritiènu vrijednost Z.  
+
+![Primjer korištenja klasiènih Z tablica za traženje kumulativne vjerojatnosti dosezanja Z vrijednosti \label{fig:z tablica}](z_tablice.png){width=100%}
+
+
+
+Odreðivanje vrijednosti **$Z_{A}$**
+
+Èesto nas zanima odrediti vrijednost $Z$ za zadanu vjerojatnost. Na primjer, ukoliko imamo zadanu površinu ispod krivulje (vjerojatnost), koja joj $Z$ vrijednost pripada (na x osi)? 
+
+$$P(Z > Z_{A}) = A$$
+     
+     
+Primjer izraèuna Z-skora na podacima o visinama osoba, uzetih sa stranice http://socr.ucla.edu/docs/resources/SOCR_Data/SOCR_Data_Dinov_020108_HeightsWeights.html.
+
+```{r, eval=T, echo = T, comment=NA}
+#uèitavamo podatke
+x <- read.csv("weights.csv", header = F, sep = ";", dec = ",")
+
+#imenujmo kolone
+names(x) <- c("Visina", 	"Masa")
+
+#prebacimo u SI sustav mjernih jedinica
+x$Visina <- x$Visina*2.5
+x$Masa <- x$Masa*0.453592
+              
+#pogledajmo strukturu podataka
+#skup podataka o visinama i masi  osoba
+str(x)
+```
+
+
+Najprije raèunamo parametre populacije, imamo izmjerenu cjelokupnu populaciju:
+
+```{r, eval=T, echo = T, comment=NA}
+#standardna devijacija populacije, sd raèuna za uzorak
+populacija_sd <- sd(x$Visina)*sqrt((length(x$Visina)-1)/(length(x$Visina)))
+populacija_mean <- mean(x$Visina)
+
+#izraèun z-skora za svaku opservaciju
+z <- (x$Visina - populacija_mean)/populacija_sd
+
+#ispis prvih 10 vrijednosti z- skora
+z[1:10]
+```
+
+Izaberimo jednu opservaciju iz skupa podataka, primjerice onu na 1000 redku i pogledajmo njezinu Z vrijednost:
+
+```{r, eval=T, echo = T, comment=NA}
+z[1000]
+```
+
+Vizualizirajmo raspodjelu varijable od interesa, *visina* i pogledajmo gdje se untar naše distribucije nalazi opservacija rednog broja 1000:
+
+```{r, eval=T, echo = T, comment=NA}
+#izraèunamo kumulativnu vjerojatnost do zadanog x-y (1000-ta opservacija)
+p_donja1 <- pnorm(x$Visina[1000], populacija_mean, populacija_sd)    
+ #korištenjem z-skora opservacije
+p_donja2 <- pnorm(z[1000])                      
+
+p_gornja1 <- 1 - p_donja1
+p_gornja2 <- 1 - p_donja2
+
+p_gornja1
+p_gornja2
+```
+
+
+Pogledajmo izraèunato:
+
+```{r eval=T, fig.width=6, fig.height=6,encoding = "ISO8859_2",echo=F, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig: z-skor, 1} Primjer izraèuna Z-skora, 1", cache=F}
+plot(dnorm,-4,4, main="X ~ Normal(0,1)", cex=0.7)
+#sekvenca do z vrijednosti 1000 opservacije
+xvals <- seq(-4,z[1000],length=100)
+dvals <- dnorm(xvals) 
+
+#osjenèamo poligon
+polygon(c(xvals,rev(xvals)),c(rep(0,100),rev(dvals)),col="gray")
+
+
+#malo oznaèimo pojedine dijelove
+#arrows(1,.15,2,.25,code=1,angle=30,length=.1,lwd=1)
+
+#segment funkcije do z vrijednosti 1000te opservacije
+segments(z[1000],0,z[1000],dnorm(z[1000]),lwd=2,col="red4")
+
+arrows(-2,.025,-3.5,.1, code=1, angle=30, length=.1, lwd=2, col=1)
+text(-3,.1,paste('pnorm(z[1000]) =', round(pnorm(z[1000]),2)), cex=.85, pos=3, col=1)
+
+#na sliku dodajemo vrijednost z[1000] - z skor za 1000-tu opservaciju
+#points(z[1000],0,col="darkred",pch=20,cex=1.6)
+
+#jednako kao i 
+points(qnorm(x$Visina[1000], mean=populacija_mean, sd=populacija_sd),0,col="darkred",pch=20,cex=1.6)
+arrows(z[1000],0,3,.05,code=1,angle=30,length=.1,lwd=2,col="darkred")
+
+text(3,.05,paste("z[1000]=", round(z[1000],2))  ,cex=.75,pos=3,col="darkred")
+#mtext(side=3,line=.5,'X ~ Normal(0,1)',cex=.9,font=2)
+#points(rnorm(20),jitter(rep(0,20)),pch=18,cex=.9)
+#legend(-4,.3,'rnorm(20)',pch=18,pt.cex=.9,cex=.8,bty='n')
+```
+
+
+
+
+Upoznat æemo se s naèinom korištenja vjerojatnosnih distribucija u statistièkom programu R. Posebnu pažnju æemo posvetiti normalnoj razdiobi i standardnoj normalnoj razdiobi te t-distribuciji iako sve navedeno vrijedi i za sve ostale definirane i ugraðene distribucije vjerojatnosti sluèajne varijable u sustavu.
+
+
+Kroz nekoliko primjera æemo se upoznati kako riješiti zadatke koji se temelje na normalnoj raspodjeli traženjem normalnih vjerojatnosti.
+
+Primjer: Vrijeme potrebno za sastavljanje jednog raèunala je normalno distribuirano sa srednjom vrijednosti 50 minuta i standardnom devijacijom od 10 minuta: Kolika je vjerojatnost da raèunalo bude sastavljeno izmeðu 45 i 60 minuta? Ovaj zadatak može se riješiti samo jednom linijom kôda ali na ovom primjeru æemo i sve nacrtati.
+
+
+```{r, eval=T,comment=NA, echo = T}
+#raèunamo potrebnu vjerojatnost
+p <- pnorm(60, mean=50, sd=10)-pnorm(45, mean=50, sd=10)
+p 
+```
+
+Isti zadatak ali i grafièki prikaz radi boljeg razumijevanja, slika \ref{fig:normalne vjerojatnosti 1}:
+
+```{r, eval=T,comment=NA, echo = T}
+#parametri zadatka
+mean<-50; sd<-10 
+donja<-45; gornja<-60
+
+#podruèje na kojem je funkcija definirana
+x <- seq(-4,4,length=100)*sd + mean
+
+#gustoæa funkcija po svim moguæim vrijednostima x-a
+hx <- dnorm(x,mean,sd)
+```
+
+Crtamo base grafikom, funkcija *plot()*, argument *type="n"* samo definira dimezije grafa bez crtanja:
+
+
+```{r fig.width=5, fig.height=6,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:normalne vjerojatnosti 1}Grafièki prikaz zadatka; izraèun normalnih vjerojatnosti", cache=F}
+#iniciranje grafa
+plot(x, hx, 
+     type="n", 
+     xlab="Vrijeme sastavljanja raèunala", 
+     ylab="",
+     main="Normalna distribucija", 
+     axes=FALSE)
+
+#proizvoljna os
+axis(1, at=seq(0, 160, 20), pos=0)
+
+#definiramo podruèje koje želimo
+i <- x >= donja & x <= gornja 
+
+#dodajemo liniju na graf, funkcija lines()
+lines(x, hx)
+
+#dodajemo poligon na graf, funkcija polygon()
+polygon(c(donja,x[i],gornja), c(0,hx[i],0), col="gray")
+
+#raèunamo vjerojatnost (identièno kao prva linija koda)
+površina <- pnorm(gornja, mean, sd) - pnorm(donja, mean, sd) #area=površina=vjerojatnost
+
+rezultat <- paste("P(",donja,"< IQ <",gornja,") =", signif(površina, digits=3))
+
+#dodajemo tekst na graf
+mtext(rezultat,3) 
+```
+
+Cijeli zadatak smo mogli riješiti i na naèin da poznatu normalnu distribuciju, u našem sluèaju $N(50, 10)$ prebacimo u standardnu normalnu Z-transformacijom i nastavimo izraèun vjerojatnosti na standardnoj normalnoj $N(0,1)$. Napravite zadatak samostalno na ovaj naèin. Naèin prebacivanja normalne distribucije u Z-skor dan je u primjeru koji slijed:
+
+
+
+
+Na ovome teèaju nemamo vremena upoznati se sa svim važnim distribucijama/razdiobama jedne kontinuirane sluèajne varijable. Upoznali smo se s normalnom i t distribucijom jer se na ovaj naèin ponašaju sredine uzoraka te ove matematièke funkcije koristimo u procesu testiranja hipoteza o srednjoj vrijednosti. Na nekom drugom teèaju æemo se upoznati s još nekim veoma važnim distribucijama kontinuirane sluèajne varijable kao što su primjerice $\chi^{2}$ distribucija prema kojoj se ponaša distribucija varijanci uzoraka ali i $F$ distribuciju prema kojoj se ponaša omjer dviju varijanci. Te se distribucije radi ovoga koriste za testiranja hipoteza o varijanci ili pak omjeru varijanci èime èine osnovu ispisa gotovo svih statistièkih metoda, poèevši od analize varijance (ANOVA), linearnog modeliranja (lm, glm, mix-model i slièno). 
+
+
+
+### Diskretna sluèajna varijabla
+
+
+Sluèajnu varijablu $X$ je diskretna sluèajna varijabla ukoliko vrijedi:
+
+- postoji konaèan broj moguæih ishoda $X$, ili
+- postoji precizno beskonaèan broj moguæih ishoda X.
+
+Brojèano beskonaèan broj moguæih ishoda znaèi da postoji odnos odnos izmeðu ishoda i skupa cijelih brojeva. Nijedna takva jednoznaèna korespondencija ne postoji za nebrojeno beskonaèan broj moguæih ishoda.
+
+Oèekivanje diskretne sluèajne varijable definiramo kao:
+
+$$\mathbb{E}X = \Sigma{x_{i}p(x_{i})}$$
+
+
+Prouèite sliku \ref {fig:oèekivanje, diskretna} s oznaèenim oèekivanjem kontinuirane funkcije $f(x)$.
+
+![Oèekivanje diskretne sluèajne varijable \label{fig:oèekivanje, diskretna}](diskretna_ocekivanje.png){width=90%}
+
+#### Neke važne diskretne distribucije
+
+
+
+##### Binomna distribucija
+
+
+Zamislimo eksperiment s dva moguæa ishoda $H$ ili $T$. Neka je 
+
+$$P(H)=p$$
+
+i 
+$$P(T)=1-p=q$$
+.
+
+Ovo je tzv. Bernoullijev eksperiment. Sada zamislimo $n$ nezavisnih eksperimenata u kojem svaki eksperiment ima dva moguæa ishoda. To je tzv. Binomni eksperiment. Neka je $X$ broj ishoda $H$. To zovemo Binomna sluèajna varijabla s parametrom $n$ i $p$.
+
+Drugim rijeèima, Bernoullijeva sluèajna varijabla ima dva moguæa ishoda, primjerice 0 ili 1. Binomna razdioba je zbroj neovisnih i identièno distribuiranih Bernoulliovih sluèajnih varijabli.
+
+Binomna distribucija je dana izrazom
+
+$P(X=x) = {n \choose x}p^x(1-p)^{n-x}$. $$\mathbb{E}X=np,\mathbb{V}X=np(1-p)$$
+
+
+
+
+
+Srednja vrijednost (oèekivanje): $\mu ???= np$
+
+Varijanca:  $\sigma^{2} = npq$
+
+Standardna devijacija:	$\sigma = \sqrt{npq}$
+
+![Binomna distribucija, shematski \label{fig:binomna dis}](dis_binomna.png){width=80%}
+
+
+
+
+
+Slièno kako smo se upoznali s koritenjem klasiènih z i t tablica, tako æemo kroz sljedeæi primjer pokazati korištenja binomnih tablica.
+
+
+Primjer: Pedeset posto odraslih djelatnika provodi manje od 20 minuta putujuæi na posao. Ukoliko sluèajnim izborom 6 djelatnika, kolika je vjerojatnost da njih toèno troje trebaju manje od 20 minuta do posla?  
+
+Pogledamo distribuciju za n = 6 i vjerojatnost p = 0.5, pronaæi æete da vjerojatnost pojavljivanja toèno 3 puta iznosi 31.2%, slika \ref{fig:binomna tablica}. Naravno, ovakve primjere æemo rješavati uz pomoæ sustava R.
+
+
+![Primjer korištenja binomne tablica \label{fig:binomna tablica}](binomna_tablica.png){width=90%}
+
+######Proporcije
+Binomna distribucija èini osnovu za statistiku proporcija. Proporcije su upravo binomna distribucija podijeljena s velièinom uzorka $n$. Primjerice, ukoliko imamo uzorak od 200 ljudi meðu kojima su 60 pušaæi, $x=60$, a       $\hat{p}=0.30$. Statistika na proporcijama je slièna binomnim vjerojatnostima, razlikuje se za faktor $n$.
+
+
+
+
+Èesto nam je važnija proporcije neke pojave u populaciji od broja. U statistièkom uzorkovanju, proporcija dogaðaja   se koristi kako bi se odredila prava proporcija pojave u populaciji. 
+Za svaki jednostavni sluèajni uzorak (SRS) velièine $n$, proporcija uzorka se raèuna na naèin:
+
+
+$$\hat{p}= \frac{frekvencija \hspace{2mm}pojave \hspace{2mm}u\hspace{2mm} uzorku}{n}= \frac{x}{n}$$
+
+
+Primjer: U jednostavnom sluèajnom uzorku od 50 studenata jednog fakulteta, 10 ih je iz Zagreba: $\hat{p}$	= 10/50 = 0.2, tj 0.2 je proporcija Zagrepèana u uzorku.
+
+
+Statistika za proporcije temelji se na normalnoj distribuciji jer se binomna distribucija može aproksimirati normalnom za np>5. 
+
+Distribucija uzorka – proporcije
+Distribucija uzoraka za proporcije $\hat{p}$ gotovo nikada nije normalna ali kako se poveæava velièina uzorka postaje približno normalna. Pogledajte i prokomentirajte slike \ref{fig:binomna normalna} i \ref{fig:stat proporcije}.
+
+![Statistika za proporcije temelji se na binomnoj distribuciji koja se pak zamjenjuje normalnom za uzorke veæe od 5 \label{fig:binomna normalna}](bin_norm.png){width=90%}
+
+**Statistika za proporcije**
+
+
+![Statistika za proporcije temelji se na binomnoj distribuciji koja se pak zamjenjuje normalnom za uzorke veæe od 5 \label{fig:stat proporcije}](stat_proporcije.png){width=75%}
+
+
+
+
+
+\clearpage
+\newpage
+
+##### Poisson distribucija
+
+
+
+Poissonova distribucija se koristi za prebrojavanja – dogaðaje koji se dogaðaju pri konstantnoj stopi tijekom vremena. Poisson distribucija daje vjerojatnosti da zabilježimo x dogaðaja u odreðenom vremenu (ili odreðenom prostoru).
+
+$$P\left( x \right) = \frac{{e^{ - \lambda } \lambda ^x }}{{x!}}$$
+
+
+
+gdje je $\lambda$ = oèekivani broj u zadanom okviru (vrijeme).
+
+Srednja vrijednost (oèekivanje): $\mu = \lambda$
+
+Varijanca:  $\sigma^{2} = \lambda$
+
+Standardna devijacija:	$\sigma = \sqrt{\lambda}$
+
+Primijetite da su za varijablu distribuiranu po Poisson distribuciji varijanca i sredina jednake!
+
+
+Primjerice, ukoliko znamo da se prosjeèno zabilježe 2 nova sluèaja mjeseèno zarazom Virusom zapadnog Nila na podruèju Danske tada možemo izraèunati vjerojatnosti pojave 0,1, 2, 3, 4, 5, 6… sluèajeva Danskoj sljedeæeg mjeseca izraèunom Poisson vjerojatnosti, slika \ref{fig:Poisson vjerojatnosti}.
+
+![Primjer izraèuna Poissson vjerojatnosti \ref{fig:Poisson vjerojatnosti}](Poisson_vjerojatnosti.png){width=60%}
+
+
+
+Na ovome teèaju nemamo dalje vremena upoznavati se sa svim znaèajnim razdiobama/distribucijama diskretne sluèajne varijable. 
+
+
+
+
+**Upoznavanje ugraðenim funkcijama distribucija u sustavu R**
+
+Kao što smo u mnogo navrata spomenuli, R je statistièki program i okruženje. Tako su i raspodjele (distribucije) vjerojatnosti sluèajnih varijabli za ogroman broj parametarski odreðenih razdioba veæ ugraðene u sustav i dolaze instalacijom R-a unutar paketa *stats*. Osnovna funkcija za pristup mnogobrojnim funkcijama za rad s distribucijama sluèajne varijable je funkcija *distributions()*. Upoznajmo se s funkcijom te popisom mnogobrojnih distribucija kontinuiranih i diskretnih sluèajnih varijabli.
+
+
+```{r, eval=F,comment=NA, echo = T}
+#informacije o ugraðenim vjerojatnosnim distribucijama u sustavu R
+?distributions
+```
+
+Primjer traženja pomoæi za željenu distribuciju - binomna distribucija:
+
+```{r, eval=F,comment=NA, echo = T}
+?dbinom
+```
+
+Upoznavanje s d,p,q,r na normalnoj i t razdiobi
+
+Normalna distribucija 
+
+
+```{r, eval=F,comment=NA, echo = T}
+help(Normal)
+?Normal
+```
+
+
+**d** - *dnorm()*
+
+Ukoliko imamo skup vrijednosti, funkcija vraæa visinu funkcije vjerojatnosti za zadanu toèku. Ukoliko zadamo samo toèku, funkcija pretpostavlja da želite vrijednost za standardnu normalnu ditribuciju, srednja vrijednost=0 i standardna devijacija=1. Funkcija putem svojih opcija omoguæava odreðivanje željenu sredine i sd normalne distribucije.
+
+
+Nacrtajmo standardnu normalnu distribuciju:
+
+```{r, eval=F,comment=NA, echo = T}
+x <- seq(-3,3,0.1)
+plot(x=x, y=dnorm(x, mean=0, sd=1), type='l')
+```
+
+Gustoæa (visina) na vrijednosti x=0:
+
+```{r, eval=F,comment=NA, echo = T}
+dnorm(0)
+```
+
+Dodat æemo ovu vrijednost na otvoreni graf.
+
+Gustoæa (visina) na vrijednosti x=0, za normalnu distribuciju sa srednjim vrijednosti=4, sd=1 (defoult)
+
+
+Neka druga normalna distribucija, srednja vrijednost 10, sd=3:
+
+```{r, eval=F,comment=NA, echo = T}
+x   <- seq(-2,23,length=1000)
+y   <- dnorm(x,mean=10, sd=3)
+
+#crtamo
+plot(x,y, type="l", lwd=1,main='N(10,3)')
+#dodajemo ravnu liniju
+abline(v=10, lty=2, col=rgb(0.9,0.5,0.7), lwd=2)
+```
+
+Možemo izraèunati gustoæu funkcije (visinu) za bilo koju toèku x, bilo koje normalne distribucije.
+
+```{r, eval=T,comment=NA, echo = T}
+#prouzvoljna normalna distribucija
+#srednja vrijednost 4; standna devijacija 1
+#tražimo vrijednost na 0
+dnorm(0,mean=4)
+
+#srednja vrijednost 4; standna devijacija 10
+#tražimo vrijednost na 0
+dnorm(0,mean=4,sd=10)
+```
+
+Traženje gustoæe odjednom na veæem broju toèaka, stavljenih u vektor v:
+
+```{r, eval=T,comment=NA, echo = T}
+#tražimo vrijednost za ckup vrijednosti x
+v <- c(0,1,2)
+dnorm(v)
+```
+
+
+Nacrtat æemo standardnu normalnu distribuciju na rasponu od -10 do 10:
+
+```{r, eval=T,comment=NA, echo = T}
+#sekvenca za koju æemo tražiti izraèun gustoæe (visinu funkcije)
+x <- seq(-10,10,by=0.1)
+
+#pogledajmo prvih nekoliko vrijednosti
+head(x)
+#visina standardne normalne na sekvenci
+y <- dnorm(x)
+
+#pogledajmo prvih nekoliko vrijednosti
+head(y)
+```
+
+
+
+```{r eval=T,fig.width=7, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:dnorm}Gustoæe funkcije nekoliko normalnih distribucija", cache=F}
+#crtamo izraèunate vrijednosti 
+plot(x,y, 
+     type="l", 
+     main="Funkcije gustoæa, visine \n za nekoliko normalnih distribucija", 
+     cex=.8, 
+     ylim=c(0, 1))
+
+#raèunamo gustoæe, visine funkcije za neku drugu 
+#normalnu distribuciju i nadodajemo grafu
+y <- dnorm(x,mean=3,sd=4)
+lines(x, y, lwd=2, col="red4")
+
+#nova normalna distribucija, manja standardna devijacija
+y <- dnorm(x,mean=3,sd=.4)
+lines(x, y, lwd=2, col="darkseagreen")
+```
+
+
+
+\clearpage
+\newpage
+
+**p** - *pnorm()*
+
+Za zadani broj ili vektor vrijednosti raèuna vjerojatnost da normalno distribuirana varijabla poprimi vrijednost manju od zadane. Kumulativna funkcija distribucije. Prihvaæa jednake opcije kao i funkcija *dnorm()*:
+  
+Možemo dobiti kumulativne vjerojatnosti za bilo koju normalnu distribuciju:
+
+
+```{r, eval=T,comment=NA, echo = T}
+#sekvenca od -4 do 4 x (z, ako radimo sa standarnom normalnom)
+x <- seq(-10,10,by=0.1)
+head(x)
+#kumulativna vjerojatnost dosezanja x, z jer radimo na standardnoj normalnoj distribuciji
+y <- pnorm(x)
+head(y)
+```
+
+
+Izraèunato možemo, prema želji i vizualizirati. Nacrtat æemo parove vrijednosti, x i visinu funkcije na $f(x)$ tj. $y$. Prokomentirajte sliku \ref{fig:pnorm}
+
+```{r fig.width=7, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:pnorm}Kumulativne vjerojatnosti nekoliko normalnih distribucija", cache=F}
+#tip prkaza kao linija
+plot(x,y, type='l', 
+     main="Kumulativna vjerojatnosti \nza nekoliko normalnih distribucija", 
+     cex=.8)
+
+#raèunamo kumulativne vjerojatnosti za neku drugu 
+#normalnu distribuciju i nadodajemo grafu
+y <- pnorm(x,mean=3,sd=4)
+lines(x, y, lwd=2, col="red4")
+
+#nova normalna distribucija, manja dtandardna devijacija
+y <- pnorm(x,mean=3,sd=.4)
+lines(x, y, lwd=2, col="darkseagreen")
+```
+
+Tražimo kumulativnu vjerojatnost za x=0 (z=1), za standarnu normalnu distribuciju:
+
+```{r, eval=T,comment=NA, echo = T}
+pnorm(0)
+```
+
+Tražimo kumulativnu vjerojatnost za x=1 (z=1), za standarnu normalnu distribuciju:
+
+```{r, eval=T,comment=NA, echo = T}
+pnorm(1)
+```
+
+Ako želimo kumulativnu vjerojatnost iznad zadane vrijednosti, argument *lower.tail*. U primjeru koji slijedi tražimo vjerojatnost premašivanja zadanog kvantila ili vrijednosti(na vrijednosti 0) za normalnu distribuciju standardne devijacije 1 (predodreðeno, nije napisano) i srednje vrijednosti 2. 
+
+```{r, eval=T,comment=NA, echo = T}
+pnorm(0,mean=2, lower.tail=F)
+```
+
+Vjerojatnost dosezanja z=1 na standardnoj normalnoj distribuciji:
+
+```{r, eval=T,comment=NA, echo = T}
+pnorm(1)
+```
+
+Vjerojatnost prekoraèenja z=1 na standardnoj normalnoj distribuciji:
+
+```{r, eval=T,comment=NA, echo = T}
+pnorm(1,lower.tail=FALSE)
+```
+
+Vjerojatnost prekoraèenja x=0, za normalnu distribuciju sredine 2 i standardne devijacije 1:
+
+```{r, eval=T,comment=NA, echo = T}
+pnorm(0,mean=2,lower.tail=FALSE)
+```
+
+
+
+
+
+**q** - *qnorm()*
+
+Funkcija *qnorm()* inverzna je funkciji *pnorm()*. *qnorm()* vraæa informaciju na kojoj vrijednosti Kumulativna Funkcija Distribucije doseže zadanu vrijednost. Sukladno tome, kada imamo standardnu normalno distribuiranu sluèajnu varijablu funkcija vraæa pridruženu Z vrijednost.
+
+
+U primjeru koji slijedi tražimo kvantil na kojem kumulativna funkcija vjerojatnosti poprimi vrijednost 0.5 za standardu normalnu distribuciju:
+
+```{r, eval=T,comment=NA, echo = T}  
+qnorm(0.5)
+```
+
+Primijetite da u sljedeæem primjeru imamo isti upit:
+
+```{r, eval=T,comment=NA, echo = T}
+qnorm(0.5,mean=1)
+```
+
+Tražimo kvantil na kojem kumulativna funkcija vjerojatnosti poprimi vrijednost 0.5 za normalnu distribuciju srednje vrijednosti 1 i standardne devijacije 2:
+
+```{r, eval=T,comment=NA, echo = T}
+qnorm(0.5,mean=1,sd=2)
+```
+
+Tražimo kvantil na kojem kumulativna funkcija vjerojatnosti premaši vrijednost 0.3 za normalnu distribuciju srednje vrijednosti 1 i standardne devijacije 2:
+
+```{r, eval=T,comment=NA, echo = T}
+qnorm(0.3,mean=2,sd=2, lower.tail=F)
+```
+
+```{r fig.width=7, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:qnorm}Funkcija kvantila za standardnu normalnu distribucija", cache=F}
+x <- seq(0,1,by=.05)
+y <- qnorm(x)
+plot(x,y, 
+     type="l", 
+     main="Funkcije kvantila \n za standardnu normalnu distribuciju", 
+     cex=.8,
+     ylim=c(-1.5, 4))
+
+#raèunamo kvantile za drugu distribuciju
+y2 <- qnorm(x,mean=2,sd=.7)
+
+#nadodajemo funkcije kvantila 
+lines(x, y2, lwd=2, col="darkred")
+
+
+#raèunamo kvantile za treæu distribuciju
+y3 <- qnorm(x,mean=2,sd=1)
+
+#nadodajemo funkcije kvantila 
+lines(x, y3, lwd=2, col="darkseagreen")
+```
+
+
+**r** - *rnorm()*
+
+Funkcija *rnorm()* generira sluèajnu varijablu, zadane velièine iz normalne distribucije. Obavezan argument je velièina varijable, opcionalno možemo odrediti sredinu i standardnu devijaciju. 
+
+Generiramo sluèajnu normalna varijablu duljine 100, standardna normalna distribucija. Funkcija koristi generator sluèajnih brojeva kao poèetnu vrijednost te ukoliko želimo imati jednake sluèajne vrijednosti (pseudosluèajne) potrebno je prije provoðena funkcije namjestiti generator na jednaku vrijednost. Ukoliko to ne napravimo generator æe kao poèetnu vrijednost koristiti vrijeme sustava u trenutku pozivanja naredbe, funkcija *Sys.time()*.
+
+
+```{r fig.width=7,eval=F, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:rnorm}Generator sluèajne normalne varijable", cache=F}
+ #postavljanje generatora sluèajnih brojeva
+set.seed(1) 
+
+#sluèajna 4 broja iz standardne normalne distribucije
+x <- rnorm(200)
+
+#više histograma na jednom prikazu
+hist(rnorm(200,mean=-2), col=rgb(0,0,0,0.2),
+     main="Èetiri generirane sluèajne varijable \nfunkcijom rnorm()",
+     xlim=c(-6, 20),
+     ylim=c(0, 60))
+
+hist(rnorm(200,mean=5, sd=.8), col=rgb(0,0,.2,0.2), add=T)
+
+hist(rnorm(200,mean=3, sd=1.5), col=rgb(0.2,0,0,0.2), add=T)
+
+hist(rnorm(200,mean=7, sd=3), col=rgb(0,0,0,0.2,0.2), add=T)
+```
+
+
+
+**ZA SAMOSTALAN RAD:**
+
+Na slièan naèin rješite sljedeæe zadatke. Barem jedan od zadataka adekvatno i vizualizirajte. 
+
+```{r, eval=T,comment=NA, echo = T}
+#ZADATAK 1: Kolika je vjerojatnost P(Z < 1.6)?
+
+#ZADATAK 2: Kolika je vjerojatnost P(Z > 1.6)?
+
+#ZADATAK 3: Kolika je vjerojatnostP(Z < -2.23)?
+
+#ZADATAK 4: Kolika je vjerojatnostP(Z < 1.52)?
+
+#ZADATAK 5: Kolika je vjerojatnostP(0.9 < Z < 1.9)?
+
+#ZADATAK 6: Povrat investicije je normalno distribuiran sa sredinom 10% i 
+#standardnom devijacijom od 5%. Kolika je vjerojatnost gubitka novca? (Matematièki 
+#napisano: Kolika je vjerojatnost P(X < 0)?)
+
+#ZADATAK 7: Poznato je da studenti Svauèilišta u Zagrebu rješavaju ispit iz  
+#matematike (broj bodova) 78 sa standardnom devijacijom 10.4. Pronaðite postotak  
+#studenata koji su riješili test s više od 89 bodova.
+
+#ZADATAK 8: Kolika je vjerojatnost da æemo dobiti 10 glava ukoliko bacimo novèiæ 
+#20 puta? (binomna)
+
+#ZADATAK 9: Provodite studiju o vjerojatnosti nastanka bolesti. Poznato je da je 
+#vjerojatnost razvoja bolesti ozraèenih osoba iznosi 0.05. Sluèajno izaberete 
+#500 ozraèenih osoba. a) Za koliko pretpostavljate da æe razviti bolest? 
+#Izraèunajte margine +- standardna devijacija procjene.
+
+#ZADATAK 10: Kolika je oèekivana vrijednost i varijanca za jedno bacanje novèiæa?
+
+#ZADATAK 11: Bacamo novèiæ 10 puta. Koja je oèekivana vrijednost 
+#i varijanca za ishod glava?
+
+#ZADATAK 12: Poznato je za London da je 57% dana u godini oblaèno, 
+#jednako rasporeðeno  tijekom svih mjeseci.  Pronaðite srednju vrijednost, 
+#varijancu i standardnu devijaciju broja oblaènih dana tijekom lipnja.
+
+#ZADATAK 13: Ukoliko je broj poziva koji primite na svoj mobilni telefon Poisson process 
+#s konstantnom stopom Lambda=2 poziva na sat, kolika je vjerojatnost da æe vam telefon zazvoniti
+#ukoliko ste ga zaboravili ugasiti u kino dvorani gledajuæi film koji traje 1.5 sat? X ~ Poisson (Lambda=2 poziva/sat)
+
+#ZADATAK 14: Objasnite što raèunamo u narednim linijama:
+pnorm( c(0,1,2))
+y <- pnorm(seq(-20,20,by=.1))
+pnorm(1,mean=3,sd=1.2)
+
+#ZADATAK 15:Prosjeèna potrošnja goriva automobila marke Renault je 7.3 l benzina 
+#na 100 km sa standardnom devijacijom 2.2 l. Kupili samo polovni automobila marke Renault.
+#Kolika je vjerojatnost da naše vozilo troši manje od 6.8 l benzina na 100 km puta?
+```
+
+
+
+
+
+
+\clearpage
+\newpage
+
+ 
+#### Studentova $t$ distribucija
+
+
+
+Omoguæava nam zakljuèivanje o tome koliko je sredina sluèajnog uzorka udaljena od poznate ili pretpostavljene populacijske sredine $\mu$ u jedinicama standardne greške izraèunate iz uzorka. Testiranje po t distribuciji izvodi se kada ne znamo standardnu devijaciju populacije. Posebno je važna kod malih uzoraka (df<30). Ukoliko je uzorak veæi od 30 slièna je standardnoj normalnoj distribuciji što je vizualno i prikazano na slici \ref{fig:T vs normalna}. Naèin na koji je slika napravljena slika \ref{fig:T vs normalna}i sami isprobajte nacrtati nove t-distribucije u usporedbi s normalnom. Primijetite da se najveæa razlika izmeðu normalne i t distribucije dogaða u podruèju njihovih "repova", slika \ref{fig:T vs normalna rep}.
+
+```{r fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:T vs normalna}Usporedba nekoliko t-distribucija i standardne normalne; t-distribucija prelazi u normalnu za uzorke veæe od 30", cache=F}
+#kritiène vrijednosti za 90, 95, 99% intervale pouzdanosti za sredine (CI)
+qt(c(.95, .975, .995), df=9)   
+pt(-2.1, 11)     # daje nam vjerojatnosti[t < -2.1] za t distribuciju s 11 stupnjava slobode
+
+ #uzimamo sluèajene uzorke velièine 50 iz t disttibucije s 11 stupnjeva slobode (df)
+ tSamp = rt(50, 11)    
+ #usporeðujemo razlièite t distribucije, t distribucije s razlièitim 
+ #stupnjevima slobobe sa standardnom mormalnom distribucijom
+ #podruèje distribucije
+ xs = seq(-5,5,.01)
+ 
+ #crtamo
+ plot(xs, dnorm(xs), type="l", lwd=2, col="black", ylab="gustoæa",
+     main="Usporedbe t distribucije i standardne normalne", cex.main=0.8)
+ #dodajemo pojedine t distribucije
+ lines(xs, dt(xs, 10), lwd=2, col="darkblue")
+ lines(xs, dt(xs, 4), lwd=2, col="red4")
+ lines(xs, dt(xs, 1), lwd=2, col="darkgreen")
+ #dodajemo legendu
+ legend("topright",col=c("black","darkblue","red4","darkgreen"),
+      legend=c("N","t, df=10","t, df=4","t, df=1"), lty=1)
+```
+
+ 
+![Najveæa razlika izmeðu normalne i t distribucije je u njihovim repovima \label{fig:T vs normalna rep}](T_vs_normalna_rep.png){width=60%}
+
+
+
+Primjer korištenja t-tablica dan je na slici \ref{fig:t tablica}.
+
+
+
+Tražimo vrijednost t statistike za 10 stupnjeva slobode (velièina uzorka n=11), a da je površina (vjerojatnost) 0.05:
+
+![Primjer korištenja t-tablica \label{fig:t tablica}](t_tablica.png){width=100%}
+
+**Stupnjevi slobode**
+
+U statistici, broj stupnjeva slobode je broj vrijednosti u konaènom izraèunu statistike koja se može slobodno razlikovati, varirati.
+
+Procjene statistièkih parametara mogu se temeljiti na razlièitim kolièinama podataka. Broj neovisnih podataka koji ulaze u procjenu parametra nazivaju se stupnjevi slobode (df). Opæenito, stupnjevi slobode procjene parametra jednaki su broju nezavisnih rezultata koji ulaze u procjenu minus broj parametara koji se koriste kao meðukoracima u procjeni samog parametra, primjerice kada procjenjujemo varijancu populacije iz uzorka.
+
+Matematièki, stupnjevi slobode su dimenzija domene sluèajnog vektora, ili bitno broj "slobodnih" komponenata: koliko se komponenti trebaju znati prije nego što je vektor potpuno odreðen. Koncept stupnjeva slobode mnogima je teško razumljiv na poèetku. Dat æemo nekoliko primjera jednostavnim, nestatistièkim rijeènikom:
+
+1) Ukoliko dobijete 10 slobodnih dana a jedan potrošite na planiranja odmora, planirati možete i trebate samo za devet dana. 
+
+
+2) Zamislite da ste trener nogometne reprezentacije te morate odrediti jedanaest igraèa za razlièite pozicije. Ukoliko znate da iz nekog razloga igraè xy mora biti ukljuèen u tim na vama je da odaberete još samo deset igraèa.
+
+
+
+
+
+*d*, *p*, *q* i *r* funkcije na Studentovoj t-distribuciji
+
+```{r, eval=F,comment=NA, echo = T}
+help(TDist)
+?TDist
+```
+
+Funkcije koje slijede pandan su funkcijama koje smo upoznali za normalnu distribuciju. Razlika je u tome da pretpostavljaju da su vrijednosti normalizirane na $mu$ = 0 i  $\sigma$ = 1. Moramo specificirati stupnjeve slobose! Imena su kompatibilna, prate konvenciju tako da imamo *dt()*, *pt()*, *qt()*, i *rt()*.
+
+Funkcija *dt()* pandan je veæ ranije predstavljenoj funkciji *pnorm()* kojom raèunamo gustoæu funkcije na zadanom kvantilu za odreðenu t distribuciju.
+
+
+Jednako kako smo radili s normalnom distribucijom, funkcije *d*, *p*, *q* i *r* rade i s bilo kojom drugom parametarskom distribucijom. Tako u sljedeæem primjeru tražimo gustoæu funkcije t sa šest stupnjeva slobode (parametar t funkcije) na x=1. Prokomentirajte tzv. parametar centraliteta t distribucije *ncp*.
+
+```{r, eval=T,comment=NA, echo = T} 
+#?dt
+dt(1,df=6)
+```
+
+
+
+U sljedeæem primjeru korištenjem funkcije za  kumulativna distribucija vjerojatnosti prema t distribuciji *pt()* tražimo kumulativnu vjerojatnost za x=-3 za t distribuciju s 10 stupnjeva slobode:
+
+```{r, eval=T,comment=NA, echo = T}   
+pt(-3,df=10)
+```
+U sljedeæem primjeru korištenjem funkcije za  kumulativna distribucija vjerojatnosti prema t distribuciji *pt()* tražimo kumulativnu vjerojatnost za x=-3 za t distribuciju s 10 stupnjeva slobode i parametrom *ncp* 3:
+
+```{r, eval=T,comment=NA, echo = T}  
+pt(3,3, df=10)
+```
+
+
+Jednako kao i kod normalne distribucije, inverzna funkcija kumulativne vjerojatnosti je *qt()*. Prokomentirajte što tražimo sljedeæim naredbama:
+
+```{r, eval=T,comment=NA, echo = T}    
+qt(0.05,df=10)
+
+qt(0.95,df=10)
+
+qt(0.05,df=20)
+
+qt(0.95,df=20)
+
+v <- c(0.005,.025,.05)
+qt(v,df=253)
+
+qt(v,df=25)
+```
+
+
+I u konaènici, ukoliko želimo generirati sluèajnu varijable prema t razdiobi koristimo generator sluèajnih brojeva *rt()* i slijede primjer generiranje varijable velièine 30 iz centralne t distribucije s 20 stupnjeva slobode. 
+
+```{r, eval=T,comment=NA, echo = T}   
+set.seed(1)
+rt(30,df=20)
+```
+
+
+
+
+#### Fisherova F distribucija
+
+Oznaka $X \sim F(n_{1},n_{2})$ se koristi za oznaèavanje sluèajne varijable $X$ koja je distribuirana prema $F$ distribuciji s parametrima $n_{1}$ i $n_{2}$, što su pozitivni cijeli brojevi koji indiciraju stupnjeve slobode brojnika i nazivnika. $F$ distribucija se još naziva i *Fisher--Snedecor distribution*. Sluèajna varijabla $X$ distribuirana po $F$ distribuciji s ~$n_{1}$ i ~$n_{2}$ stupnjeva slobode ima funkciju gustoæe (engl. *probability density function*:
+
+$$
+f(x) = \frac{\Gamma((n_{1}+n_{2})/2)(n_{1}/n_{2})^{n_{1}/2}x^{n_{1}/2-1}}
+{\Gamma(n_{1}/2)\Gamma(n_{2}/2)[(n_{1}/n_{2})x+1]^{(n_{1}+n_{2})/2}} \qquad \qquad x > 0
+$$
+
+za $n_{1} = 1,2,\ldots$ i $n_{2} = 1,2,\ldots$
+
+
+$F$ distribuja se koristi za statistièko zakljuèivanje o omjerima varijanci dviju normalnih populacija. Takoðer, $F$ distribucija se koristi za statistièko zakljuèivanje o omjerima stopa dviju eksponencijalnih populacija.
+
+
+
+
+
+Za sve koje žele znati više o distribucijama sluèajnih varijabli putem inovativnih alata neka posjete web stranicu na poveznici http://www.socr.ucla.edu/htmls/dist/.
+ 
+
+ 
+**PITANJA ZA PONAVLJANJE:**
+
+1) Izaberite tvrdnju o t-distribuciji koja je ispravna:
+
+-	To je bimodalna distribucija.
+-	Koristimo je kada je standardna devijacija populacije poznata.
+-	Sadržava veæi broj vrijednosti u svojim rubnim dijelovima (repovima) od normalne distribucije.
+-	Veæi broj vrijednosti pada u centralno podruèje distribucije u usporedbi s normalnom distribucijom.
+
+Gledajuæi informacijsku karticu o funkciji *t.test()* oznaèite koje su od sljedeæih tvrdnji istinite:
+
+-	ima moguænost izvoðenja t.testa samo na jedom uzorku
+-	funkcija t.test standardni je dio paketa *base*
+-	parametar kojim odreðujemo smjer testa nazivamo *direction*
+-	y je obavezni argument funkcije
+-	pretpostavka na x je da je on mjeren na intervalnoj ili omjernoj skali
+-	argument funkcije *alternative* prihvaæa jedino potpune izraze *two sided*, *greater* ili *less*
+-	funkcija nema moguænost testiranja lijevog testa
+-	funkciji obavezno moramo dati barem dva argumenta kako nam ne bi javljala pogrešku
+-	kôd t.test(x, mu=0, alternative="two sided") identièno je kôdu t.test(x).
+	
+2)	Što od navedenoga vrijedi za normalnu distribuciju?
+
+-	u svakoj normalnoj distribuciji približno 68% podataka dolazi izmeðu 1 $sd$ od srednje vrijednosti podataka
+-	medijan = mod = srednja vrijednost
+-	opisana putem jednog parametra
+-	standardna devijacija normalne distribucije je horizontalna udaljenost od sredine do jedne od toèaka pregiba
+-	nije moguæe svaku normalnu distribuciju pretvoriti u standardnu normalnu distribuciju
+
+ 
+### Distribucija statistike uzorka (engl. *sampling* distribucija)
+
+Zamislimo da imamo moguænost mnogo puta uzeti sluèajne uzorke fiksne velièine $n$ iz iste populacije od interesa. Za svaki takav uzorak raèunamo statistiku koja nas zanima, npr. aritmetièku sredinu, varijancu, standardnu devijaciju ili bilo koju drugu statistiku. Sve tako dobivene vrijednosti imaju odreðenu distribuciju koja opisuje teoretsko ponašanje statistike. Primjerice, sredine uzoraka imaju normalnu distribuciju, varijance uzoraka imaju $\chi$ distribuciju, omjeri varijanci dva nezavisna uzorka imaju $\mathcal{F}$ distribuciju i tako dalje.
+
+
+#### Centralni granièni teorem (engl. *Central Limit Teorem* - CLT) 
+
+Govori nam o teorijska raspodjeli, distribuciji sredina uzoraka.
+
+Ukoliko je distribucija populacije iz koje uzimamo sluèajni uzorak velièine $n$ (u teoriji mnogo uzoraka fiksne velièine $n$) normalna, $$\mathcal{N}{(\mu, \sigma)}$$ tada je distribucija sredina uzoraka velièine $n$ normalna: $$\mathcal{N}{(\mu, \sigma/n_{1_{2}}})$$
+
+Zanima nas sluèaj kada je distribucija populacije iz koje uzimamo sluèajni uzorak velièine $n$ (u teoriji mnogo uzoraka fiksne velièine $n$) *nije normalna*, kakva je distribucija sredina uzoraka?
+
+Odgovor na pitanje daje nam Centralni granièni teorem (engl. *Central Limit Theorem* - CLT) koji je najvažniji teorem u primijenjenoj statistici i èini osnovu za inferencijalnu statistiku - zakljuèivanje o sredini populacije na temelju uzorka. 
+
+Centralni granièni teorem kaže da ukoliko je uzorak velièine $n$, gdje je $n>=30$, uzet iz populacije sa sredinom $\bar{x}$ i standardnom devijacijom $\sigma$, tada je distribucija sredina uzoraka velièine $n$ približno normalna: 
+
+$$\mathcal{N}{(\mu, \sigma/n_{1_{2}}})$$
+Što imamo veæi uzorak to je aproksimacija bolja.
+
+
+Distribucija sredina uzoraka ima varijancu jednaku varijanci populacije / $n$, i standardu devijaciju jednaku standardnoj devijaciji populacije / drugi korijen od n ($SD[\bar{x}]=\frac{SD[x]}{\sqrt(n)}$), slika \ref{fig: clt, odnos devijacija}.
+
+```{r, eval=T, echo = F, comment=NA}
+#pripremam velik broj uzoraka, 10000
+populacija <- ames$Gr.Liv.Area
+n<- 50
+n_uzoraka <- 10000
+
+#radimo objekt za sredine svih uzoraka
+uzorci_mean <- rep(NA, n_uzoraka) 
+for (i in 1:n_uzoraka) {
+
+# selekcija uzorka velièine n  
+uzorci <- sample(populacija, n) 
+
+#spremimo srednju vrijednost na i-to mjesto u objektu  uzorci_mean  
+uzorci_mean[i] <- mean(uzorci)  
+                        }
+```
+
+
+```{r eval=T, fig.width=5, fig.height=5,encoding = "ISO8859_2",echo=F, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig: clt, odnos devijacija} Grafièki prikaz distribucije populacije i distribucije sredina 10000 uzoraka jednake velièine", cache=F}
+#dva histograma na jednom prikazu
+hist(populacija, breaks=10, col=rgb(0.1,0.1,0.1,0.5), main="Centralni granièni teorem, histogram \npopulacije i sredina 10000 uzoraka", ylim=c(0,3000), xlim=c(0,5000), cex=.8)
+
+#histogram distribucije 10000 uzoraka
+hist(uzorci_mean, breaks=10,col=rgb(0.8,0.8,0.8,0.5), add=T)
+
+```
+
+
+
+Što nam kaže Centralni granièni teorem?
+
+Ukoliko uzmemo sve moguæe sluèajne uzorke fiksne velièine $n$ (vrijedi samo za velike uzorke) iz bilo koje populacije koja ima sredinu $\mu$ i standardnu devijaciju $\sigma$, distribucija sredina uzoraka ima parametre kako slijedi:
+
+1)	sredina: $\mu_{x}=\mu$  (distribucija sredina uzoraka ima sredinu jednaku populacijskoj) ili drugaèije pisano, ukoliko je oèekivanje sredine uzoraka jednako je populacijskoj sredini:
+	 
+	 $E[x] = \mu$ tada vrijedi $E[\bar{x}]=\mu$.
+
+	 
+	 
+2)	standardna devijacija:   (distribucije sredina uzoraka ima standardnu devijaciju manju od populacijske)
+
+	$$SD[\bar{x}]=\frac{SD[x]}{\sqrt(n)}$$
+	
+	
+	
+	odnosno za varijancu vrijedi
+	
+	$$Var[\bar{x}]=\frac{Var[x]}{n}$$
+
+
+	
+Distribucija sredina uzoraka je normalna bez obzira na distribuciju populacije iz koje smo uzorke vadili što je prikazano na slici \ref{fig:clt, dist}.
+	
+Ipak, postoje sluèajevi gdje ovaj teorem ne vrijedi ali to se odnosi na distribucije vjerojatnosti sluèajne varijable o kojima na ovome teèaju neæe biti govora i rijetko da æete se sretati s njima u radu.
+
+![Distribucija sredina uzoraka (Samnling distribution of the means); uzorci izvlaèeni iz razlièito distribuiranih populacija \label{fig:clt, dist}](CLT.png){width=60%}
+
+
+#### Ponašanje distribucije sredina za razlièito velike uzorke
+
+```{r fig.width=5, fig.height=6,encoding = "ISO8859_2",echo=F,eval=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{clt}CLT: distribucija sredina 1000 uzoraka za razlièite velièine uzorka", cache=F}
+par(mfrow=c(2,2))
+population<-sample(1:6, 10000, replace=T)
+clt.example<-function(sample.size){
+  sapply(1:100, function(y){ mean( sample(population,sample.size))} )
+}
+
+hist(clt.example(5), main="Distribucija 100 uzoraka \nvelièine 5",breaks = 10, freq=F)
+hist(clt.example(10), main="Distribucija 100 uzoraka \nvelièine 10", freq=F)
+hist(clt.example(150), main="Distribucija 100 uzoraka \nvelièine 150", freq=F)
+hist(clt.example(1000), main="Distribucija 100 uzoraka \nvelièine 1000", freq=F)
+```
+
+Ponašanje sredina uzoraka u ovisnosti o broju ponavaljanja eksperimenta, prouèite sliku \ref{fig:clt}.
+
+```{r fig.width=5, fig.height=6,encoding = "ISO8859_2",echo=F,eval=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{clt}CLT: distribucija sredina uzoraka jednake velièine", cache=F}
+par(mfrow=c(2,2))
+set.seed(1)
+populacija<-sample(1:6, 10000, replace=T)
+
+br_uzoraka_10 <-  sapply(1:10, function(y){ mean(sample(populacija,50))} )
+br_uzoraka_50 <-  sapply(1:50, function(y){ mean(sample(populacija,50))} )
+br_uzoraka_500 <-  sapply(1:500, function(y){ mean(sample(populacija,50))} )
+br_uzoraka_10000 <-  sapply(1:10000, function(y){ mean(sample(populacija,50))} )
+
+#prvi
+hist(br_uzoraka_10, main="Distribucija 10 uzoraka \nvelièine 50", freq=F)
+
+#drugi
+hist(br_uzoraka_50, main="Distribucija 50 uzoraka \nvelièine 50", freq=F)
+
+#treæi
+hist(br_uzoraka_500, main="Distribucija 500 uzoraka \nvelièine 50", freq=F)
+
+#èetvrti
+hist(br_uzoraka_10000, main="Distribucija 10000 uzoraka \nvelièine 50", freq=F)
+```
+
+
+Prouèite demonstraciju Centralnog graniènog teorema na poveznici: http://vis.supstat.com/2013/04/central-limit-theorem/. Na slici \ref{fig:clt,Poiss} prikazana je demonstracija teorema. Iako u ovome teèaju nismo stigli obraditi, kao rezultat demonstracije prikazuje i mjeru normaliteta dobivene distribucije uzoraka, p-vrijednost Shapiro-testa kojeg interpretiramo na naèin da daje vjerojatnost da je distribucija uzoraka normalna. Demonstracija ima svoje predodreðene parametre koje možemo pogledati korištenjem *?clt.ani*. Na slici \ref{fig:clt,Chi} prikazana je distribucija uzoraka velièine 300 uzetih iz $\chi^{2}$ distribucije.
+
+\blandscape
+
+```{r fig.width=12, fig.height=9,encoding = "ISO8859_2",echo=F,eval=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:clt,Poiss} Centralni granièni teorem; uzorci izvlaženi iz Poisson distribucije izvor: https://www.rdocumentation.org/packages/animation/versions/1.1-3/topics/clt.ani", fig.keep=c(250),cache=F}
+library(animation)
+ani.options(interval = 0.1, nmax = 250)
+op = par(mar = c(3, 3, 1, 0.5), mgp = c(1.5, 0.5, 0), tcl = -0.3)
+lambda=6
+f = function(n) rpois(n, lambda)
+clt.ani(FUN = f, mean = lambda, sd = lambda, col=c("lightblue", "red4", "darkblue", "black"))
+```
+
+\newpage
+ 
+```{r fig.width=12, fig.height=9,encoding = "ISO8859_2",echo=F,eval=T, warning=FALSE,message=F,include=TRUE,fig.cap="\\label{fig:clt,Chi}Centralni granièni teorem; uzorci izvlaèeni iz Hi-kvadrat distribucije izvor: https://www.rdocumentation.org/packages/animation/versions/1.1-3/topics/clt.ani", fig.keep=c(250),cache=F}
+library(animation)
+ani.options(interval = 0.1, nmax = 250)
+op = par(mar = c(3, 3, 1, 0.5), mgp = c(1.5, 0.5, 0), tcl = -0.3)
+f = function(n) rchisq(n, 4)
+clt.ani(FUN = f, mean = 4,  col=c("lightblue", "red4", "darkblue", "black"))
+```
+ 
+
+
+\elandscape
+
+\clearpage
+\newpage

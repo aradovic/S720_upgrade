@@ -1,0 +1,793 @@
+---
+title: "Uvod u jezik R"
+output:
+  pdf_document: default
+  html_document: default
+---
+ 
+# Uvod u jezik R
+
+R je programski jezik i okruženje za statistièke izraèune i vizualizaciju. R je slobodan programski jezik (engl. free) što znaèi da se može slobodno koristiti i distribuirati te da je otvorenog kôda (engl. *open-source*). Izraz "okruženje" istièe da je R dobro planiran i konzistentan sustav, a ne sustav koji se postepeno dopunjava specifiènim i nefleksibilnim programskim alatima, što je èesto sluèaj kod drugih programa za analizu podataka. 
+
+Program R pruža širok izbor statistièkih metoda za linearno i nelinearno modeliranje, klasiène statistièke testove, analize vremenskih serija, klasteriranje. Lako je proširiv s velikim izborom grafièkih tehnika. 
+
+R je implementacija jezika S kojeg je razvio John Chambers s kolegama u Bell Laboratories te Robert Gentleman sa sveuèilišta u Aucklandu, Novi Zeland. Ista grupa razvila je i jezik C i UNIX. Trenutno jezik R razvija tzv. *jezgra*, osnovna grupa za razvoj  jezika R (engl. *R Core Team*). Postoje neke važne razlike, ali mnogi programi (kôd) napisani u jeziku S rade nepromijenjeni i u jeziku R.
+
+R je proizvod aktivnog pokreta meðu statistièarima koji ima cilj stvaranje moænog, programibilnog, prijenosnog, otvorenog raèunalnog okruženja primjenjivog pri rješavanju veèine kompleksnih problema, ali i provedbi rutinskih analiza.
+
+Statistièari su razvili stotine specijaliziranih statistièkih procedura za širok raspon uporabe putem tzv. pridodanih paketa (engl. *contributed packages*) koji su slobodno dostupni i integrirani direktno sa sustavom R. Donedavno je postojalo uvriježeno mišljenje da sustav R koristi uglavnom akademska zajednica dok je za analize podataka u tvrtkama standard sustav SAS. No to se danas promijenilo. Sustav R je npr. Federalna agencija za lijekove (Federal Drug Administration - FDA) identificirala je dijelove R-a pogodnim za tumaèenje podataka iz klinièkih istraživanja. 
+
+Takoðer, velik je broj kompanija koje prelaze na sustav R za analizu i prezentaciju svojih podataka. Neke od njih nalaze se na popisu koji se može pronaæi na sljedeæoj poveznici:http://www.listendata.com/2016/12/companies-using-r.html. 
+
+Usmjeravanje baza podataka tvrtke ORACLE na povezivanje sa sustavom R (https://blogs.oracle.com/R/entry/announcing_oracle_r_enterprise_1) (http://www.oracle.com/technetwork/topics/bigdata/r-offerings-1566363.html) te prvi puta stavljanje sustava R na Gartnerov magièni kvadrant uvjerilo je i najveæe skeptike u vjerodostojnost sustava R kao relevantnog sustava za analitiku velikih skupova podataka, naprednu analitiku i vizualizaciju  
+
+
+Kusum i Legoviæ (2004) navode znaèajnu razliku u filozofiji izmeðu sustava SAS i R: u sustavu S (R) statistièka se analiza obièno provodi u nizu koraka pohranjujuæi meðurezultate pojedinih koraka u objekte. Na primjer, neki poznatiji komercijalni paketi kao što su SAS i SPSS æe dati obilne rezultate iz regresijske ili diskriminantne analize dok æe sustav R dati minimalan rezultat i pohraniti rezultate u odgovarajuæe objekte za kasnija ispitivanja drugim funkcijama sustava R. 
+
+
+ 
+## Neke prednosti sustava R
+
+Neke od prednosti sustava R su:
+
+R je dostupan kao slobodan softver pod uvjetima Free Software Foundation GNU Opæe javne licence u obliku izvornog kôda (http://en.wikipedia.org/wiki/GNU_Project):
+
+- Sloboda uporabe programa u bilo koje svrhe - sloboda 0
+
+- Sloboda prouèavanja naèina rada programa i moguænost prilagodbe vlastitim potrebama - sloboda 1
+
+- Sloboda  kopiranja i distribucije programa - preduvjet za to je slobodan kôd (engl. *free-source*) sloboda 2
+
+- Sloboda poboljšavanja programa i moguænost dijeljenja poboljšanog programa u zajednici  - sloboda 3
+
+- Dostupan je putem Interneta
+
+- Radi na raznim platformama UNIX i sliènim sustavima (ukljuèujuæi FreeBSD i Linux), Windows i MacOS
+
+- Proizvod je meðunarodne suradnje vrhunskih statistièara i dizajnera programskih jezika
+
+- Dozvoljava statistièke analize i vizualizaciju te njihovo neogranièeno unaprjeðenje
+
+- Ima moguænost rada na velikim i kompleksnim objektima - ogranièenja su vezana uz operacijski sustav koji koristimo, a ne sustav R. 
+
+- Postoji vrlo dobra tehnièka dokumentacija o paketima i njihovim funkcijama te velik broj udžbenika i priruènika (https://cran.r-project.org/manuals.html) koje, izmeðu ostalih, pripremaju sami korisnici. Takoðer, postoji i velik broj knjiga koje objašnjavaju kako provesti pojedine vrste analiza koristeæi sustav R. Poveznica na glavnu dokumentacijsku stranicu sustava je https://www.r-project.org/other-docs.html.
+
+- Svaki korak u analizi je saèuvan i takva povijest (*.Rhistory* datoteka) može se naknadno koristiti u novim analizama ili kao dokumentacija postojeæoj.
+
+- Radi svoje organizacije potièe kritièko razmišljanje tijekom provedbe analize, za razliku od èestog poticanja izvršavanja analiza pritiskom na jednu tipku.
+
+- U potpunosti je programibilan i u podlozi nosi vrlo sofisticiran jezik S.
+
+- Pisanjem skripti i korisnièkih funkcija analize se jednostavno automatiziraju. Na taj naèin je i pojednostavljena priprema korisnièkih paketa i njihovo stavljanje zajednici na uporabu i provjeru.
+
+- Programski kôd svake funkcije je javan i vidljiv je svaki  korišteni algoritam. Uz to, struènjaci - statistièari osiguravaju korektnost ponuðenih funkcija.
+
+
+
+
+##Neki nedostaci sustava R
+
+Veoma se èesto navode neki od nedostataka sustava R kao što su:
+
+-R nije jednostavan za poèetnike i nemali broj osoba koje susame zapoèinjale edukaciju su u tome odustale. Ipak, nakon poèetnog usvajanja znanja o osnovnom naèinu funkcioniranja sustava i strukturama podataka, linija uèenja je za R veoma strma i sliène je ostalim statistièkim paketima.
+
+![Krivulja uèenja najèešæih statistièkih programa i paketa; izvor: https://sites.google.com/a/nyu.edu/statistical-software-guide/summary](LearningCurve2.png){ width=60% }
+
+- U svojoj suštini temelji se na 40 godina staroj tehnologiji
+
+- Postoji slaba podrška analizama putem grafièkih suèelja (engl. *Graphical  User Interface - GUI*). Za rad u R-u ulavnom je nužno je pisanje naredbi kako bi se provele analize i napravila vizualizacija rezultata. Mnogi korisnici ovo ne smatraju nedostatkom radi uspostave potpune kontrole nad sustavom. Ipak, noviji projekti rjašavaju i problem korisnika koji ne žele uèiti R sintaksu preporuèamo upoznavanje s projektom Deducer (http://www.deducer.org/pmwiki/index.php?n=Main.DeducerManual?from=Main.HomePage). Od starijih rješenja postoji paket *Rcmdr* koji u odreðenoj mjeri omoguèava naèin rada GUI i odreðen skup analiza. 
+
+- Korisnik odluèuje o svakom koraku analize i provodi je po koracima. Ovakav naèin rada omoguæuje prednosti kao što je èuvanje tijeka analize (engl. *processing log*) koji se koristi u svrhu izvještavanja ili ponavljanja analize. Mnogi navedeno smatraju prednošæu.
+
+- Korisnik treba prihvatiti novi naèin razmišljanja o podacima koje analizira, te o objektima i metodama. Mnogi ovo smatraju prednošæu jer klasa objekta odreðuje koje metode ima smisla primijeniti
+
+- U velikom broju sluèajeva korisnik treba uèiti jezik S/R kako bi bio u moguænosti specificirati analizu, iako danas postoji velik broj projekta i tvrtki koje nude razlièite oblike podrške korisnicima sustava R (npr. bivši Revolution Analitics, sada Microsoft) ili moguænost on-line analize u oblaku (engl. *cloud*), kao npr. StatAce.
+
+
+Ipak, postoje novi prostupi koji omoguæavaju interaktivno uèenje razlièitih softwera pa tako i R-a putem, primjerice *Docker* sustava (projekt *Rocker* https://github.com/rocker-org/), u oblaku (engl. *cloud computing*) ili lokalno korištenjem vitrualnih strojeva. Ovakav pristup jedan je od kljuènih elemenata reproducibilne znanosti jer omoguæava pohranu sustava kakav je bio u trenutku izrada analiza. O ovoj temi u narednim teèajevima i radionicama Srca.
+
+ 
+## Instalacija sustava R
+
+Kako je veæ spomenuto, R je sustav koji radi na razlièitim platformama, kao što su UNIX, Windows, Mac OS te njihovim operacijskim sustavima. Prilikom instalacije programskog okruženja treba pronaæi odgovarajuæi kôd te pratiti upute o instalaciji. S web-stranice http://cran.r-project.org/bin/ potrebno je odabrati verziju kompatibilnu operacijskom  sustavu na raèunalu. Instalacija na operacijski sustav Windows je klasièna i ovom prilikom neæemo je detaljnije opisivati.
+
+Napomenut æemo da velik broj istraživaèa priprema i vlastite pakete koji su dostupni jedino putem njihovih osobnih Github spremišta.
+
+###Programski paketi koji dolaze s instalacijom sustava R
+
+Odreðene osnovne funkcionalnosti sustava R dobivaju se sa sustavom instalacijom. To su tzv. osnovni paketi koji podržavaju programski jezik S, osnovnu statistiku i osnovnu (oznaka prioritea - engl. *priority*  **base**) grafiku. Neki od paketa ukljuèeni su u instalaciju sustava R su: *base*, *compiler*, *datasets*, *graphics*, *grDevices*, *grid*, *methods*, *parallel*, *splines*, *stats*, *stats4*, *tcltk* i *utils*. Ovaj skup paketa ne mijenja se izmeðu dvije verzije sustava R i svi nose oznaku temeljnih paketa (priority="base"). Pakete iz ove grupe nije moguæe pronaæi neovisne na spremištu CRAN. Drugi skup paketa sustava je dio i same instalacije sustava R, ali se njihove verzije mogu nadograðivati izmeðu pojedinih verzija i kao takvi se mogu i pojedinaèno pronaæi na spremištu CRAN (oznaka prioritea - engl. *priority*  **recomended**). Neki od njih su *KernSmooth*, *MASS*, *Matrix*, *boot*, *class*, *cluster*, *codetools*, *foreign*, *lattice*, *mgcv*, *nlme*, *nnet*, *rpart*, *spatial*, *survival*.
+
+Paket base (library (*base*)) èini okosnicu sustava R sadržavajuæi osnovne funkcije: aritmetika, ulaz i izlaz podataka, osnovne programske potpore, itd. Nešto kasnije upoznat æemo se detaljnije s nekim od funkcija paketa base.
+Radi lakšeg snalaženja, mnogobrojni paketi dostupni unutar spremišta CRAN grupirani su u manji broj tzv. spaktara aplikacija (engl. *Task Views*), èiji se popis se može pronaæi na stranici http://cran.r-project.org/web/views.
+
+
+### Nadogradanja sustava R kontribuiranim paketima
+
+Moguænosti jezika R proširene su putem paketa koje razvijaju korisnici i time omoguæuju uporabu specijaliziranih statistièkih tehnika, grafièkih ureðaja, uvoz/izvoz s preko 11000 dodatnih paketa (stanje srpanj 2017.) dostupno je na sveobuhvatnoj arhivi sustava R (CRAN: The comprehensive R Archive Network), Bioconductor (repozitorij paketa za analizu genomskih podataka) i drugim spremištima (engl. *repository*). Buduæi se svi paketi neophodni za praæenje ovog teèaja nalaze na spremištu CRAN, ovaj æe se izraz u daljnjem tekstu odnositi upravo na ovo spremište.
+
+
+
+![Broj R paketa na CRAN repozitoriju; izvor: http://blog.revolutionanalytics.com/2017/01/cran-10000.html](broj_R_paketa.PNG){ width=60% }
+
+Da bi se neki paket mogao staviti na CRAN spremište neophodno je da zadovolji konzistentnost rada na razlièitim operacijskim sustavima, proðe provjeru korektnosti zapisa o potrebama provjera paketa na kojima se ovaj paket temelji (engl. *dependency*), provjere inverzne ovisnosti o neštetnosti paketa na veæ postojeæe (engl. *reverse dependency*) te da ima pripremljenu obaveznu dokumentaciju o funkcionalnostima koje paket nudi, tzv. referentni priruènik (engl. *reference manual*). Svaki paket koji je prošao provjere i pohranjen je na spremištu CRAN ima svoju web stranicu. Upoznat æemo se s izgledom stranice nekog paketa na primjeru paketa *akima*. Iako je moguæe zatražiti informacije iz sustava, ovaj puta æemo u web pretraživaè unijeti upit, primjerice "package akima in r". Tražilice æe nam na ovako postavljen upit redovno kao prvu poveznicu nuditi web stranicu formata (za paket *akima*) https://cran.r-project.org/web/packages/akima/index.html. Upoznajmo se sa strukturom stranice te informacijama koje pruža.
+
+
+Jednako vrijedi i za sve ostale pakete na spremištu.
+
+
+
+Moguænosti sustava možemo nadograditi instalacijom dodatnih paketa funkcija te unošenjem njihovih funkcionalnosti u sustav. To radimo u sljedeæih nekoliko koraka:
+
+#### Izbor repozitorija (spremišta) paketa
+
+Naredbom *setRepositories()* odabiremo na kojim spremištima paketa želimo pretraživati funkcionalnosti. Do istog dijaloga može se doæi putem padajuæeg izbornika na konzoli sustava R Packages -> Select repositories.
+
+Funkcije za izbor spremišta (repozitorija) paketa te izbor zrcalnih stranica (engl. *mirror pages*).
+
+```{r, eval=F, echo=T}
+setRepositories()
+```
+
+Uz pomoæ naredbe *chooseCRANmirror()* možemo izabrati željenu zrcalnu stranicu spremišta CRAN. Uz pomoæ naredbe *getCRANmirrors()* možemo doæi do informacija gdje se sve nalaze zrcalne stranice spremišta CRAN. Ova funkcija bila je znatno važnija u ranijim vremenima znatno sporijeg prometa podataka na internetu.
+
+```{r, eval=F, echo=T}
+chooseCRANmirror()
+```
+
+Izabrana opcija ostat æe aktivna do trenutka izlaska iz sustava R. 
+
+***
+
+**Napomena:**
+
+Ako unutar RStudio-a želite vidjeti sintaksu odreðene naredbe dovoljno je njezin naziv napisati u konzolu sustava R i pritisnuti [enter].
+
+***
+
+```{r, eval=F, echo=T}
+chooseCRANmirror()
+```
+
+Na konzoli æe se ispisati sintaksa. Ako želite provesti naredbu sa zadanim vrijednostima tada treba upisati naredbu te potom znakove *()*.
+Ako za traženu funkciju ne postoje zadane (engl. *default*) vrijednosti na konzoli æe se pojaviti poruka koja nas o tome obavještava. Ukoliko želite vidjeti sam kôd neke funkcije tada naziv funkcije upisete u R konzolu bez otvaranja zagrada i unosa argumeneta. Na ovaj naèin, ranije pripremljene funkcije unutar sustava korisnik može ili koristiti ili na željeni naèin dodatno prilagoditi svojim potrebama bez kretanja od nule.
+
+
+#### Instalacija paketa sa spremišta (engl. *repository*)
+
+Instalacija paketa s nekod od spremišta/repozitorija paketa radi sef unkcijom *install.packages()*, a kao argument unijeti pod navodnicima ime paketa. Upoznajte se s funkcijom te instalirajte paket *ggplot2*.
+
+
+```{r, eval=F, echo = T, comment=NA}
+?install.packages
+```
+
+
+```{r, eval=F, echo = T, comment=NA}
+install.packages("ggplot2")
+```
+
+Sama instalacija paketa ne èini funkcije paketa dostupnima. Svaki puta prilikom poèetka rada u sustavu potrebno je uèitati u radni prostor funkcije željenog paketa funkcijom *library()* ili *require()* pri èemu funkcija *library()* uèitava funkcionalnost instaliranog paketa, dok funkcija *require()* prethodno provjeri da li su funkcionalnosti paketa veæ unesene u radnu konzolu te tek prema potrebi uèita njegova funkcionalnost.
+
+```{r, eval=F, echo = T, comment=NA}
+library("ggplot2")
+```
+
+
+
+Ukoliko želimo instalirali sve pakete koje su dostupni u željenom spektru aplikacija (engl. *Task View*) najprije je potrebno instalirati paket ctv funkcijom *install.packages()*. Ipak, kao i u svakom sluèaju kada želimo koristiti neku funkciju unutar sustava, nema potrebe za uèenjem sintakse veæ se najprije treba upoznati sa sintaksom željene funkcije, otvaranjem njezine informacijske kartice pa tek onda njezinom upotrebom.
+
+
+```{r, eval=F, echo = T, comment=NA}
+install.packages("ctv")
+```
+
+
+```{r, eval=F, echo=T}
+library("ctv")
+```
+
+Tek tada su funkcionalnosti paketa ctv u sustavu, u moguænosti smo sve pakete iz nekog željenog spektra zadataka odjednom unijeti u svoj sustav. 
+
+
+Ovo je primjer za spektar zadataka vezanih za analize multivarijantnih podataka 
+
+```{r, eval=F, echo = T, comment=NA}
+install.views("Multivariate") 
+```
+
+ili
+```{r, eval=F, echo = T, comment=NA}
+update.views("Multivariate")
+```
+
+#### Instalacija paketa putem lokalne datoteke
+
+Paketi se mogu instalirati iako još nisu provjereni i postavljeni na nekim od spremišta, iz lokalne datoteke (engl. *installing from source*), tj. istom naredbom install.packages(), ali dajuæi argumente *repos*=NULL, *type*="source".
+
+```{r, eval=F, echo = T, comment=NA}
+install.packages("ime_paketa", repos=NULL, type="source")
+```
+
+gdje je datoteka formata tar.gz ili
+
+```{r, eval=F, echo = T, comment=NA}
+install.packages("rgdal_0.9-1.zip", repos = NULL, type ="source")
+```
+
+gdje je datoteka formata zip.
+
+Ili sljedeæim kôdom na primjeru paketa gdal
+
+```{r, eval=F, echo = T, comment=NA}
+download.file("http://cran.r-project.org/src/contrib/Archive/rgdal/", 
+              "rgdal_0.9-1.tar.gz")
+list.files(getwd(), pattern="gz")
+system("R CMD INSTALL rgdal_0.9-1.tar.gz")
+```
+ 
+
+
+
+#### Instalacija paketa s osobnih Git/GitHub spremišta
+
+U posljednjih nekoliko godina, postoji trend pohrane pripremljenih fukcija i cjelovitih paketa na osobnim GitHub repozitorijima. Za razliku od paketa pohranjenih na repozitorijima poput CRAN-a, gdje je referentni priruènik obavezna dokumentacija paketa koja nam kasnije omoguæava traženje informacije o pojedinoj funkciji (otvaranje infrmacijske kartize funkcije), na GitHub repozitorijima pojedinih programera/statistièara ovakvu konzistentnu dokumentaciju možda neæemo pronaæi. Ipak, najèešæe se neki oblik dokumentacije paketa nalazi u datotekama indikativnih naziva, primjerice *readme.txt* ili slièno. Ovakav pohrana paketa dogaða se najèešæe unutar podruèja veoma intenzivnog razvoja i želje autora da zajednici ponude svoja programska rješenja i prije no što uspiju zadovoljiti sve zahtjeve spremišta. Velika veèina paketa koje je zajednica prihvatila i poèela koristiti u konaènici dospiju i na spremište poput CRAN-a ali GitHub ostaje mjesto pohrane, posebno verzija u izradi ii fazi testiranja. Ukoliko želite instalirati neki od paketa pohranjenih na GitHub repozitorijima programera, najprije je unutar sustava R potrebno instalirati paket *devtools*. 
+
+Primjer instalacije paketa *sf* za rad s prostornim bazama podataka s Git spremišta naziva r-spatial:
+
+```{r, eval=F, echo = T, comment=NA}
+library(devtools)
+install_github("r-spatial/sf")
+```
+ 
+
+##Traženje pomoæi
+
+##Informacije o paketima i funkcijama
+
+R je sustav u kojem je traženje pomoæi veoma važno radi kolièine dostupnih funkcionalnosti. Kao što je veæ spomenuto, funkcionalnosti nekih paketa uneseni su u sustav samom instalacijom sustava R. Takav je paket *utils* koji u sebi nosi ugraðene funkcije za traženje pomoæi kao što funkcije s kojima æemo s upoznati.
+
+Ukoliko radite u RStudiju, najlakše je krenuti putem padajuæeg izbornika *Help* te potom izbora *R help*. S ove stranice vode poveznice na velik broj materijala, teèajeva i proruènika o sustavu R.
+
+### Pretraživanje lokalno instaliranog sustava (engl. *offline*)
+
+Osnovnu stranicu za pomoæ možemo pozvati na naèin, generalna pomoæ u radu:
+
+```{r, eval=F, echo = T, comment=NA}
+help.start()
+```
+
+Kao i kod svake druge funkcije, možemo pogledati njezinu dokumentaciju kako bismo bili sigurni što nam omoguæava.
+
+```{r, eval=F, echo = T, comment=NA}
+?help.start
+```
+
+
+Kako bi dobili uvid u sve funkcije koje sadrži neki paket dovoljno je napisati ovu naredbu:
+
+```{r, eval=F, echo = T, comment=NA}
+library(help = "base") #pomoæ za paket base
+```
+
+Po unosu naredbe [Enter] otvorit æe nam se informacijska kartica za traženi paket.
+Primjer za pomoæ oko paketa base:
+
+
+
+```{r, eval=F, echo = T, comment=NA}
+#help(ime_paketa)
+help(base) 
+```
+
+ili najjednostavnije
+
+```{r, eval=F, echo = T, comment=NA}
+?ime_paketa
+```
+
+što nam daje informaciju o pravilnoj sintaksi za traženje informacije o funkcionalnostima nekog paketa.
+
+Potpuni popis funkcionalnosti nekog paketa dobit æemo sljedeæim kôdom:
+
+```{r, eval=F, echo = T, comment=NA}
+library(help = "base")
+```
+
+
+
+Funkcija *help()* može se zamijeniti upitnikom *?* (funkcija *Question* iz paketa **utils**). Funkcija *Question()* omoguæava pristup dokumentaciji. U primjeru koji slijedi funkcijom *Question* iz paketa *base* tražimo informacije o samom paketu *base*.
+
+```{r, eval=F, echo = T, comment=NA}
+?base 
+```
+
+Pomoæ pri uporabi funkcije npr. *read.table()*:
+
+```{r, eval=F, echo = T, comment=NA}
+help(read.table)
+#jednako kao i sljedeæe
+?read.table
+```
+
+Prikaz primjera upotrebe funkcije *as.matrix()*:
+
+```{r, eval=F, echo = T, comment=NA}
+
+example(as.matrix)
+```
+
+Samostalno prouèite promjer korištenja funkcije *read.table()*.
+
+Funkcija *help.search()* omoguæuje pretraživanje u instaliranom sustavu dokumentacije podudaranjem odreðenog niza znakova u imenu datoteke, pseudonimu, naslovu, konceptu ili kljuènim rijeèima (ili bilo koje njihove kombinacije).
+
+Isprobajte slièna pretraživanja i za druge pojmove s kojima ste se susreli u svojem dosadašnjam radu.
+
+```{r, eval=F, echo = T, comment=NA}
+help.search("logistic")
+```
+
+jednako kao
+```{r, eval=F, echo = T, comment=NA}
+??logistic
+```
+
+Iako veoma korisna i èesto korištena, funkcija *help()* i operator *?* korisni su ukoliko poznajemo ime funkcije koju tražimo. Unutar sustava R postoje funkcionalnosti koje nam omoguæuju da, iako ne znamo ime željene funkcije i objekte kao što je funkcija *apropos()*. Popisi svih funkcija i objekata koje u sebi imaju rijeè "raster":
+
+```{r, eval=F, echo = T, comment=NA}
+#pretražujemo sve objekte (time i funkcije) na putu pretraživanja
+apropos("raster")
+```
+
+### Pretraživanje globalnog sustava (engl. *online*)
+
+Pretraživanje dokumentacije koja postoji na cjelokupnom webu, pretražujuæi obaveznu dokumentaciju (engl. *reference manuals*) i opcionalnu dokumentaciju (engl. *vignettes*) za pakete koji se nalaze na repozitoriju CRAN. Za razliku od funkcija *apropos()* i *help.search()* funkcija zahtjeva vezu prema internetu te pretražuje globalni sustav pomoæi.
+
+```{r, eval=F, echo = T, comment=NA}
+RSiteSearch("principal component analysis")
+RSiteSearch("krige dimensions do not match")
+```
+
+Pretraživanje dokumentacije koja sadrži toèan izraz, primjerice "regression kriging":
+
+```{r, eval=F, echo = T, comment=NA}
+RSiteSearch("logistic regression") 
+```
+
+#### Traženje dokumentacije o instaliranim paketima
+
+Osnovna stranica za traženje dokumentacije o uporabi sustava R i njegovih paketa u specifiènim analizama je http://www.r-project.org/other-docs.html.
+
+##### Obavezna dokumentacija paketa na CRAN-u
+
+Svaki paket na repozitoriju CRAN mora sadržavati i osnovnu dokumentaciju o funkcionalnostima (http://cran.r-project.org/web/packages/ime_paketa/index.html) koje nazivamo (engl. *reference manual*) s popisom svih funkcija i njihovih argumenata. Direktno iz sustava moramo tražiti *help(package=ime_paketa)*.
+
+##### Opcionalna dokumentacija paketa na CRAN-u
+
+Vinjete su opcionalni dokumenti vezani za odreðeni korisnièki paket. U njima su opisane funkcionalnosti paketa na nekom specifiènom problemu. One prižaju prièu o tome što se s paketom može napraviti i ne rade ih nužno autori funkcija veæ vinjete ponekad napišu iskusni korisnici funkcionalnosti paketa.
+Prikaz svih dostupnih vinjeta instaliranih paketa možemo vidjeti ako unesemo sljedeæe:
+
+```{r, eval=F, echo = T, comment=NA}
+vignette()
+```
+
+Ukoliko želimo vinjete unutar odreðenog paketa:
+
+```{r, eval=F, echo = T, comment=NA}
+#upoznavanje sa sintaksom funkcije
+?vignette
+vignette(package="ime_paketa")
+#otvaramo vinjetu za koju znamo toèan naziv
+vignette("ime_vinjete") 
+```
+
+Ukoliko želimo vidjeti popis svih vinjeta za sve uèitane (engl *attached*) pakete:
+
+```{r, eval=F, echo = T, comment=NA}
+vignette(all=FALSE)
+```
+
+Ukoliko želimo vidjeti popis svih vinjeta svih paketa koje imamo na instalirane na raèunalu:
+
+```{r, eval=F, echo = T, comment=NA}
+vignette(all=TRUE)
+```
+
+
+**ZA SAMOSTALAN RAD**:
+
+Potražite vinjete paketa *sp* i paketa *akima* te prokomentirajte razliku. Ukoliko veæ nisu, instalirajte navedene pakete.
+
+Funkcijom *browseVignettes()* otvaramo web-stranicu s vinjetama svih paketa koji su instalirani na našem sustavu ili samo odreðenog paketa kojeg smo definirali u naredbi. Vinjete je moguæe preuzeti u formatima PDF, R i Latex.
+
+```{r, eval=F, echo = T, comment=NA}
+browseVignettes (package="sp")
+```
+
+Osnovna stranica na kojoj je moguæe pronaæi ogroman broj priruènika s veæeg broja spremišta paketa nalazi se na poveznici https://www.rdocumentation.org/ dok se snovna stranica s priruènicima o R jeziku i paketima pohranjenim na CRAN-unalazi se na poveznici https://cran.r-project.org/manuals.html.
+ 
+#### Komunikacijske liste u sustavu R
+
+Unutar sustava R postoje èetiri glavne komunikacijske liste (engl. *Mailing Lists*) na kojima se nalaze informacije o sustavu:
+
+- R-announce (https://stat.ethz.ch/mailman/listinfo/r-announce)
+	
+Na ovoj se listi objavljuju velike novosti u sustavu kao što je izdavanje nove verzije sustava R i promjene koje donosi.
+	
+- R-packages (https://stat.ethz.ch/mailman/listinfo/r-packages)
+
+Ovdje se objavljuju novosti o nadogradnji postojeæih i dostupnosti novih paketa - uglavnom se odnosi na spremište CRAN.
+	
+- R-help (https://stat.ethz.ch/mailman/listinfo/r-help)
+
+Ovo je glavna obavijesna lista za sustav R, a namijenjena je raspravi o problemima i rješenjima pomoæu sustava R, najavama koje nisu objavljene na prethodne dvije liste, obavijestima o dokumentaciji za sustav R, usporedbi i kompatibilnosti s jezikom S-plus te širenju dobrih primjera. R-announce i R-packages prosljeðuju sve obavijesti na R-help.
+ 
+- R-devel (https://stat.ethz.ch/mailman/listinfo/r-devel)
+
+Ova je lista namijenjena pitanjima i raspravi vezanima za razvoj kôda programskog jezika R.
+ 
+#### Grupe specijalnog interesa 
+
+Unutar sustava došlo je do stvaranja zajednica korisnika sustava R s posebnim interesima (engl. *Special Interest Group* - SIG). Tako je moguæe predbilježiti se za primanje obavijesti vezanih uz odreðeno podruèje, na primjer, u našem je to sluèaju grupa koja koristi i razvija alate za analize prostornih podataka 
+R-SIG-geo na mrežnim stranicama.
+
+
+Ukoliko ste poèetnik i ne razumijete poruke koje Vam sustav javlja kao pogrešku, najbolji i najjednostavniji naèin je kopiranje teksta pogreške i unošenje u internetski pretraživaè (na primjer Google). Na isti naèin moguæe je pronaæi i velik broj dokumenata i znanstvenih radova s temom koja nas zanima. 
+ 
+
+Ako na opisane naèine niste uspjeli riješiti svoj problem i odluèite postaviti pitanje na neku od distribucijskih lista važno je:
+	
+- dati primjer koji æe drugi korisnici moæi reproducirati 
+
+- navesti koji ste rezultat oèekivali, odnosno pokušali dobiti
+
+- navesti što je prikazano umjesto oèekivanog rezultata
+
+- navesti verziju sustava R i paketa korištenih u analizi
+
+- navesti naziv i inaèicu operacijskog sustava kojeg koristite
+
+- osmisliti naslov poruke koji æe na jasan naèin predstaviti problem.
+ 
+
+Noviji komunikacijski kanali i mjesta za postavljanje pitanja su i osobne Git stranice osoba koje neki paket razvijaju te veoma popularna plathorma *StackOverflow*.
+
+Postoje i mnogi drugi kanali putem kojih R zajednica komunicira, tako postoje i grupepotpore u radu ženama koje se bave R-om (*RLadies*) ali i mnogo Google grupa. Lokalna otvorena Google grupa korisnika programskog jezika R zove se *Rtuntun*!
+
+#### Specijalizirane konferencije
+
+
+Informacije o konferencijama o sustavu R mogu se pronaæi na poveznici http://www.r-project.org/conferences.html. R-projekt aktivno podupire rad dva tipa konferencija koje redovno organizira R-zajednica:
+	
+- **useR!** 
+
+	konferencija-forum korisnika sustava R i
+	
+- **DSC (*engl. Directions in Statistical Computing*)** 
+
+	konferencija koja okuplja programere statistièkog softvera i istraživaèa u statistièkom raèunalstvu koji su usredotoèeni na sustav R, ali nije iskljuèivo posveæena sustavu R. Cilj konferencije je osigurati platformu za razmjenu ideja o zbivanjima u statistièkom raèunalstvu.
+	
+#### Ostala literatura o sustavu R
+
+Unutar sustava R postoji velika kolièina literature slobodno dostupne korisnicima. Osnovna grupa suradnika za razvoj sustava R (*engl. R Core Team*) zadužena je za održavanje i sadržaj mrežnih stranica s priruènicima. 
+
+Za operacijski sustav Windows literatura je dostupna putem poveznice http://cran.r-project.org/manuals.html. Putem ovih stranica moguæe je doæi do priruènika prevedenih na druge svjetske jezike (http://cran.r-project.org/other-docs.html).
+
+Osim literature unutar sustava pomoæi navodimo još neke od klasiènih tekstova koji olakšavaju poèetak rada u sustavu R:
+
+- Chambers (2008) Software for data analysis, Springer
+
+ -    Chambers (1998) Programming with data, Springer
+
+ -    Venables & Ripley (2002) Modern Applied Statistics with S, Springer
+
+ -    Venables & Ripley (2000) S Programming, Springer
+
+ -    Pinheiro & Bates (2000) Mixed-Effect Models in S and S-PLUS, Springer
+
+ -    Murrel (2005) R Graphics, Chapman & Hall / CRC Press
+
+ -    Use R! Serija knjiga, Springer
+
+ -   Serija knjiga izdavaèa Wiley
+
+ -    ...
+
+ -    The R Journal 
+
+
+![Knjige o sustavu R iz razlièitih izvora](r_books.png){ width=95% }
+
+*Open-access* èasopis koji objavljuje kraæe èlanke vezane uz projekt razvoja softvera u sustavu R koji bi mogli biti od interesa kako osobama koji sustav razvijaju tako i korisnicima, a može se pronaæi na: http://journal.r-project.org/current.html.
+
+Velik broj kniga o sustavu R moguæe je pronaæi na poveznici : http://www.r-project.org/doc/bib/R-books.html ali s naznakom da lista nije u potpunosti ažurirana.
+
+Na hrvatskom jeziku, osim teèajeva Srca, moguæe je pronaæi relativno stare, dokumente:
+
+*Uvod u korištenje R-a* (2004) Damir Kasum i Tarzan Legovic s Instituta Ruðer Boškoviæ preveli su knjigu *An introduction to R* autorskog tima W.N. Venables, D.M. Smith i osnovna grupa suradnika za razvoj sustava R (http://cran.r-project.org/doc/contrib/Kasum+Legovic-UvodUr.pdf).
+	
+*Osnovne naredbe u R-u* Damir Kasum (http://cran.r-project.org/doc/contrib/Kasum-QuickRefCard_ver.1.2.pdf).
+
+
+### Odreðivanje okoline za rad
+
+Posao je okoline povezivanje skupa  sa skupom vrijednosti. Naredbom *search()* bez dodatnih argumenata dobit æemo popis redosljeda spajanja vrijednosti u radnom prostoru. Ujedno iz njega vidimo i popis svih paketa uèitanih u radnu okolinu kao i redoljed njihova uèitavanja.
+
+```{r, echo=T}
+search()
+```
+
+Naredbom *library()* bez dodatnih argumenata dobit æemo popis svih instaliranih paketa u našem sustavu.
+
+### Stvaranje individualiziranog sustava
+
+Svaki korisnik u moguænosti je prilagoditi neke funkcionalnosti na 
+sustavu izmjenom datoteke *Rprofile.site* koja se nalazi unutar mape *etc*, u našem sluèaju to je unutar ove putanje 
+
+```{r, eval=F, echo=T}
+paste("...\R\R-3.4.1\etc")
+```
+
+
+
+
+### Skupovi podataka za vježbu
+
+Unutar R sustava postoji odreðen broj skupova podataka na kojima možete isprobavati funkcije i pripremati analize. Velik broj skupova podata sakupljeno je i dostupno putem paketa *datasets* koji dolazi instalacijom sustava i obuhvaæa raznolike strukture podataka s kojima možete vježbati. 
+
+```{r, eval=F, echo=T}
+#skupovi podataka za vježbu unutar paketa "datasets"
+data() 
+```
+
+Ipak, paket *datasets* ne sadži podatke organizirana u specijalizirane interne R klase za specifiène analitièke metode kao što su geografski referencirani podaci, prostorno vremenski podaci te mnogi drugi primjeri koje velik broj korisnika nikada i neæe susresti u svojem radu. Ukoliko je potrebno za razumijevanje funkcionalnosti koje neki specifièan paket nudi, autori paketa, èesto u sklopu paketa dostavljaju adekvatne podatke na kojima je moguæa vježba i upoznavanje s funkcionalnostima.  
+
+Prokomentirajte razliku izmeðu paketa raster i sp. Ukoliko je potrebno, napravite i instalaciju ova dva pakata te njihove funkcionalnosti uèitajte u radni prostor funkcijama *library()* ili *require()*.
+
+```{r, eval=F, echo=T}
+#install.packages("raster")
+#install.packages('sp')
+data(package = "raster")
+data(package = "sp")
+```
+
+
+
+ 
+###Prijelaz na novu verziju sustava R
+
+Najjednostavniji naèin prelaska na novu verziju sustava R je kopiranje i prebacivanje svih instaliranih paketa iz mape 
+
+```{r, eval=F, echo=T}
+...\\R\\R-ver1\\library
+```
+
+u mapu paketa verzije 2
+
+```{r, eval=F, echo=T}
+...\\R\R-ver2\library
+```
+
+Na staroj verziji sustava R napravite sljedeæe, uporabom primjera s verzijom R-3.4.1:
+
+```{r, echo=T, eval=F}
+setwd("../S720")
+packages <- installed.packages()[,"Package"]
+save(packages, file="Rpackages")
+#Na novoj verziji sustava R napravite sljedeæe:
+setwd("..C:/Temp/")
+load("Rpackages")
+for (p in setdiff(packages, installed.packages()[,"Package"]))
+install.packages(p)
+```
+
+
+Kako je sustav R izuzetno fleksibilno okruženje, gotovo u svakoj prilici postoji mnogo naèina na koje se može doæi do željenog rezultata. Da bismo potkrijepili ovu tvrdnju isto æemo napraviti putem veæ pripremljenog paketa *installr*; instaliranje i uèitavanje najnovije verzije *installr* paketa. 
+
+```{r, eval=F, echo=T}
+install.packages("installr")
+library(installr)
+updateR()
+```
+
+Kako bismo bili sigurni da u svojem radu koristite najnoviju verziju nekog paketa moguæe je napraviti ažuriranje uporabom naredbe *update.packages()*.
+
+```{r, eval=F, echo=T}
+update.packages(checkBuilt=TRUE, ask=FALSE)
+updateR()
+```
+
+Radi lakše izrade programa (skripti) i upravljanja kôdom sustava R, tijekom teèaja æemo koristiti RStudio, integralnu platformu za razvoj *(engl. Integrated Development Environment - IDE)* pripremljenu upravo za sustav R. Ova platforma ukljuèuje razne funkcionalnosti, kao što su automatsko detektiranje grešaka u kôdu (engl. *debug*) i pripremu vlastitih paketa, a integrirana je s dokumentacijom o funkcijama te omoguæuje integraciju s alatima za automatsku izradu izvještaja kao što su *Sweave* (integracija s dokumentima programa Latex) i R Markdown (izrada HTML-dokumenata). Relativno noviji paket *rmarkdown* u znatnoj je mjeri olakšao reproducibilnu znanost i izvještavanje integrirajuæi veæi broj softwera. Uz nove funkcionalnosti RStudija koje u RMarkdown dokumentima dopuštaju dijelove razlièitih programskih jezika doveo je pojam reproducibilnosti na posve novu razinu. Korisnik tako danas u jednom dokumentu ima moguænost korištenja bilo kojeg programskog jezika u kojem može zna/može riješiti neki problem u jedinstvenom dokumentu (primjerice Tex, Python, R...) kombinirajuæi njih s pisanjem teksta rada ili izvještaja (engl. *literate programming*). 
+
+Ukoliko u svojem radu koristite RStudio prelazak na novu verziju R-a je još jednostavniji. S CRAN repozitorija instalirajte željenu verziju R-a, otvorite RStudio i svi æe paketi iz ranijih verzija biti dostupni i u novoj. RStudio æe automatski prepoznati novu verziju i raditi s njom. Ukoliko to ne želite, pod opcijama programa namjestite (RStudio - Tools - Global Options - General) namjestite željenu verziju R-a za rad. RStudio, takoðer, omoguæava instaliranje i/ili ažuriranje pojedinih paketa interaktivno. 
+ 
+### Poèetak rada
+
+Program R pokreæe se na neki od uobièajenih naèina za operacijski sustav Windows:
+
+- dvostrukim klikom lijevom tipkom miša na ikonu na radnoj površini (engl. *Desktop*)
+
+- klikom lijeve tipke miša na ikonu na traci za brzo pokretanje programa (engl. *Quick Launch*) 
+
+- upisom R-3.4.1 u prompt prozor sustava Windows.
+
+
+#### Zadavanje naredbi
+
+Veæina akcija koje želite napraviti u sustavu radi se putem unosa naredbi koje obièno izgledaju ovako: znak **>** ukazuje na spremnost sustava na prihvat nove naredbe (engl. *prompt*) i sustav R ga automatski stavlja na poèetak retka. Korisnik nikada ne upisuje znak za spremnost kao dio kôda.
+
+Nakon pisanja naredbe potrebno je pritisnuti tipku [ENTER].
+
+Postoji nekoliko naèina da sustavu prenesete naredbe:
+
+- izravan upis naredbe u prompt prozor na opisani naèin
+	
+- kopiranje i lijepljenje naredbe iz nekog drugog dokumenta (pojedini red, dio ili cijeli kôd) pritom treba paziti da se ne kopira znak spremnosti sustava (engl. *prompt*) > ili znak prekida naredbe +
+	
+- kopiranje i lijepljenje naredbe iz tekstualne datoteke s kôdom sustava R koji nosi nastavak .R; ovaj oblik datoteka može se otvoriti u tekst editoru ili u editoru kôda kakav je Tinn-R ili RStudio
+	
+- pripremiti cjelokupnu skriptu u editoru kôda i poslati je na izvršenje na R konzolu.
+
+Sustav R æe prihvatiti naredbu koja ima ispravnu sintaksu. Ako to nije sluèaj pojavit æe se oznaka kojom sustav traži završetak sintakse u obliku znaka plus +. Ukoliko ne želite završavati naredbu, pritisnite tipku [esc].
+
+Kako je za poèetnike rad s naredbama ponekad zastrašujuæi, nekoliko grupa razvija i grafièka suèelja za rad o kojima u ovome teèaju neæe biti govora. Najèešæe rabljeno grafièko suèelje za rad u sustavu R je *R commander* dok primat u radu s web grafièkim suèeljima je Deducer.
+ 
+
+
+
+Radi preglednosti kôda, od sada æemo pripremljene programe otvarati u programu RStudiJU. Pokrenite RStudio. Ukratko æemo se upoznati s izgledom programa.
+
+
+
+
+#### Postavljanje radnog direktorija
+
+Za korisnike operacijskog sustava Windows važno je napomenuti da sustav R ne može koristiti notaciju putanje do odreðene datoteke na naèin kako se to radi unutar sustava Windows. Na primjer, sustav R neæe moæi proèitati
+
+```{r, eval=F, echo=T}
+c:\mydocuments\file.txt
+```
+
+iz razloga što znak *backslash* prepoznaje kao tzv. engl. *escape character* koji sa sobom nosi alternativno tumaèenje sljedeæeg znaka u nizu znakova. Iz tog razloga putanje do datoteka moraju se promijeniti na jedan od ova dva naèina:
+
+1) ili dvije dvostruke linija unatrag (engl. *backslash*)
+
+*"c:\\mydocuments\\file.txt"*
+ 
+2) ili jednostruka linija unaprijed (engl. *forwardslash*)
+
+*"c:/mydocuments/file.txt"*
+
+Prije poèetka rada potrebno je definirati radni direktorij. Informacija o trenutaènom radnom direktoriju dobiva se na ovaj naèin:
+
+
+```{r, eval=F, echo=T}
+getwd()
+```
+
+Radni direktorij odreðuje se na sljedeæi naèin:
+
+```{r, eval=F, echo=T}
+setwd("putanja/moj_direktorij")
+```
+
+
+#### Neke osnovne funkcije za rad u sustavu:
+
+U nastavku slijedi nekoliko funkcija koje je dobro znati prilikom samog poèetka rada u R sustavu.
+
+Za ispis svih objekata u radnom prostoru (engl. *workspace*) upišite:
+
+```{r, eval=F, echo=T}
+ls()
+```
+
+Otvaranje informacijske kartice željene funkcije, primjer za funkciju *lm()*
+
+```{r, eval=F, echo=T}
+?lm
+```
+
+Snimanje i uèitavanje objekta i/ ili cjelokupnog radnog prostora:
+
+```{r, eval=F, echo=T}
+save(ime_objekta, file="ime_datoteke.RData") 
+```
+
+Snimanje liste objekata na tvrdi disk:
+
+```{r, eval=F, echo=T}
+save(c(ime_objekta1, ime_objekta2), file="ime_datoteke.RData") 
+```
+
+Snimanje cjelokupnog radnog prostora (svi objekata aktivne sesije) na tvrdi disk
+
+```{r, eval=F, echo=T}
+save.image("ime_datoteke.RData")
+```
+
+Uèitavanje cjelokupnog radnog prostora:
+
+```{r, eval=F, echo=T}
+load("ime_datoteke.RData")
+```
+
+Snimanje povijesti (datoteke history) na tvrdi disk:
+
+```{r, eval=F, echo=T}
+savehistory(file="ime.Rhistory")
+```
+
+Uèitavanje povijesti (datoteke history) u radni prostor:
+
+```{r, eval=F, echo=T}
+loadhistory(file="ime.Rhistory")
+```
+
+***
+**Napomena:**
+
+U konzolu sustava R upisujemo naredbe. Simbol <- je operator pridruživanja. Veoma slièno, ipak ne identièno, ponaša se i drugi simbol pridruživanja vrijednosti =.
+
+Simbol # predstavlja poèetak komentara i sve napisano desno, ukljuèujuæi i sam znak, biti æe zanemareno prilikom izvoðenja naredbi.
+
+Pprogram otvaramo R dvostrukim klikom lijevom tipkom miša na ikonu na radnoj površini. Kopirati je potrebno sve izmeðu znakova prompt > i komentara #. 
+
+Ne smeta ako je unesen i komentar - program R æe ga zanemariti.
+
+***
+
+
+**PITANJA ZA PONAVLJANJE:**
+
+1) Kojom funkcijom odreðujemo radni direktorij u R-u?
+	
+2) Što su to vinjete? Kojom funkcijom ih možete pregledati i otvoriti?
+	
+3) Što æete dobiti ukoliko u konzoli izvršite naredbu *help()* bez zadanih argumenata? Prokomentirajte.
+	
+4) Što æete dobiti ukoliko u konzoli izvršite naredbu *help(sd)* ili *help(base)* s dodanim argumentom? Prokomentirajte.
+
+4) Pomoæu funkcije *chooseCRANmirror()* odredite kao željenu stranicu s koje æete uzimati pakete onu iz Italije.
+	
+5) Postoji li stranica CRAN-a u Hrvatskoj?
+	
+6) Odredite u sustavu radni direktorij ~/S720/user.
+	
+7) Prokomentirajte poruku sustava kada ste zatražili skupove podataka iz paketa base.
+	
+8) Kojim znakom možete zamijeniti funkciju *help()*?
+	
+9) Kojim znakom možete zamijeniti funkciju *help.search()*?
+	
+9) Kojom biste funkcijom snimili cjelokupan radni prostor po završetku rada?
+	
+10) Razlikuje li R velika i mala slova?
+
+11) Koja je razlika izmeðu lokalnog i globalnog pretraživanja? Navedite primjere funkcija.
+
+12) Koja je razlika izmeðu funkcija library i require (ako postoji)?
+
+**ZADACI ZA SAMOSTALNI RAD:**
+
+```{r, eval=F, echo = T, comment=NA}
+#ZADATAK 1:Kojom biste funkcijom zatražili informaciju 
+#o trenutnom radnom direktoriju?
+
+#ZADATAK 2: Definirajte željeni radni direktorij kao direktorij 
+#u kojemu se nalaze skripte za ovaj teèaj.
+
+#ZADATAK 3: Kreirajte objekt koji æete nazvati razlika. 
+#U taj objekt spremite razliku brojeva brojeva 19217 i 19113. 
+#Što bi se dogodilo da ovu razliku nismo spremili u objekt?
+
+#ZADATAK 4: Kreirajte objekt pod nazivom div. 
+#Objekt treba biti broj 3384 podijeljeno s 51:
+
+#ZADATAK 5: Instalirajte paket ggplot2 i uèitajte ga u radni prostor.
+#Ima li ovaj paket vinjete, ako da, koliko?
+```
+
+
+
+
+ 

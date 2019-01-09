@@ -1,0 +1,579 @@
+---
+title: "Manipulacija tesktom u R-u"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+#Manipulacija tesktom u R-u
+
+Vrlo èesto najviše vremena u obradi podataka i analizi provede se ispravljajuæi pogreške i homogeniziranje formata u svojim skupovima podataka. To je osobito vrijedi za sluèajeve kada želimo sintetizirati više skupova podataka iz razlièitih izvora. R ima bogat skup funkcija dizajniran za manipulaciju tekstualnih podataka èime olakšava èišæenje, formatiranje i obradu informacija. Unutar sustava postoje funkcije koje nam olakšavaju rad s varijablama tipa *character* ali je veoma važno i znati za neke argumente ovih funkcija koje R interpretira kao regularne izraze. Upoznat æemo se s osnovama manipulacije tekstualnim podacima u R-u od kojih mnoge omoguæavaju unos regularnih izraza za prepoznavanje obrazaca kao argumenata ovih funkcija.
+
+
+
+## Osnovne funkcije za rad sa znakovima
+
+Znakovni (tekstualni) vektor možemo kreirati, uz veæ spomenute funkcije kreiranja vektora pa i uz pomoæ funkcije *character()*. Kao i s  drugim tipovima vektora unutar sustava R moguæe je postaviti specijalni upit na vektor kako bismo dobili informaciju da li je znakovnog (tekstualnog) tipa putem funkcije *is.character()* te vektor nekog drugog tipa prevesti u znakovni putem funkcije *as.character()*. 
+
+Unutar sustava postoje funkcije koje nam olakšavaju rad s varijablama tipa *character* ali je veoma važno i znati za neke argumente ovih funkcija koje R interpretira kao regularne izraze. Najèešæe funkcije za rad kojima se omoguæuje rad sa znakovnim (tekstualnim) vektorima kao što su *touper()* koja mijenje mala slova u velika tiskana i njezina inverzna funkcija *tolower()* te niz funkcija koje rade prepoznavanje i selekcije dijelova znakovnog vektora kao što su primjerice: *grep()*, *grepl()*, *sub()*, *gsub()*, *strsplit()* te mnoge druge.
+
+Upoznajt æemo se s najvažnijim funkcijama za baratanje tekstualnim vektorima te osnovnim funkcijama za korištenje regularnih izraza neophodnih u procesu manipulacije i pripreme podataka za statistièku analizu. Funkcije za rad s tekstualnim podacima nalaze se u osnovnom paketu *base*. Mnoge su od njih ponovno implementirane kroz paket *stringr* u pokušaju da se njihova sintaksa ujednaèi i olakša rad s funkcijama.
+
+###Regularni izrazi
+
+
+Funkcije na stringovima koje su povezane s regularnim izrazima generalno se mogu podijeliti na funkcije koje:
+
+
+* identificiraju poklapanje s obrascem: *grep(..., value = FALSE)*, *grepl()*, *stringr::str_detect()*
+
+* identificiraju toèno poklapanje s obrascem: *grep(..., value = TRUE)*, *stringr::str_extract()*, *stringr::str_extract_all()*
+    
+* lociranju obrazaca unutar stringa, primjerice daju poèetnu poziciju od kuda obrazac poèinje: *regexpr()*, *gregexpr()*, *stringr::str_locate()*, *string::str_locate_all()*
+
+* zamjenjuju obrazac: *sub()*, *gsub()*, *stringr::str_replace()*, *stringr::str_replace_all()*
+    
+* dijele string prema zadanom obrascu: *strsplit()*, *stringr::str_split()*
+
+
+Regularni izrazi se mogu definirati kao uzorak koji opisuje skup nizova ili jednostavnije reèeno, regularni izrazi daju upute funkciji na koji naèin da pariraju i zamijene odreðene znakove i daju izuzetnu funkcionalnost sustavu u manipulaciji znakovima. 
+
+U sustavu R regularni izrazi (*regexps*) postoje dva oblika: produljeni (engl. *extended*) i oni nalik jeziku Perl (engl. *Perl-like*) regularni izrazi i u funkcijama se oznaèavaju kao *perl=TRUE*). Dodatno, postoje i fiksni oblici koji se prepoznaju upravo u zadanom formatu. Malo æemo se bolje upoznati s produljenim oblikom.
+Regularni izrazi konstruiraju analogno aritmetièkim izrazima, korištenjem raznolikih operatora. Cjelokupan izraz podudara se s niti jednim ili više tekstovnih znakova. Osnovni graðevni blok je regularni izraz koji odgovara jednom tekstualnom znaku. Veæina tekstualnih znakova, ukljuèujuæi sva slova, su regularni izrazi koji se podudaraju sami sa sobom. Ostali znakovi, kao što su i metaznakovi imaju posebna znaèenja i koriste se za generalizaciju izraza.
+
+
+Za poèeteak rada s regularnim izrazima dobro je znati sljedeæu sintaksu:
+
+```{r, eval=F,comment=NA, echo = T}
+
+- '.' sve osim praznog znaka " " 
+
+- '?' prethodni znak je opcionalan i mora biti barem jednom
+
+- '+' prethodni znak bit æe uparen barem jednom
+
+- '*' prethodni znak bit æe uparen niti jednom ili više puta
+
+- '{n}' prethodni znak bit æe uparen n puta
+
+- '{n,}' prethodni znak bit æe uparen n ili više puta
+
+- '{n,m}' prethodni znak bit æe uparen barem n puta ali ne više od m puta
+
+- '^' uparuje poèetak linije
+
+- '$' uparuje kraj linije
+
+- '|' ili
+
+- '( )' zagrade za grupiranje
+
+- '[ ]' zagrade za klasu znakova
+
+-  r '\' znak za izlaz.
+```
+
+#### Oznaèivaèi broja ponavljanja obrasca
+
+```{r, eval=F,comment=NA, echo = T}
+
+- '*': uparuje se barem 0 puta
+
+- '+': uparuje se barem jednom
+
+- '?': uparuje se najviše jednom
+
+- '{n}': uparuje se toèno n puta
+
+- '{n,}': uparuje se barem n puta
+
+- '{n,m}': uparuje se izmeðu n i m puta.
+
+```
+
+
+#### Metaznakovi
+
+Metaznakovi su znakovi s posebnim znaženjem u regularnim izrazima. Možemo ih smatrati nekim oblikom "zamjenskih znakova". Metaznakovima tražimo informacije o ponavljanjima i lokaciji obrasca u stringu i oni u izrazima ismaju specijalna znaèenja. Metaznakove možemo èitati i bez njihova posebna znaèenja ali u tom sluèaju moramo ispred njih navesti oznaku engl. *backslash* èime oznaèavamo izlaz iz sfere metaznakova.
+
+#### Oznake klase znakova
+
+Moguæe je definirati i èitavu klasu znakova kao što su znakovi, brojevi, slova i slièno. Postoje dva naèina zapisa cijele klase znakova:
+
+1)  oznaèavenje uglatom zagradom i dvotoèkama ```r '[:  :]'```
+
+2)  oznaèavanje znakom engl. *backslash ```{r paste('\', sep="")```.
+
+
+
+i specijalnim znakovima.
+
+Ova dva naèina ponekad je moguæe kombinirati.
+
+
+```{r, eval=F,comment=NA, echo = T}
+
+- '[:digit:]' ili '\d': znamenka, 0 1 2 3 4 5 6 7 8 9, ekvivalentno '[0-9]'
+
+- '\D': ne-znamenka, ekvivalentno '[^0-9]'
+
+- '[:lower:]': mala pisana tzv. lower-case slova, ekvivalentno r '[a-z]'
+
+- '[:upper:]': velika tiskana tzv. upper-case slova, ekvivalentno r '[A-Z]'
+
+- '[:alpha:]': alfanumerièki znak, ekvivalentno '[[:lower:][:upper:]]' ili '[A-z]'
+
+- '[:alnum:]': alfanumerièki znakovi characters, ekvivalentno '[:alpha:][:digit:]' ili '[A-z0-9]'
+
+- '\w': znakovi rijeèi, ekvivalentno '[[:alnum:]]' ili '[A-z0-9]'
+
+- '\W': ne rijeè, ekvivalentno '[^A-z0-9_]'
+
+- '[:xdigit:]': heksadecimalni broj (baza 16), ekvivalentno '[0-9A-Fa-f]'
+
+- '[:blank:]': prazan znak, primjerice *space* ili *tab*
+
+-  '[:space:]': znak za prostor: *tab*, *newline*, *vertical tab* itd.
+
+- '\s': *space* ` `
+
+- '\S': *not space*
+
+- '[:punct:]': znakovi interpunkcije
+
+- '[:graph:]': grafièki znakovi èitljivi ljudima: ekvivalentno '[[:alnum:][:punct:]]'
+
+- '[:print:]': znakovi koji se mogu printati, ekvivalentno '[[:alnum:][:punct:]\\s]'
+
+- '[:cntrl:]': kontrolni znakovi, kao '\n' ili '\r',  '[\x00-\x1F\x7F]'
+```
+
+
+
+#### Usporedba regularnih izraza nasuprot shell programiraju 
+
+Oznaèava (engl *globbing*) uparivanje stringova temeljeno na tzv. *wildcards* znakovima. *Wildcard* znak može se koristiti za zamjenu bilo kojeg znaka u stringu. Proces *globbinga* koristi se za prepoznavanje putanji do datoteka i ima veoma jednostavnu sintaksu. Donekle je slièan sustavu regurarnih izraza i èesto se miješa s njime. Dajemo pregled *globbing* sintakse i usporedbe s regularnim izrazima:
+
+```{r, eval=F,comment=NA, echo = T}
+- '*': uparuje neki broj nepoznatih znakova, ekvivalentno . u regularnim izrazima
+
+- '?': uparuje jedan nepoznati znak, ekvivalentnto kao . u regularnim izrazima
+
+- '\': jednako kao i u regularnim izrazima
+
+- '[...]': jednako kao i u regularnim izrazima
+
+- '[!...]': jednako kao '[^...]' u regularnim izrazima.
+
+```
+
+
+
+Upoznat æemo se s osnovnim funkcijama za manipulaciju karakternim podacima iz *base* paketa i paketa *stringr*.
+
+```{r, eval=T,comment=NA, echo = T}
+#prisjetimo se izdrade vektora tipa character
+vektor <- c("ADRESA",NA, NA, 1, 'IME', T)
+class(vektor)
+```
+
+Funkcije base paketa za manipulaciju znakovima:
+
+```{r, eval=T,comment=NA, echo = T}
+rijeè <- "nekolicina"
+```
+
+Funkcijom *substr()*, izdajamo dio stringa na zadanoj lokaciji.
+
+```{r, eval=T,comment=NA, echo = T}
+#izdvajamo dio od prvog do èetvrtog elementa (pozicije u stringu)
+substr(rijeè,start=2,stop=4)
+#izdvajamo samo dio na prvoj poziciji
+substr(rijeè,start=1,stop=1)
+```
+
+Funkcija *nchar()* tražimo informaciju o broju znakova u stringu.
+
+```{r, eval=T,comment=NA, echo = T}
+nchar(rijeè)
+```
+
+
+Funkcija *tolower()* - sve znakove prebacuje u mala slova.
+
+```{r, eval=T,comment=NA, echo = T}
+tolower(rijeè)
+```
+
+Funkcija *toupper()* - sve znakove prebacuje u velika tiskana slova.
+
+```{r, eval=T,comment=NA, echo = T}
+toupper(rijeè)
+```
+
+Funkcija *strsplit()* - dijeli string prema zadanim parametrima.
+
+```{r, eval=T,comment=NA, echo = T}
+strsplit(rijeè,split="k",fixed=TRUE)
+
+#dijelimo zadani string na svakom slovu (znaku) k
+v<- strsplit(rijeè,split="k",fixed=TRUE)
+
+#rezultat je lista
+v
+```
+
+Funkcija *paste()* kombinira proizvoljne stringove u jedinstveni u string.
+ 
+
+```{r, eval=T,comment=NA, echo = T}
+#?paste
+paste("redak", 1:5, sep="_")
+
+#koristimo razdijeljene stringove iz prthodne funkcije za izradu novog
+rijeè2 <- paste(v[[1]][1], v[[1]][2],sep='_')
+
+rijeè2
+```
+
+Funkcija *grep()* - prepoznaje unutar stringa zadani obrazac.
+
+```{r, eval=T,comment=NA, echo = T}
+l<- c('jagoda','banana','kruška','10','lubenica')
+
+#?grep - biramo rezultat, indeks položaja ili vrijednost (string)
+grep('a',l)
+
+grep('a',l,value=TRUE)
+
+#prepoznaje string koji sadrži znamenku
+grep('[[:digit:]]',l,value=TRUE)
+
+grep('.',l)
+
+#traženje eksplicitnog stringa
+grep('.',l,fixed=TRUE)
+grep('anan',l,fixed=TRUE, value=T)
+
+#prokomentirajte argument invert
+grep('[[:lower:]]',l,invert=TRUE)
+
+#pronaðite sve elemente vektora l (vrijednosti) koji u sebi imaju znamenku
+grep('[[:digit:]]',l,invert=F, value=T)
+
+#na kojem se mjestu unutar vektora l nalaze?
+grep('[[:digit:]]',l,invert=F, value=F)
+
+grep('an|da',l, value =TRUE)
+```
+
+
+Funkcija *grepl()* vraæa logièki indeks o zadovoljavanju uvjeta.
+
+```{r, eval=T,comment=NA, echo = T}
+grepl('a',l)
+```
+
+Funkcijom *sub() * radimo zamjenu prvog simbola iz upita.
+
+```{r, eval=T,comment=NA, echo = T}
+#zamjenit æe prvo slovo a znakom $ u zadanom stringu
+sub('a','$',l)
+
+#zamijenit æe prvu znamenku znakom $ u zadanom stringu
+sub('[[:alpha:]]','$',l) 
+```
+
+Funkcija *gsub()* - za razliku od *sub()* zamijeni sve što odovara.
+
+```{r, eval=T,comment=NA, echo = T}
+#zamjena svih znamenki znakom $
+gsub('[[:alpha:]]','$',l) 
+
+#svaki simbol a zamijenit æe znakom $
+gsub('a','$',l)
+```
+
+Funkcija  *gregexpr()* - prepoznavanje obrasca i zamjena.
+
+
+```{r, eval=T,comment=NA, echo = T}
+#?gregexpr
+gregexpr('a',l)
+r <- regexpr('anan',l)
+
+r
+
+#traženje zadanog obrasca
+obrazac <- '[[:blank:]]'
+prvi_razmak <- regexpr(obrazac,l)
+prvi_razmak[[1]][1]
+```
+
+Funkcija *regmatches()* prikazuje koji dio je uspjela spariti.
+
+```{r, eval=T,comment=NA, echo = T}
+regmatches(l,r)
+```
+
+
+Uèitavanje tabliènih podataka, jedan oblik uèitavanja tekstualnih podataka. Uèitat æemo neke podatke s weba:
+
+
+Pokazat æemo samo jedan primjer analize teksta. Funkcijekoje æemo koristiti u funkcionalnostima su veoma sliène ranije prokazanim funkcijama za manipulacuju tekstom paketa *base()*. Veoma popularan paketa za manipulaciju stringovima s jednostavnije napisanom sintaksom. Primjer analize teksta; podaci o biomedicinskim èasopisima, paket *stringr()*.
+
+```{r, eval=T,comment=NA, echo = T}
+library(stringr)
+#url <- "www.biomedcentral.com/journals/biomedcentraljournallist.txt"
+biomed <-read.table("biomed.txt", 
+                    header=TRUE, 
+                    sep=",", 
+                    na.strings="NA", 
+                    dec=".", 
+                    strip.white=TRUE)
+```
+
+```{r, eval=T,comment=NA, echo = T}
+#vec.len = 1 argument daje nam samo jedan podataka za svaku varijablu
+str(biomed, vec.len = 1)
+```
+
+Napravit æemo jednostavnu analizu broja ponavljanja rijeèi u nazivima biomedicinskih èasopisa. Najprije pogledajmo podatke, tekst:
+
+```{r, eval=T,comment=NA, echo = T}
+head(biomed$Journal.name)
+```
+
+Radi lakšeg rukovanja, željeni vektor rijeèi izdvajamo u novu varijablu (objekt):
+```{r, eval=T,comment=NA, echo = T}
+imena <- biomed$Journal.name
+```
+
+Ujednaèavamo naèin pisanja, stavljamo sve u mala slova funkcijom *tolower()*:
+
+```{r, eval=T,comment=NA, echo = T}
+imena <- tolower(imena)
+```
+
+Pogledajmo rezultat:
+
+```{r, eval=T,comment=NA, echo = T}
+head(imena)
+```
+
+Mnogi nazivi èasopisa sadržavaju znakove interpunkcije, brišemo ih sve funkcijom *str_replace_all()* i pogledajmo rezultat:
+
+```{r, eval=T,comment=NA, echo = T}
+imena <-str_replace_all(imena, pattern ="[[:punct:]]", "")
+head(imena)
+```
+
+
+
+Zamijenili smo znakove interpunkcije ali sada imamo ponegdje višak razmaka pa mièemo razmake izmeðu rijeèi (definiramo regularni izraz koji æe prepoznati sve razmake izmeðu rijeèi, recikliramo objekt i pogledajmo prvih 6 podataka: 
+
+
+```{r, eval=T,comment=NA, echo = T}
+imena<- str_replace_all(imena, pattern ="\\s+", " ")
+
+head(imena)
+```
+
+Svaku rijeè stavimo u jedan element liste i pogledajmo prvi element liste:
+
+```{r, eval=T,comment=NA, echo = T}
+imena_list <-str_split(imena, pattern =" ")
+
+imena_list[[1]]
+```
+
+Pojednostavimo strukturu i pogledajmo prvih 6 podataka:
+
+```{r, eval=T,comment=NA, echo = T}
+rijeci_imena <- unlist(imena_list)
+
+head(rijeci_imena)
+```
+
+
+Zanima nas koliko jedinstvanih rijeèi se pojavljuje u skupu. Najprije radimo objekt sa skupom jedinstvenih rijeèi; nova funkcija *unique()* te pogledamo prvih 10 jedinstvenih rijeèi i duljinu vektora kako bismo znali koliko jedinstvenih rijeèi se nalazilo u tekstu. Nakon toga izradimo objekt klase *data.frame()* prema broju jedinstvenih rijeèi:
+
+```{r, eval=T,comment=NA, echo = T}
+jedinstvene_rijeci <- data.frame(unique(rijeci_imena))
+jedinstvene_rijeci[1:20,]
+
+str(jedinstvene_rijeci)
+
+length(jedinstvene_rijeci)
+```
+
+Imenujemo redke kao identifikatore o kojoj rijeèi se radi:
+
+```{r, eval=T,comment=NA, echo = T}
+rownames(jedinstvene_rijeci)<- unique(rijeci_imena)
+
+head(jedinstvene_rijeci)
+```
+
+Funkcijom length na objektu klase list tražimo informaciju o broju  jedinstvenih rijeèi koje su se pojavile u tekstu
+
+```{r, eval=T,comment=NA, echo = T}
+broj_jedinstvenih <- length(unique(rijeci_imena))
+
+broj_jedinstvenih
+```
+
+Zanima nas koja se rijeè pojavljuje u tekstu u kojoj frekvenciji; stvaramo vektor u koji æemo spremiti broj pojavljivanja svake rijeèi:
+
+```{r, eval=T,comment=NA, echo = T}
+brojim_rijeci <-data.frame(rep(0, broj_jedinstvenih))
+
+head(brojim_rijeci)
+```
+
+
+U ime redka stavljamo informaciju o nazivu. Primijetite kako atribut jednog objekta koristimo za dodjelu atributa drugog:
+
+```{r, eval=T,comment=NA, echo = T}
+rownames(brojim_rijeci)<- rownames(jedinstvene_rijeci)
+```
+
+Izbrojimo koliko se puta pojavila koja rijeè - primjer korištenja for petlje. For petlja nije optimalna radi saporosti veæ se preporuèa korištenje *apply()* obitelji petlji. Na kraju pogledamo rezultat:
+
+```{r, eval=T,comment=NA, echo = T}
+for(i in 1:dim(brojim_rijeci)[1])  {
+                            brojim_rijeci[i,1] = sum(rijeci_imena  == 
+                                                    jedinstvene_rijeci[i,])
+}
+
+head(brojim_rijeci)
+```
+
+Imenujemo redke:
+```{r, eval=T,comment=NA, echo = T}
+brojim_rijeci$rijec <- rownames(brojim_rijeci)
+names(brojim_rijeci) <- c( "broj", "rijec")
+```
+
+Sortiramo data.frame silazno; nova funkcija *order()*:
+
+```{r, eval=T,comment=NA, echo = T}
+brojim_rijeci <- jedinstvene_rijeci[order(brojim_rijeci$broj),]
+```
+
+
+Pogledajmo deset najèešæih rijeèi:
+
+
+```{r, eval=T,comment=NA, echo = T}
+brojim_rijeci[1:10]
+```
+
+Pogledajmo sumarnu statistiku:
+
+```{r, eval=F,comment=NA, echo = T}
+summary(brojim_rijeci$broj)
+```
+
+Neæemo više mnogo raditi s dobivenom variablom, ako je to sada *obièna* numerièka varijabla veæ æemo jedino vizualizirati uèestalost pojavljivanja pojedine rijeèi iz skupa imena èasopisa trenutno veoma popularnim prikazom *wordcloud* koji na sluèajan naèin rasporeðuje stringove iz skupa podataka a velièina ispisa stringa proporcionalna je nekoj varijabli iz istog skupa podataka, kod nas s uèestalošæu pojavljivanja koja je zapisana u varijabli *broj*.
+
+Najprije stvaramo vlastitu paletu za krajnju vizualizaciju:
+
+```{r, eval=T,comment=NA, echo = T}
+library(RColorBrewer)
+pal <- brewer.pal(8, "Dark2")
+pal <- pal[-(1:2)]
+```
+
+Uèitamo biblioteka koja sadrži funciju *wordcloud()* za željenu vizualizaciju:
+
+```{r, eval=T,comment=NA, echo = T}
+library("wordcloud") 
+```
+
+Prisjetimo se naèina eksporta u željeni grafièki ureðaj, slika ref{fig:worldcloud}:
+
+```{r, eval=F,comment=NA, echo = T}
+#otvaramo željeni ureðaj s postavkama
+png("wordcloud_biomedical_journal.png", width=1280,height=800)
+#crtamo
+wordcloud(brojim_rijeci$rijec,brojim_rijeci$broj, 
+          scale=c(8,.3),min.freq=2,max.words=100, random.order=T, 
+          rot.per=.15, colors=pal, vfont=c("sans serif","plain"))
+#zatvaramo grafièki ureðaj
+#dev.off()
+invisible(dev.off()) #invisible radi generiranja dokumenta u RMarkdownu
+```
+
+
+![Rezultat vizualizacije teksta funkcijom wordcloud \\label {fig:worldcloud}](wordcloud_biomedical_journal.png){ width=100% }
+
+
+
+**ZADACI ZA SAMOSTALAN RAD:**
+
+```{r, eval=F,comment=NA, echo = T}
+#ZADATAK 1: Uèitajte s donje adrease tablicu abc-local-radio.csv
+#Nakon što ste isprobali dolje navedene opcije uèitajte istu tablicu 
+#funkcijom read.csv. Koja je razlika izmeðu funkcija read.table() i read.csv?
+
+#lokacija web stranice
+abc <- "http://www.abc.net.au/local/data/public/stations/abc-local-radio.csv"
+
+#Uèitavanje podataka s web adrese u R
+radio <- read.table(abc,
+                   header = TRUE, 
+                   sep ="," ,
+                   stringsAsFactors = FALSE)
+
+radio_2 <- read.table(abc,
+                   header = TRUE, 
+                   sep ="," ,
+                   stringsAsFactors = TRUE)
+
+#ZADATAK 2: U objektu s imamo naziv satelitske snimke s vegetacijskim indeks
+
+s <- "MOD11A2.A2008209.h18v04.005.2008222201606.hdf"
+
+#Ispitajte adekvatnom funkcijom koliko znakova ima vektor s? 
+
+#Želimo svaki segment (znakove izmeðu toèaka) spremiti u zasebni element liste.
+
+#Izdvojite dio teksta iz naziva snimke koji požinje znakom na prvom mjestu i 
+#zavržava na  6 mjestu jer one predstavljaju ime proizvoda, 
+#senzora koji je snimi snimak.
+
+#Želimo napraviti ime objekt kojim æemo imenovati datoteku
+#na naèin koji je nama intuitivniji 
+#te sadrži informacije o proizvodu (sve do prve toèke) i danu 
+#snimanja, 209 dan 2008 godine (na ovom primjeru bi to bilo MOD11A2_2008209).
+#Kreirajte ovakav naziv iz zadanog vektora s.
+
+
+#ZADATAK 3: Koristite tekst naziva
+#https://www.vecernji.ba/svijet/zasto-se-slavi-8-ozujka-medunarodni-dan-zena-1066377. 
+#Ponovite analizu iz prethodne skripte te recite koja se rijeè najèešæe koristi u tekstu. 
+#Upoznajte se s funkcijom gsub. Zamijenite sve praznije u tekstu znakom _. 
+#Vizualizirajte broje jedinstvanih rijeèi funkcijom wordcloud.
+
+#ZADATAK 4: Prokomentirajte što rade sljedeæi upiti
+
+tekst <- c("^ab", "ab", "abc", "abd", "abe", "ab 12")
+
+grep("ab.", tekst, value = TRUE)
+grep("ab[c-e]", tekst, value = TRUE)
+grep("ab[^c]", tekst, value = TRUE)
+grep("^ab", tekst, value = TRUE)
+grep("\\^ab", tekst, value = TRUE)
+grep("abc|abd", tekst, value = TRUE)
+gsub("(ab) 12", "\\1 34", tekst)
+  
+
+#ZADATAK 5: Za izradu ovog zadatka koritite objekt naziva brojim_rijeci iz primjera 
+#analize teksta o nazivima biomedicinskih èasopisa te napravite stupèasti dijagram 
+#varijable brojim_rijeci. Promijenite sve dijelove prikaza prema želji, dodajte adekvatan 
+#naslov te u konaènici eksportirajte prikaz kao JPEG datoteku velièine 10 x 10 cm. Za izradu 
+#ovog zadatka koritite prema želji osnovnu (base) ili lattice grafiku. 
+```
+

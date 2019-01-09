@@ -1,0 +1,1644 @@
+---
+title: "Osnovne vrste podataka u sustavu R"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+# Osnovne vrste podataka u sustavu R
+
+```{r, eval=T, echo = FALSE}
+if (Sys.getenv("JAVA_HOME")!="")
+Sys.setenv(JAVA_HOME="")
+library(xlsx)
+library(knitr)
+```
+
+
+```{r, eval=T, echo = FALSE}
+pdf.options(encoding = 'ISOLatin2')
+```
+
+
+```{r, eval=F, echo = FALSE}
+pdf.options(encoding = 'CP1250')
+```
+
+
+
+Unutar sustava R postoji šest osnovnih atomskih (engl. *atomic*) vrsta podataka:
+
+- znak / slovo / tekst (engl. *character*, *string*)
+- realan broj / numerik (engl. *numeric*)
+- cijeli broj (engl. *integer*)
+- kompleksni broj (engl. *complex*)
+- logièki operator (engl. *logical*) - T (TRUE) / F (FALSE)
+- sirovi (engl. *raw*).
+
+
+
+Unutar sustava, definirani su i specijalni brojevi beskonaènost Inf (engl. *infinity*) primjerice 1/0 dok je 1/Inf = 0.
+
+```{r, eval=F, echo=T}
+#matematièke definicije
+1/0
+1/Inf
+```
+
+
+
+Sustav R je interaktivni kalkulator s odreðenim brojem ugraðenih funkcija i vrijednosti konstanti.
+
+
+
+Generalno definirane, a nedostajuæe vrijednosti u sustavu R su oznaèene oznakom *NA* (engl. *not available*) dok se nedefinirane vrijednosti, kao što je sluèaj 0/0 oznaèavaju s *NaN* te predstavljaju nedefiniranu vrijednost (engl. *not a number*). 
+
+Primjer:  Radimo vektor velièine 2 i ispisujemo ga na konzoli:
+
+```{r, eval=F, echo=T,comment=NA}
+a<-c(1,2) 
+a
+```
+
+Selekcijom trežimo element koji ne postoji:
+
+```{r, eval=F, echo=T,comment=NA}
+a[3] 
+```
+
+Ukoliko æelimo ispitati pojedini element vektora, radimo specifiène upite na svaki element vektora, primjerice spitujemo da li su pojedini elementi vektora *NA* vrijednosti:
+
+
+```{r, eval=F, echo=T,comment=NA}
+
+#
+#i
+is.na(c(0/0,NA))
+
+#ispitujemo da li su pojedini elementi vektora NAN vrijednosti
+is.nan(c(0/0,NA)) 
+```
+
+Takoðer su u ovom kontekstu ispitivanja svojstva brojeva korisne naredbe o provjeri pojedinog elementa vektora o njegovoj konaènosti, funkcija *is.finite()* i *is.infinite()*.  
+
+
+##Strukture podataka 
+
+R je objektno orijentirani jezik. Neki od poznatijih objektno orijentiranih jezika su i C++, Python, Smalltalk, PHP, Java, Perl, Ruby. Objektno orijentirani jezici se temelje na konceptu da objekt posjeduje atribute koji ga opisuju te njemu pridružene procedure koje se još nazivaju metodama. Tako i u osnovi sustava R postoje klase i metode (engl. *methods*). Klasa (engl. *class*) je definicija objekta. Sustav klasa govori nam što pojedini elementi u sustavu R u bîti jesu. Tipièno je za klase da unutar sebe imaju definirane isjeèke (engl. *slot*) koji se koriste za èuvanje specifiènih informacija za tu klasu objekta. Metode su funkcije koje djeluju jedino na odreðenoj klasi objekata. Generièke funkcije u sebi nose neku generièku (temeljnu) funkcionalnost - koncept , tako funkcija *print()* ispisuje objekte, funkcija *plot()* ih crta, *predict()* radi projekciju na novom skupu podataka, itd. No svaka od tih funkcija ponaša se nešto drugaèije u odnosu na klasu objekta na koji je primijenjena. 
+
+U osnovi, generièka funkcija ništa ne radi/raèuna veæ prepoznaje klasu objekta i tada pronalazi odgovarajuæu metodu koja odgovara tom tipu objekta i zove metodu. Metoda je ono što implementira generièke funkcije na objektu odreðene klase. Ako generièka funkcija ne pronaðe odgovarajuæu metodu za traženu klasu objekta, primjenjuje unaprijed zadanu metodu (engl. *default*). Ako takva nije definirana, sustav javlja pogrešku. U ovome teèaju neæemo iæi dublje u sustav metoda i klasa u sustavu R.
+
+U ovom æe dijelu  biti prikazan pregled najvažnijih struktura podataka sustava R *base*. Kako je veæ i ranije spomenuto, paket *base* èini osnovu jezika R.  Tablica u nastavku daje pregled struktura podataka u sustavu R na temelju njihove dimenzionalnosti i homogenosti podataka (svi sadržaji moraju biti iste vrste) ili heterogeni (sadržaj može biti razlièitih vrsta) kako je prikazano u tablici \ref{tab:Strukture podataka, R}.
+
+
+
+
+```{r , echo=FALSE ,  esults='asis', message=F, comment=NA, cache=F}
+#print(read.xlsx("strukture_podataka.xlsx", as.data.frame=T, stringsAsFactors = F,  sheetIndex=1, encoding="UTF-8" ), cex=0.5)
+
+x <- read.xlsx("strukture_podataka.xlsx", as.data.frame=T, stringsAsFactors = F,  sheetIndex=1, encoding="UTF-8" )
+options(knitr.kable.NA = '')
+kable(x, format = "pandoc", align=c(rep('c', 1), rep('r', 2)), col.names=c("Broj.dimenzija", "Homogeni", "Heterogeni"), row.names=F, caption="\\label{tab:Strukture podataka, R} Osnovne strukture podataka u sustavu R")
+```
+
+
+
+Primijetite jednu osobitost sustava R, a to je da nema skalar, odnosno vrstu podataka bez dimenzije. Svi skalari (alfanumerièki znakovi) su u sustavu R definirani kao vektori duljine 1.
+
+Gotovo svi drugi objekti u sustavu R su izgraðeni na ovim temeljinim strukturama. Alati unutar objektno orijentiranog jezika se takoðer grade na ovim osnovama.
+
+Ako želite pogledati strukturu nekog objekta u sustavu R, najvažnija je funkcija *str()* što je skraæenica engleske rijeèi *structure* koja nam na konzoli daje opis objekta na jednostavno èitljiv naèin.
+
+
+
+###Vektori
+
+Osnovna vrsta podataka u sustavu R je vektor. Vektori dolaze u dva oblika: atomski (engl. *atomic*) i liste (engl. *list*). Ove dvije vrste razlikuju se po svom sadržaju. Dok podaci unutar atomskog vektora nužno moraju biti iste vrste, sadržaj liste to ne mora biti. Vektori u sustavu R imaju tri osnovna obilježja:
+	
+	
+1) Što su? Koje su vrste?
+
+Ispitivanje ovih svojstava vektora radimo specifiènim funkcijama paketa *base*.
+
+```{r, eval=F, echo=T,comment=NA}	
+typeof()
+```
+
+2) 	Koliko elemenata sadrži neki vektor, koja duljina vektora?
+```{r, eval=F, echo=T,comment=NA}
+length()
+```
+
+3) Dodatni atributi, metapodaci o vektoru.
+
+Jedini metapodaci koji možemo dodijeliti klasi objekta tipa vektor je atribut imenovanja svakog elementa vektora, *names()*.
+
+```{r, eval=F, echo=T,comment=NA}
+attributes()
+```
+
+
+#### Atomski vektori
+
+Atomski vektori mogu biti logièki (engl. *logical*), cjelobrojni (engl. *integer*) ili numerièki (engl. *numeric*) te tekstualni (engl. *character* ili *string*). Rjeðe su kompleksni (engl. *complex*) ili sirovi binarni (engl. *raw*). O posljednje dvije vrste neæe biti obraðene u ovome teèaju.
+Vektori se najèešæe izraðuju funkcijom *c()* što je prvo slovo engleske rijeèi *combine*. 
+
+**Napomena: ** Decimalni separator u sustavu R je decimalna toèka.
+
+
+**Primjer:**
+
+Izrada tekstualnog vektora i pohrana u objekt naziva tekstualni_vektor te primjeri izrade numerièkog i eksplicitno cjelobrojnog vektora.
+
+
+```{r, eval=T, echo=T,comment=NA}
+#izrada vektora, kombiniranje bilo kojih stringova u vektor
+tekstualni_vektor <- c("tekst1", "tekst2", "tekst3", "tekst4", "tekst5")
+
+#ispis
+tekstualni_vektor #(engl. "character" vektor, dva teksta (engl. "strings")
+
+#izrada numerièkog vektora
+```{r, eval=T, echo=T,comment=NA}
+numerièki_vektor <- c(1, 7.5, 6.5, 8.4)
+```{r, eval=T, echo=T,comment=NA}
+
+
+```{r, eval=T, echo=T,comment=NA}
+numerièki_vektor2 <- c(1,8,18,33)
+```
+
+Ukoliko želimo eksplicitno izraditi cjelojelobrojni vektor:
+
+```{r, eval=T, echo=T,comment=NA}
+cjelobrojni_vektor <- c(1L, 6L, 10L) 
+```
+
+Izrada sekvence cjelobrojnih vrijednosti:
+
+```{r, eval=T, echo=T,comment=NA}
+cjelobrojni_vektor2 <- 1:20 
+
+cjelobrojni_vektor2
+```
+
+Ukoliko želimo kreiranje logièkog vektora i pohraniti ga u u objekt naziva *logièki_vektor*:
+
+```{r, eval=T, echo=T, comment=NA}
+logièki_vektor <- c(TRUE, FALSE, T, F)
+
+logièki_vektor
+```
+
+Objekt klase vektor možemo izraditi i funkcijom *vector()*.
+
+```{r, eval=T, echo=T,comment=NA}
+logièki_vektor_2 <- vector("logical",length=15)
+
+logièki_vektor_2
+```
+
+Izrada vektora s dodatnim atributima - najèešæi opcionalni atribut u sustavu R je *names()*.
+
+```{r, eval=T, echo=T,comment=NA}
+vektor_1 <- c("Marko", 9, "sladoled", T)
+```
+
+Dodjeljujemo vektoru atribut *names* i ispisujemo objekt, vektor:
+
+```{r, eval=T, echo=T,comment=NA}
+names(vektor_1) <- c("ime", "starost", "najdraža_hrana", "sestra_brat")
+
+
+vektor_1
+```
+
+
+Odreðivanje tipa vektora radi se upitima, kako smo veæ naveli funkcijom *typeof()*, ili specifiènijim testovima kao što su: *is.character()* - funkcija ispituje da li su elemeni vektora tipa karakter, *is.double()* - funkcija ispituje da li su elementi vektora realni brojevi, *is.integer()* - funkcija ispituje da li su elementi vektora cijeli brojevi, *is.logical()* - funkcija ispituje da li su elementi vektora logièkog tipa, ili opæenitijima: *is.atomic()* - radi li se o atomskom tipu elemenata ili pak *is.na()* kojim ispitujemo da li je svaki pojedini element vektora NA vrijednost).
+
+**Napomena: **
+
+Tekst u sustavu R mora biti oznaèen navodnicima. U suprotnom R smatra da se radi o objektu u njegovom prostoru ili imenu varijable.
+ 
+
+#### Indeksiranje i selekcija podskupa vektora
+
+
+Sve primjere selekcije elemenata objakta koje æemo pokazati na primjeru vektora, vrijede i na svim ostalim klasama objekata s kojima æemo se upoznati. 
+
+
+##### Selekcija putem indeksa (položaja elementa u objektu)
+
+
+
+Selekcija elemenata vektora (engl. *subset*) provodi se operandom[]. Unutar zagrada indeksom rednog broja elementa u vektoru dobiti æemo željenu vrijednost. Selekcija drugog elementa objekta vektor_1:
+
+```{r, eval=T, echo=T}
+vektor_1[2]
+```
+
+Selekcija prvog i treæeg elementa vektor_1:
+
+```{r, eval=T, echo=T, comment=NA}
+vektor_1[c(1,3)]
+```
+
+ili putem atributa, kod vektora moguæ jedino atribut *names()*.
+
+```{r, eval=T, echo=T, comment=NA}
+vektor_1["starost"]
+```
+
+
+Negativni indeksi se koriste u sluèajevima kada želimo izbaciti odreðene elemente vektora kako je pokazano u sljedeæem primjeru:
+
+Izbacivanje drugog i èetvrtog elementa vektora_1: 
+
+```{r, eval=T, echo=T,comment=NA}
+vektor_1[-c(2,4)]
+```
+
+
+
+##### Selekcija logièkim uvjetima
+
+Da bismo pokazali kako funkcionira logièka selekcija, dajemo jednostavan primjer na vektoru cijelih brojeva iako se do sada još nismo upoznali s logièkim operatorima u R-u.
+
+```{r, eval=T, echo=T, comment=NA}
+#radimo vektor naziva x koji se sastoji od sekvence cijelih brojeva od 1 do 40
+x <- 1:40
+```
+
+Selektiramo svaki drugi element poèevši od prvog, zadani obrazac:
+```{r, eval=T, echo=T, comment=NA}
+x[c(T,F)]
+```
+
+Selektiramo svaki drugi element poèevši od drugog, zadani obrazac:
+```{r, eval=T, echo=T, comment=NA}
+x[c(F,T)]
+```
+
+Selektiramo sve elemente èije vrijednosti iznose 7 ili više. Prije no što napravimo zadatak pogledajmo što je rezultat upita:
+
+```{r, eval=T, echo=T,comment=NA}
+x>=7
+```
+
+Ranije dobiveni logièki vektor koristimo kao uvjet za selekt na prvobitnom elementu
+```{r, eval=T, echo=T, comment=F}
+x[x>=7]
+```
+
+Primje složene selekcije:
+```{r, eval=T, echo=T, comment=NA}
+x[x<=30 | x==200]
+```
+
+Korištenjem negativnih indeksa možemo napraviti selekciju svih elemanata vektora. Tako æemo napraviti selekciju svih elemanata vektora osim od drugog do èetvrtog elementa na sljedeæi naèin.
+
+Izbacivanje drugog do èetvrtog elementa *vektora_1* 
+
+```{r, eval=F, echo=T, comment=NA}
+vektor_1[-(2:4)]
+```
+
+Primijetite da, ukoliko neprekinutu stvarate sekvencu cijelih brojeva, nije potrebno iste konbinirati korištenjem funkcije *c()*.
+
+
+
+
+
+## Opcionalni atributi objekata u sustavu R
+
+Svi objekti u sustavu R mogu imati opcionalne atribute. Atributi pojedinog objekta mogu se pozvati i pregledati pojedinaèno funkcijom **attr()** ili svi moguæi atributi na zadanoj klasi objekta odjednom, korištenjem funkcije *attributes()*. Upoznajmo se s funkcijom *names()* otvaranjem informacijske kartice funkcije na naèin da u R konzolu upišemo: *?names*.
+
+```{r, eval=T, echo=T, commnet=NA}
+attributes(vektor_1)
+```
+
+```{r, eval=T, echo=T, commnet=NA}
+attr(vektor_1, "names")
+```
+
+### Opcionalni atributi na vektorima, klasa objekta *vector*.
+
+Jedini atribut koji možemo dodijeliti klasi objekta vektor je atribut imenovanja, engl. *names*. Elemente vektora možemo imenovati na tri naèina:
+
+1)	prilikom izrade vektora:
+
+```{r, eval=T, echo=T,comment=NA}
+x <- c(var1 = 1, var2 = 2, var3 = 3)
+x
+```
+
+2) izmjenom postojeæeg vektora: 
+
+```{r, eval=T, echo=T,comment=NA}
+#u prvom koraku samo napravimo željeni vektor, u ovome sluèaju vektor x s tri elementa
+x <- 1:3
+x
+
+
+
+#u drugoj iteraciji, dodjeljujemo ime svakom elementu vektora x
+names(x) <- c("var1", "var2", "var3")
+x
+```
+
+3) izradom izmijenjenog vektora:
+
+```{r, eval=F, echo=T}
+#upoznajmo se s funkcijom setNames tako što æemo otvoriti informacijsku karticu funkcije
+x <- setNames(1:3, c("var1", "var2", "var3"))
+x
+```
+
+**Napomena: **
+
+Sustav R prema konvenciji logièke operatore u suštini smatra numericima. Tako je T (TRUE) definirano i kao 1 dok F (FALSE) ima vrijednost 0.
+
+
+
+**PITANJA ZA PONAVLJANJE:**
+
+1) Nabrojite osnovne, atomske, strukture podataka u R-u.
+2) Koja su tri osnovna obilježja vektora?
+3) Kojom funkcijom biste ispitali od kakvog atomskog tipa podataka je kreiran zadani vektor?
+4) Kojom funkcijom biste ispitali da li je atomski vektor numerièki?
+5) Kojom funkcijom biste ispitali da li je atomski vektor numerièki, cjelobrojni?
+6) Kojim funkcijama možemo kreirati vektor? 
+7) Kojom funkcijom biste ispitali atribute odreðenog vektora?
+8) Na koji biste naèin izbacili posljednji element nekog vektora?
+9) Što ispitujemo sljedeæom linijom: *typeof(iris)[,2])*?
+10) Prokomentirajte dolje navedeni primjer i objastite radi èega æe nastati nevedene klase vektora:
+
+```{r, eval=F, echo=T}
+v <- c(7.5, "b")  # rezultat je tekstualni vektor (engl. "character")
+v<- c(TRUE, 2)  # rezultat je numerièki vektor (typeof=double)
+v<- c("a",TRUE)  # rezultat je tekstualni vektor
+```
+
+ 
+### Liste
+
+Liste (engl. *list*), za razliku od atomskih vektora, mogu sadržavati i druge vrste vektora, ukljuèujuæi i same liste. Radi ovog svojstva još ih nazivaju i rekurzivnim vektorima. Mogu se izraditi pomoæu funkcije *list()*, a ne više uz pomoæ funkcije *c()*.
+
+```{r, eval=F, echo=T}
+#upoznajmo se s naredbom, otvorimo informacijsku karticu funkcije *list()*
+?list
+```
+
+Prisjetimo se da ukoliko u konzolu samo unesemo ime objekta, R æe objekt ispisati:
+
+```{r, eval=T, echo=T, comment=NA}
+#izrada objekta klase list i stavljanje liste u objekt naziva lista_1
+lista_1 <- list(10, "z", FALSE, matrix(1:20, ncol=4, nrow=5))
+
+#ispis na konzoli
+lista_1
+```
+
+
+Liste su veoma važne pri izradi kompleksnih objekata u sustavu R. Prema konvenciji identificiranje elemenata liste radi se operatorom [[ ]].
+ 
+U sljedeæem primjeru radimo selekt drugog elementa u listi:
+
+```{r, eval=T, echo=T, comment=NA}
+lista_1[[2]]
+```
+
+Važno je primijetiti pa stoga ponavljamo da se pojedini elementi liste oznaèavaju dvostrukim uglatim zagradama [[ ]] dok se unutar svakog pojedinog elementa njihovi elementi oznaèavaju jednostrukim uglatim zagradama [ ]. 
+
+Primjer selekcije drugog retka, treæeg stupca na èetvrtom elementu liste radila bi se na ovaj naèin.
+
+```{r, eval=T, echo=T, comment=NA}
+lista_1[[4]][2,3]
+```
+
+Dodjeljivanje atributa objektu klase *list* radi se, kako smo se veæ upoznali na vektorima, korištenjem funkcije *names()*. 
+
+```{r, eval=T, echo=T, comment=NA}
+#izraðujemo objekt klase *list*
+lista_2 <- list("Pero", 1, matrix(runif(10)),5.3)
+
+#svakom elementu napravljenog objekta dodijelimo 
+names(lista_2) <- c("ime", "broj", "moja_matrica", "starost")
+```
+
+
+Do jednakog objekta mogli smo doæi i na ovaj naèin, stvaranjem liste i dodjeljivanjem atributa u jednoj naredbi. 
+
+
+```{r, eval=T, echo=T, comment=NA}
+#izrada liste i dodavanje liste objektu naziva lista_2
+lista_2 <- list(ime="Pero", broj=1, moja_matrica=matrix(runif(10)), starost=5.3)
+
+#ispis objekta
+lista_2
+```
+
+
+Generalno vrijedi da se pojedini dijelovi objekta mogu selektirati putem njihovog položaja u objektu (selekcija indeksom), putem atributa ali i kombinacijom ova dva naèina.
+
+
+Izrada liste koja u sebi nosi dvije liste.
+
+```{r, eval=F, echo=T}
+lista_3<-list(grad="Zagreb",ulica="Ilica",k_br=17)
+
+#korištenjem funkcije c()
+spoj_lista_c <- c(lista_2,lista_3)
+
+#korištenjem funkcije list()
+spoj_lista_list <- list(lista_2,lista_3)  
+```
+
+Usporedite rezultate dvije posljednje funkcije te prokomentirajte razliku u strukturama dobivenih objekata.
+
+```{r, eval=F, echo=T, comment=NA}
+str(spoj_lista_c)
+
+str(spoj_lista_list)
+```
+
+Traženje elementa odreðenog naziva u listi, selekcija elementa liste putem atributa *names()*:
+
+```{r, eval=F, echo=T, comment=NA}
+lista_2[["grad"]]
+```
+
+Vraæanje liste natrag u atomski vektor radi se funkcijom *unlist()*.
+
+```{r, eval=F, echo=T, comment=NA}
+unlist(spoj_lista_c)
+```
+
+Usporedite sa sljedeæim kôdom:
+
+```{r, eval=F, echo=T}
+unlist(spoj_lista_list)
+vektor_povrat <- unlist(lista_2)
+```
+
+
+
+
+#### Atributi objekata klase *list*
+
+Kao što smo veæ nauèili prilikom upoznavanja s vektorima, Svi objekti u sustavu R mogu imati opcionalne atribute. Na vektorima je to mogao jedino biti atribut  pojedinog elementa, *names()*. Kako klasa objekta *list* ima mnogo karakteristika vektora, to je i u ovome sluèaju ovaj atribut koji je jedino moguæe dati. 
+
+```{r, eval=F, echo=T}
+#svi atributi na objektu
+attributes(lista_2)
+
+#ispitujemo baš atribut names()
+attr(lista_2, "names")
+```
+
+
+Analogijom s vektorima, duljinu liste, broj elemenata liste, ispitujemo funkcijom *length()*.
+
+```{r, eval=F, echo=T, comment=NA}
+length(lista_2)
+```
+
+
+**ZADACI ZA SAMOSTALNI RAD:**
+	
+1) Izradite proizvoljnu listu od 4 elementa na naèin da su dva elementa tekstualna a dva prema izboru.
+2) Izradite listu naziva I koja æe kao svaki element sadržavati jedan cijeli broj iz sekvence od 1:5.
+3) Dodijelite svakom elementu lista I proizvoljno ime.
+4) Selektirajte èetvrti element liste I.
+
+**PITANJA ZA PONAVLJANJE:**
+
+1) Definirajte liste. Kojom biste funkcijom krenuli u izradu jedne liste?
+2) Kojim operatorom radimo selekciju elemenata liste?
+3) Kojim operatorom radimo selekciju unutar odreðenog elementa liste?
+4) Da li je toèna tvrdnja: U izrazu lista[[5]][2,2] radimo selekciju na treæem elementu liste?
+5) Slažete li se s tvrdnjom: U prethodnom primjeru selekciju na objektu klase *list* napravili smo putem atributa objekta.
+
+
+
+
+##Matrice (engl. *matrix*) i polja (engl. *array*)
+
+
+Polja su relativno rijetko korištene strukture podataka. Mogu biti višedimenzionalne, a specijalni sluèaj dvodimenzionalnog polja je matrica (engl. *matrix*) i one èine osnovu za velik dio statistièkih analiza. Posjeduju atribut dimenzije, kao nadogradnja na duljinu *length()* vektora, koji se traži funkcijom *dim()*. Funkcija *dim()* ponaša se slièno veæ ranije korištenim funkcijama koje u ovosnosti o sintaksi ili daju traženu informaciju (u ovome sluèaju dimenziju objekta) ili postavljaju zadane postavke (dimenzije).
+
+
+Kao i inaèe, prije korištenja bilo koje funkcijeu sustavu R, dobro je upoznati se s naèinom njezina rada i sintaksu, èitajuæi njezinu informacijsku karticu.
+
+```{r, eval=F, echo=T}
+#otvaranje informacijske kartice za funkciju
+?matrix
+```
+
+Matrica se može izraditi uz argumente broja redaka i stupaca, a pritom treba obratiti pažnju na naèin "popunjavanja" matrice vektorom - brojevima od 1 do 10. Davanje dimenzija matrici može se napraviti:
+
+1) prilikom izrade matrice:
+
+```{r, eval=T, echo=T, comment=NA}
+#?matrix
+#izrada matrice
+matrica_1 <- matrix(1:20, ncol = 4, nrow = 25)
+
+#ispis na konzolu
+matrica_1
+```
+
+Jednakom naredbom možemo ispitati i/ili zadati dimenzije polja. 
+
+Jednako kao i kod matrice,  dimenziju nekom polju možemo zadati u 1) samoj naredbi stvaranja polja jednim vektorom mogu se zadati sve dimenzije polja kao u primjeru:
+
+
+```{r, eval=T, echo=T, comment=NA}
+#?array
+#izrada polja
+polje_a <- array(1:12, c(2, 3, 2))
+
+#ispis na konzolu
+polje_a
+```
+
+ili 2) modifikacijom veæ postojeæe matrice/polja: 
+
+```{r, eval=T, echo=T, comment=NA}
+#najprije napravimo proizvoljni vektor
+c <- 1:10
+
+c
+
+#ispitajmo klasu objekta koji je nastao
+class(c)
+
+#veæ napravljenom vektoru zadamo dvije dimenzije
+dim(c) <- c(5, 2)
+
+#ponovno ispitamo klasu nastalog objekta
+class(c)
+```
+
+
+Polja, kao mnogodimenzionalne strukture, teško je predoèiti pa ponekad i pravilno indeksirati element koji se æe izdvojiti. Ako ponekad niste sigurni koji je indeks elementa kojeg tražite može Vam biti korisna funkcija *slice.index()*.
+
+
+
+
+Primijetite kojim se redom matrica popunjava zadanim vrijednostima.
+
+```{r, eval=T, echo=T, comment=NA}
+#popunjavanje matrice vektorom zadanih vrijednosti
+matrica_2 <- matrix(1:20, ncol = 4, nrow = 26)
+
+#popunjavanje matrice predodreðenom vrijednosti NA, zadajemo samo dimenzije matrice
+matrica_3 <- matrix(ncol = 4, nrow = 26)
+```
+
+
+Pogledajte što kao rezultat daju funkcije:
+
+```{r, eval=T, echo=T, comment=NA}	
+length(matrica_1)
+
+dim(matrica_1)
+```
+
+Osnovno svojstvo duljine vektora *length()* i  elemenata *names()* sada dobivaju višedimenzionalnu nadogradnju kod matrica i polja na naèin da se funkcija *length()* nadograðuje funkcijama za specifiène upite na broj redaka *nrow()* i broj kolona *ncol()* za matrice i polja, te funkcijom upita svih dimenzija *dim()* za polja. Istovjetno, funkcija *names()* se nadograðuje funkcijama *rownames()* i *colnames()* za matrice i polja te *dimnames()* za polja.
+
+
+
+Postavljamo  dimenzija objekta matrica_1 u jednom koraku korištenjem funkcije *dim()*. Prije samog pisanja naredbe, upoznajte se sa sintaksom funkcije dimnames.
+
+```{r, eval=T, echo=T, comment=NA}	
+dimnames (matrica_1) <- list(paste("red",1:nrow(matrica_1),sep="_"),
+                             paste("var",1:ncol(matrica_1), sep="_"))
+
+#pogledajmo sada izgled objekta
+matrica_1
+```
+
+jednako kao i u dva koraka gdje  svake dimenzije postavljamo zasebno 
+
+```{r, eval=T, echo=T, comment=NA}	
+#pobrižimo postojeæa  redaka i kolona i postavimo ih ponovno 
+#u dva koraka - svaku dimenziju zasebno
+
+#prisjetimo se brisanja
+dimnames (matrica_1) <- NULL
+
+#postavljamo  redaka
+rownames(matrica_1) <- paste("red", 1:nrow(matrica_1),sep="_")
+#postavljamo  kolona (stupaca)
+colnames (matrica_1)<- paste("var", 1:ncol(matrica_1), sep="_")
+```
+
+Funkcija *c()* sada se proširuje na *cbind()* za spajanje po stupcima i *rbind()* spajanje po redcima za matrice. Matrice se transponiraju funkcijom *t()*, a polja funkcijom *abind()* koja nije dio paketa *base* veæ paketa *abind*.
+
+
+### Indeksiranje i selekcija podskupa matrice
+
+Selekcija elemenata matrice (engl. *subset*) radi se operatorom[]. Unutar zagrada, indeksom retka i stupca željenog elementa u matrici dobiva se njegova vrijednost.
+
+Važno je za zapamtiti da u sustavu R, prva dimenzija je dimenzija redaka dok se broj stupaca ili kolona nalazi na drugom mjestu.
+
+Selekcija elementa u drugom retku i treæem stupcu matrice:
+
+```{r, eval=T, echo=T, comment=NA}
+matrica_1[2,3]
+```
+
+ili putem atributa, drugi element u varijabli/objektu *var_3*:
+
+```{r, eval=T, echo=T}
+matrica_1[2, "var_3"]
+```
+
+ili u cijelosti putem atributa, redak   u varijabli var_3
+```{r, eval=T, echo=T, comment=NA}
+matrica_1["red_2", "var_3"]
+```
+
+Selekcija na vektorima, matricama, poljima i skupovima podataka može biti u uvjetna, tj. iz objekta æe biti prepoznati samo oni elementi koji odgovaraju zadanom uvjetu:
+
+```{r, eval=T, echo=T, comment=NA}
+#nova funkcija za generiranje sekvenci - seq
+
+vektor_d <- seq(1,100, by=5)
+
+vektor_d
+
+vektor_d[c(T,F)]
+
+vektor_d[c(T,F,T)]
+
+
+#kao rezultat daje logièki vektor oznaèavajuæi sve elemente koji zadovoljavaju uvjet
+selekt <- vektor_d>10 
+vektor_d[selekt]
+```
+
+Ili korištenjem funkcije *which()* na naèin:
+
+```{r, eval=T, echo=T}
+selekt2<-which(vektor_d>10, arr.in=TRUE)
+vektor_d[selekt2]
+```
+
+Na slièan naèin moguæe je i zamijeniti elemente nekom drugom vrijednosti.
+
+Vektori nisu jedine 1D strukture. Moguæe je imati matrice s jednim stupcem ili jednim retkom ili jednodimenzionalna polja. U ovome trenutku nam to nije važno, ali ponekad bismo se mogli iznenaditi rezultatom neke funkcije radi specifiène strukture objekta.
+
+Ako se atribut *dimension()* primijeni na matrici ili polju dobivaju se liste matrica (engl. *list-matrices*), odnosno liste polja (engl. *list-arrays*). Mnogi korisnici sustava R vrlo se rijetko susreæu s ovom strukturom podataka.
+
+Za sve navedene vrste objekata unutar sustava R postoje testovi kojima je moguæe postaviti upit o specifiènom svojstvu nekog objekta. Uz najkorisniju funkciju *str()* (engl. *structure*) navodimo specifiène testove koji kao odgovor daju T/TRUE ili F/FALSE.
+
+```{r, eval=F, echo=T, comment=NA}
+is.matrix(vektor_1) #da li je objekt vektor_1 matrica?
+is.integer(matrica_1) #da li su elementi objekta matrica_1 cijeli brojevi?
+```
+
+Na slièan naèin je moguæe odreðeni objekt prebaciti iz jedne klase u drugu, ukoliko je takav prijelaz moguæ i definiran:
+
+```{r, eval=F, echo=T, comment=NA}
+matrica_iz_vektora <- as.matrix(vektor_1)
+class(matrica_iz_vektora ) #provjerimo klasu dobivenog objekta
+```
+
+
+**Napomena: **
+
+Ponovimo da se selekcija elementa objekata (vektora, matrica, skupa podataka itd.) može se napraviti i logièkim vektorima, pri èemu vrijedi da je T/TRUE vrijednost koja æe biti selektirana, a F/FALSE stoji za vrijednost koja neæe biti uzeta u selekciju.
+
+
+
+
+
+## Skupovi podataka
+
+
+Skupovi podataka (engl. *data frames*) su najuobièajeniji naèin èuvanja podataka u sustavu R. Preciznije reèeno, skup podataka je lista vektora jednakih duljina. Prema ovoj definiciji oni imaju dvije dimenzije i dijele svojstva i matrica i lista. To znaèi da skup podataka ima *names()*, *colnames()* i *rownames()* s naznakom da u ovom sluèaju funkcije *names()* i *colnames()* su iste stvari.
+
+Duljina skupa podataka je u biti duljina liste spojenih vektora kolona - varijabli pa daje isti odgovor kao i specifiènije napisan upit putem naredbe *ncol()* (engl. *number of columns*). Naredba *nrow()* (engl. *number of rows*) daje nam odgovor o broju redaka u skupu podataka.
+
+Skup podataka stvaramo naredbom *data.frame()*. Kako je skup podataka prema svojoj definiciji lista vektora, tako je moguæe da jedan skup podataka (*data.frame*) kao jednu kolonu ima lista. Navedeno poèetnicima može biti teško razumljivo ali na primjerima æe sve postati znatno jasnije.
+
+Objekte za koje je to definirano možemo prebaciti u neku drugu klasu naredbom *as()* paketa *methods*. U ovome sluèaju, prebacivanje u skup podataka radi se naredbom *as.data.frame()* (što je gotovo identièno s pisanjem *as(objekt, "data.frame")* i to redom:
+
+- vektor æe rezultirati skupom podataka s jednim stupcom (broj redaka jednak duljini vektora)
+- lista - za svaki element liste izradit æe se jedan stupac u skupu podataka. Ukoliko elementi popisa nisu jednako dugi, sustav R æe javiti pogrešku.
+- matrica æe prijeæi u skup podataka koji æe imati jednak broj stupaca (i redaka) poèetnoj matrici.
+
+
+**Napomena:** Predefinirano ponašenje funkcije *data.frame()* tekst prebacuje u faktore. Ukoliko to ne želimo moramo dati opciju  stringAsFactors = FALSE. Svakako, kao i u radu s drugim funkcijama u sustavu R, najprije se treba upoznati sa sintaksom funkcije otvaranjem njezine informacijske kartice, u ovom sluèaju unosom *?data.frame* u R konzolu.  
+
+Iako æe o tipovima varijabli biti rijeè nešto kasnije, na ovome mjestu želimo navesti da su faktori u sustavu R su naèin na koji R definira kategorijske varijable, varijable mjerene na nominalnoj skali. Varijable mjerene na ordinalnoj skali u sustavu R se definiraju kao posloženi (poredani) faktori (engl. *ordered faktor*). Faktori se u sustavu R definiraju putem naredbe *gl()*, ali pretvaranjem veæ postojeæeg vektora u faktor funkcijom *factor()*. Definiranje varijabli prema naèinu njihova mjerenja izuzetno je važno prilikom procesa analize podataka, a posebno grafièkih prikaza.
+
+Promotrite razliku izmeðu sljedeæa dva skupa podataka nastala korištenjem funkcije *data.frame()* s jednakim poèetnim vektorima. Najprije se upoznajmo s funkcijom i njezinom sintaksom otvarajuæi informacijsku karticu funkcije.
+
+```{r, eval=F, echo=T, comment=NA}
+?data.frame
+```
+
+
+Primijetite na koji naèin sustav R sada daje informaciju o strukturi objekta klase *data.frame*, kolone naziva 
+
+```{r, eval=T, echo=T, comment=NA}
+#kreiranje skupa podataka i odreðivanje na koji se naèin ponaša prema znakovima: 
+#da li da ih smatra character ili factor.
+df <- data.frame(brojevi = 20:29, slova = letters[1:10], stringsAsFactors = FALSE)
+df2 <- data.frame(brojevi = 20:29, slova = letters[1:10], stringsAsFactors = TRUE)
+
+#pogledamo strukturu nastalih objekta
+str(df)
+str(df2)
+```
+
+Poseban je sluèaj podataka kodiranje klasa (nominalne varijable) dodjeljivanjem broja kao identifikatora klase. Primjer za ovakvu varijablu može biti poštanski broj mjesta. Kroz primjere koji slijede, upoznat æemo se s internim naèinom èuvanja numerièkih vrijednosti koje su u svojoj suštini oznake klase odnosno kategorija (faktori).
+
+```{r, eval=T, echo=T, comment=NA}
+#prebacujemo numerièku iz skupa podataka df iz tipa character u tip factor.
+df$brojevi_f <- as.factor(df$brojevi) 
+
+#prebacujemo tek napravljanu faktorsku varijablu ponovno u varijablu tipa numeric 
+#Prokomentirajte rezultat
+df$brojevi_povrat <- as.numeric(df$brojevi_f)
+```
+
+
+Ispravno prebacivanje faktora u numerièku varijablu: 
+
+```{r, eval=F, echo=T}
+#primijetite na koji naèin sustav bilježi varijable tipa factor
+as.numeric(levels(x))[x] 
+#ispravno vraænje faktorske varijable bilježene numerièkim znakovima
+as.numeric(as.character(x))
+```
+
+
+
+
+Kombiniranje (spajanje) dvaju skupa podataka putem stupaca provodi se naredbom koju smo veæ upoznali kod matrica *cbind()*. U tom sluèaju broj redaka iz objekata koji se spajaju moraju biti jednaki. Funkcija æe zanemariti ranije dodijeljena  redaka *rownames()*. Napominjemo da ovaj oblik lijepljenja nema nikakve veze s relacijskim spajanjima podataka prema nekom kljuèu. 
+
+```{r, eval=F, echo=T, comment=NA}
+#spajanje po kolonama, ukoliko dimenzija rednaka objekata odgovara
+cbind(skup_podataka_1, data.frame(z = 4:1))
+```
+
+```{r, eval=F, echo=T, comment=NA}
+#spajanje dva objekta po redcima, ukoliko dimenzija kolona odgovara
+rbind(skup_podataka_1, data.frame(x = 5, y = "E"))
+rbind(skup_podataka_1, data.frame(x = 5, y = "E"))
+```
+
+Primijetite da ovdje nije rijeè o bilo kakvom relacijskom spajanju podataka (join, merge i slièno) iz dva supa veæ se unutar funkcija *rbind()*/*cbind()*. podaci spajaju ukoliko odgovaraju prema eventualno odgovarajuæim dimenzijama. 
+
+
+
+**ZADACI ZA SAMOSTALNI RAD:**
+
+Pažljivo proèitajte zadatke koji slijede i riješite ih samostalno:
+
+```{r, eval=F, echo=T, comment=NA}
+#ZADATAK 1: Izradite logièki vektor koji æete nazvati logicki_vektor, 
+#duljine 15 s 11 vrijednosti TRUE (T) i 4 vrijednosti FALSE (F).
+
+#ZADATAK 2: Napravite sumu na vektoru l iz prethodnog zadatka (funkcija sum). 
+#Prokomentirajte rezultat.
+
+#ZADATAK 3: Izradite cjelobrojni vektor koji æete nazvati r. 
+#Vektor treba sadržati sve cjelobrojne vrijednosti od 1 do 100, 
+#osim sekvence od 5 do 10. Koliko elemenata ima napravljeni vektor?
+#Nova funkcija, seq() za generiranje sekvenci:
+#?seq #upoznavanje s funkcijom
+
+#ZADATAK 4: Selektirajte prvih pet elemenata vektora iz predhodnog 
+#zadatka i vrijednosti saèuvajte kao objekt naziva selekt.
+
+#ZADATAK 5:Selektirajte sve elemente veæe of 20.
+
+#ZADATAK 6: Što bismo dobili da smo samo napisali r>20 bez uglatih zagrada?
+
+#ZADATAK 7: Uèitajte skup podataka iris (pomoæu naredbe data(iris) 
+#ili u novijim verzijama R-a samo unosom  skupa podataka iris). 
+#Odgovorite koje informacije o skupu podataka dobijete korištenjem sljedeæih funkcija:
+#za svaku od navedenih funkcija možete otvoriti i njezinu informacijsku karticu.
+
+?class
+class(iris)
+?names
+names(iris) 
+?dim
+dim(iris) 
+dim(iris)[1] 
+dim(iris)[2] 
+?nrow
+nrow(iris) 
+?ncol
+ncol(iris) 
+
+#ZADATAK 8: Napravite selekciju svakog treæeg elementa iz objekta vektor_d
+```
+
+
+
+
+## Uèitavanje postojeæih podataka u R
+
+R Ima izuzetnu moguænost izmjene podataka s drugim programima.
+
+U sustav R podatke možemo uèitati na mnogo naèina (https://cran.r-project.org/doc/manuals/r-devel/R-data.html). Osnovni tipovi su uèitavanje:
+
+- **tabliènih podataka** funkcijom *read.table()* paketa *utils* unutar kojih je moguæe definiranje velikog broja parametara ali i putem unaprijeðenih funkcija osnovnog sustava, primjerica funkcija *read.csv()*, *read.csv2()*, *read.delim()*, *read.delim2()* koje nisu ništa drugo no pojednostavljena funkcija *read.table()* s dijelom predodreðenih parametara radi lakšeg korištenja; Google tablice funkcijom *gs_ls()* paketa *googlesheets()* 
+
+- **teksta** *readLines()* ili *scan()*
+
+- **web stranice** funkcijom *getURL()* paketom *XML* za stvaranje veze te èitanje funkcijom *readLines()* ili funkcijom *download.file()* paketa *utils*
+
+- **kôda sustava R** funkcijom *source()*
+
+- **JavScript** objekata funkcijom *fromJSON()* paketa *JSON* 
+
+-	**objekata sustava R** funkcijama *load()* i *dget()* u ovisnosti kojim su funkcijama objekti snimani (*save()* ili *dput()*)
+
+- **binarnih objekata** funkcijom *unserialize()* ali i za pristup razlièitim hijerarhijskim formatima podataka kao što su *hdf5*, *h5r*, *rhdf5*, *RNetCDF*, *ncdf* i *ncdf4*  
+
+- **radnog prostora sustava R** (engl. *workspace*) *load()*
+
+-	specifièno razvijeni paketi i funkcije za uèitavanje SAS-datoteka (paket *sas7bdat*), prostornih podataka (paketi *rgdal*, *shapefiles*, *maptools*, *maps* i mnogi drugi)
+
+- i mnogi drugi. 
+
+Postoji niz razvijenih specifiènih paketa za rad npr. datotekama programa Excel (paketi *xlsx* i *openxlsx*) ili pak MODIS satelitskim snimkama (paketi *MODIS* i *MODISTools*). Velik broj formata moguæe je uèitati uz pomoæ paketa foreign. SPSS, STATA i SAS datoteke se mogu uèitavati i uz pomoæ paketa *Hmisc*.
+
+
+Izuzetno važan aspekt za svaki programski paket je njegova moguænost pristupa podacima pohranjenim u razlièitim bazama podataka. Kljuèan paket za pristup bazama podataka iz R-a je paket *DBI* na kojeg se nadovezuju funkcionalnosti specifiènih naèina povezivanja drugih paketa. Veoma važna je i moguænost pristupa bazama podataka kao što su Oracle, Microsoft SQL Server , MS Access, PostgreSQL, MySQL, SQLite i druge putem ODBC pristupa bazama SQL upitima (paket *RODBC*, *RJDBC*) ali i specijaliziranih paketa za spajanja na specifiène baze kao što je primjerice paket *ROracle* za spajanje specifièno na Oracle baze podataka. Veoma dobro mjesto za upoznavanje s naèinima povezivanja na razlièite baze podataka je poveznica RStudija https://db.rstudio.com/. Iz sustava R možete pristupiti i ne baš tako èestim ali specifiènim bazama podataka, primjerice bazi podataka specijaliziranoj za unos inf æèija specifièna sintaksa omoguæuje i ulanèavanjeprocesa analize (engl. *pipe*).
+
+Kako je R zajednica postala izuzetno brojna tako se i funkcionalnosti sustava mijenjaju veoma brzo. Ovo treba uvijek imati na umu i pravo stanje sustava u nekom podruèju dodatno pretražiti na Internetu, a posebno i na informacijskim kanalima.
+
+### Funkcije u sustavu R
+
+R je tzv. funkcionalan program koji se fokusira na izradu i upravljanje funkcijama. Osnovno je pravilo da se unutar sustava R s funkcijama može napraviti sve što se može napraviti s vektorima - mogu se dodijeliti nekoj varijabli, spremiti na popis, biti argumenti nekih drugih funkcija. Èak je moguæe kreirati bezimenu funkciju te funkciju unutar funkcije. Funkcije èine najmoèniji dio sustava R i brišu granice izmeðu programera sustava i korisnika.
+Korisnik može izraditi svoju funkciju uporabom naredbe *function()* i u osnovi ima ovaj oblik: 
+
+```{r, eval=F, echo=T}
+#function (arglist) {body}
+f <- function(argumenti funkcije) {# funkcija nešto radi, tijelo funkcije}
+```
+
+
+Ukoliko nismo upoznati s funkcijom koju želimo koristiti trebamo otvoriti njezinu informacijsku karticu (ukoliko je funkcija dio paketa s repozitorija) ili zatražiti popis argumenata funkcije koja se nalazi u radnom prostoru funkcijom *args()*:
+
+```{r, eval=F, echo=T, comment=NA}
+args(f) 
+```
+
+U sljedeæem primjeru pitamo koji su sve argumenti funkcije za izraèun standardne devijacije uzorka, *sd()*:
+
+```{r, eval=T, echo=T, comment=NA}
+args(sd) 
+```
+
+
+
+Kako smo veæ spomenuli, funkcije su takoðer objekti unutar sustava, objekti s kojima se može raditi sve ostalo - objekti prve klase.
+Formalni argumenti su ukljuèeni u samu definiciju funkcije (funkcija *formals()* dat æe nam popis formalnih argumenata za traženu funkciju). Formalni argumenti koji su i imenovani mogu imati predodreðene vrijednosti (engl. *defoult*).
+
+### Spajanje argumenata funkcija 
+
+Argumenti se spajaju (engl. *match*) na tri naèina: prema imenu, prema djelomiènom imenu ili prema poziciji.
+
+Primijetite na sljedeæem primjeru da æe sustav sve dolje napisane linije tretirati jednako. Koji naèin spajanja argumenata je primijenjen u kojem dijelu? Prokomentirajte.
+
+```{r, eval=T, echo = T, comment=NA}
+#osiguravamo jednake podatke u procesu generiranja sluèajne varijable
+set.seed(1) #definiranje poèetne vrijednosti generatora sluèajnih brojeva
+
+#generiramo podatke
+moji_podaci <- rnorm(150) #sluèajna normalna varijabla sa 150 vrijednosti
+
+#tražimo standardnu devijaciju (uzorak)
+sd(moji_podaci)
+```
+
+Funkcija *sd()* raèuna standardnu devijaciju na zadanom argumentu (ako pogledamo pomoæ za funkciju *sd()*, vidimo da ona ima dva argumenta sd(x, na.rm = FALSE) i prvi je x tj. vektor za koji raèunamo standardnu devijaciju. Stoga nije potrebno u funkciju pisati i ime argumenta, veæ samo ime objekta za izraèun, iako i sljedeæe vrijedi:
+
+```{r, eval=F, echo = T, comment=NA}
+sd(x=moji_podaci)
+```
+
+ali i ovo:
+
+```{r, eval=F, echo = T, comment=NA}
+sd (x=moji_podaci, na.rm=F)
+```
+
+U prethodnom retku eksplicitno smo rekli što želimo da funkcija *sd()* radi s nedostajuæim vrijednostima iako je i automatski predodreðena vrijednost (engl. *default*) definira jednako. Argumente koji imaju automatski definirane postavke važno je navesti tek onda kada predodreðene vrijednosti želimo promijeniti. Svakako se treba, prije izvršenja bilo koje funkcije u sustavu R, upoznati se s algoritmom i predodreðenim vrijednostima argumenata funkcije.
+Spajanje argumenata putem naziva:
+
+```{r, eval=F, echo=T, comment=NA}
+
+sd(na.rm=FALSE, x=moji_podaci)
+```
+
+ili:
+
+```{r, eval=F, echo=T, comment=NA}
+sd(na.rm=FALSE, moji_podaci)
+```
+
+**Napomena:** R razlikuje velika i mala slova.
+
+
+Ako pogledamo naèin uporabe funkcije *lm()* iz paketa *stats*
+```{r, eval=F, echo=T, comment=NA}
+?lm()
+```
+
+
+Iz informacija o funkciji vidljivo je da funkcija nema predefinirane vrijednosti za prvih pet argumenata, od kojih su neki obavezni argumenti funkcije, a neki tek opcionalni. Da bi funkcija mogla raditi potrebno je definirati sve obavezne argumente bez predodreðenih vrijednosti.
+
+Specijalna vrsta argumenata '...' može sadržavati bilo koji broj dodatnih argumenata. Prije no što korisnik zapoène s pisanjem vlastitih funkcija dobro je upoznati se s naèinima definicije argumenata, njihove evaluacije i drugome na stranicama http://cran.r-project.org/doc/manuals/r-release/R-lang.html#Functions.
+Osim što je prilagoðen jednostavnom pisanju korisnièkih funkcija, sustav R omoguèava i jednostavnu pripremu dokumentacije o funkciji (http://cran.r-project.org/doc/manuals/R-exts.html#Writing-R-documentation).
+
+Izuzetno dobar tekst o vrstama funkcija u sustavu R te njihovoj izradi i djelovanju možete proèitati ovdje: http://adv-r.had.co.nz/Functional-programming.html.
+
+U nastavku su primjeri funkcija koje raèunaju elementarne statistike u sustavu R. Ovo su uglavnom tzv. primitivne funkcije koje u svojoj biti nemaju kôd sustava R, veæ izravno pristupaju kôdu C++:
+
+```{r, eval=T, echo = T, comment=NA}
+#stvaranje podataka
+
+x <- c(8,17,25,67,13,26,34, 74, 15)
+y <- c(81,12,53,57,15,12,45, 100, 13)
+
+#spajanjem dva vektora funkcijom cbind dobit æemo objekt klase matrix
+X <- cbind(x,y)
+```
+
+Funkcije deskriptivne statistike:
+
+```{r, eval=T, echo = T, comment=NA}
+#minimalna vrijednost u objektu
+min(x)
+
+#maksimalna vrijednost
+max(x)
+
+#suma elemenata
+sum(x)
+
+#raspon vrijednosti
+range(x)
+
+#kumulativna sumea elemenata
+cumsum(x)
+
+#kumulativni umnožak
+cumprod(x)
+
+#razlika
+diff(x)
+
+#sumarna statistika
+summary(x)
+
+#srednja vrijednost, aritmetièka sredina
+mean(x)
+
+#medijan
+median (x)
+
+#standardna devijacija uzorka
+sd(x)
+
+#ista funkcija primijenjena na objektu klase matrix
+#prisjetite se što su to generièke funkcije
+sd(X)
+
+#varijanca uzorka
+var(X)
+
+#kovarijanca
+cov(X)
+
+#korelacijski koeficijenti
+cor(X)
+
+#kvantili za zadanu vjerojatnost
+quantile(x, 0.75)
+
+#kvantili za zadanu vjerojatnost, predodreðeni vektor vjerojatnosti
+quantile(x)
+```
+
+Dodatne funkcije neophodne u osnovnoj pripremi i analizi podataka:
+
+```{r, eval=T,comment=NA, echo = T}
+#rangiranje vrijednosti
+rank(x)
+
+#sortiranje vrijednosti
+sort(x)
+
+#indeks poredka sortiranja vrijednosti
+order(x)
+
+#kategorizacija kontinuirane varijable u zadane klase
+moja_razdioba <- cut(x, breaks=c(1,20,40,60,80))
+```
+
+
+### Operatori u sustavu R
+
+Operatori u sustavu R predstavljeni su na sljedeæi naèin:
+
+
+
+####Aritmetièki operatori
+
+Aritmetièki operatori u R-u su operator:
+
+- + zbrajanja
+
+-	- oduzimanja
+
+-	* množenja
+
+-	/ dijeljenja
+
+-	^ ili ** eksponencije
+
+-	x %% y x sadržan u y, pripada u y.
+
+####Logièki operatori
+
+Logièki operatori u R-u su operator:
+
+-	<, <=, >, >=, == - manje od; manje ili jednako; veæe, veæe ili jednako, identièno
+
+-	!= - nije jednako
+
+-	!x - nije x
+
+-	x | y - x ili y
+
+-	x & y - x i y.
+
+	
+	
+Unutar sustav postoje specijalizirane funkcije koje rade operacije na dva skupa podataka te rade uniju (*union()*), presjek (*intercest()*), razliku (*setdiff()*), testiraju jednakost (*setequal()* i *identical()*), pripadnost (*is.element()*).
+
+Primjer korištenja spomenutih funkcija *base* paketa u radu s podacima. Koristit æemo skup podataka o cijenama nekretnina u gradu Ames.Opis podataka može se pronaæi na https://ww2.amstat.org/publications/jse/v19n3/decock/DataDocumentation.txt. Ovaj skup podataka veoma se èesto koristi prilikom upoznavanja s razlièitim segmentima analize podataka i metodama analize. Najprije æemo pristupiti bazi podataka na web stranicama Openintro.org
+
+```{r, eval=T,comment=NA, echo = T}
+#uzimamo podatke s wwb stranice i snimamo ih u radni direktorij
+download.file("http://www.openintro.org/stat/data/ames.RData", destfile = "ames.RData")
+```
+
+Prisjetimo se funkcije *list.files()* kojom tražimo ispis svih datoteka u zadanom direktoriju, u ovom sluèaju radnom direktoriju.
+
+```{r, eval=F,comment=NA, echo = T}
+list.files(getwd(), pattern="RData")
+```
+
+Podaci se za sada se ne nalaze u radnom prostoru.
+
+```{r, eval=F,comment=NA, echo = T}
+ls()
+```
+
+Uèitajmo podatke u R konzolu:
+
+```{r, eval=F,comment=NA, echo = T}
+load("ames.RData")
+```
+
+Pogledajmo sada popis objekata u radnom prostoru:
+
+```{r, eval=F,comment=NA, echo = T}
+ls()
+```
+
+Pogledajmo strukturu/klasu/podatke/dimenzije/ varijabli objekta naziva ames:
+
+```{r, eval=F,comment=NA, echo = T}
+#struktura
+str(ames)
+
+#klasa objekta
+class(ames)
+
+#prvih 6 podataka
+head(ames)
+
+#dimenziju podataka
+dim(ames)
+nrow(ames); ncol(ames)
+
+# dimenzija (redaka/kolona)
+# varijabli (kolona)
+#na klasi objekta data.frame jednako kao i colnames(ames)
+names(ames)
+```
+
+U sljedeæih nekoliko koraka napravit æemo drugi skup podataka, modifikacijom skupa ames te napraviti nove varijable ali i obrisati neke prvobitne varijable.
+
+```{r, eval=F,comment=NA, echo = T}
+#radimo kopiju podataka
+ames_2 <- ames
+
+#raèunamo nove varijable kao kombinacije starih
+
+#ames$SalePrice u milijunima $
+ames$SalePrice_m <- ames$SalePrice / 1000000
+
+#SalePrice/Gr.Liv.Area
+ames_2$cijena_jed_pov <- ames$SalePrice / ames$Gr.Liv.Area
+
+#razdjeljujem cijenu po jedinici površine na tri jednake kategorije
+ames_2$cijena_jed_pov_cat1 <- cut(ames_2$cijena_jed_pov, breaks=c(3))
+
+#razdjeljujem cijenu po jedinici površine na toèno zadane kategorije
+ames_2$cijena_jed_pov_cat2 <- cut(ames_2$cijena_jed_pov, breaks=c(50, 100,200))
+
+#razdjeljujem cijenu po jedinici površine prema kvantilnoj statistici, 
+#dvije kategorije, iznad i ispod medijana
+ames_2$cijena_jed_pov_cat3 <- cut(ames_2$cijena_jed_pov, 
+                                  breaks=c(summary(ames_2$cijena_jed_pov)[1],  #minimum
+                                  summary(ames_2$cijena_jed_pov)[3],  #median
+                                  summary(ames_2$cijena_jed_pov)[6])) #maksimum
+```
+
+
+Sada æemo pokušati funkcijama ispitati razlike izmeðu dva skupa podataka. Veoma èesto radeæi analize podataka radimo s veoma velikim skupovima podataka i nije toliko jednostavno prepoznati razlike izmeðu dva skupa ali i generalno se snalaziti u razlièitim skupovima podataka. 
+
+
+```{r, eval=F,comment=NA, echo = T}
+#varijable koje se nalaze u oba skupa podataka
+intersect(names(ames), names(ames_2))
+
+#jednako kao i 
+setequal(names(ames), names(ames_2))
+
+#koje varijable se nalaze u x a nema i u y
+setdiff(names(ames), names(ames_2))
+
+setdiff(names(ames_2), names(ames))
+
+#postoji li varijabla  SalePrices u skupu ames?
+is.element("SalePrices", names(ames))
+
+#postoji li varijabla  SalePrice u skupu ames?
+is.element("SalePrice", names(ames))
+
+#koliko jedinstvenih varijabli imamo za pojedinu prodanu kuæu u oba skupa podataka?
+union(names(ames), names(ames_2))
+```
+
+**ZADACI ZA SAMOSTALAN RAD:**
+
+```{r, eval=F,comment=NA, echo = T}
+#ZADATAK 1: U skupovima A i B 
+#Koliko se  djece ponavlja u razredima A i B.
+#Drugaèije reèeno, pronaðite zajednièke elemente skupova A i B.
+A <- c("Petra", "Mirna", "Luka", "Karla", "Iva", "Tea","Lucija", 
+       "Lea", "Sara", "Kristina", "Ivan", "Ivana", "Jana")
+
+B <- c( "Luka", "Sara", "Jure", "Kristijan", "Iva", "Igor", 
+        "Petra", "Mirna", "Ivan", "Katja", "Petar", "Karlo", 
+        "Sven", "Jan" , "Luka")
+
+#ZADATAK 2: Koja se  pojavljuju jedino u razredu A?
+
+#ZADATAK 3: Koja se  pojavljuju jedino u razredu B?
+```
+
+
+
+### Distribucije vjerojatnosti u sustavu R
+
+Sustav R posjeduje bogatu obitelj funkcija vjerojatnosnih distribucija kao što su na primjer normalna, beta, binomna, gama, hipergeometrijska itd. 
+
+
+Funkcija *distributions()* iz paketa stats dat æe nam popis svi ugraðenih distribucija u sustavu R. 
+
+
+#### Funkcija gustoæe *d()*
+
+```{r, eval=F,comment=NA, echo = T}
+#upoznajmo se s osnovnom funkcijom koja æe nam dati smjernice za dalje
+?distributions
+```
+
+
+Za svaku od navedenih funkcija vjerojatnosne razdiobe postoje èetiri funkcije koje èine sljedeæe:
+Funkcija *d* (x,...) raèuna gustoæu na x-u:
+
+```{r, eval=F,comment=NA, echo = T}
+#upoznajmo se sa sintaksom funkcije
+#otvara nam informacijsku karticu za normanu razdiobu sluèajne varijable
+?dnorm
+```
+
+```{r, eval=T,comment=NA, echo = T}
+dnorm(0) #gustoæa na 0;standardna normalna distribucija
+```
+
+
+#### Funkcija vjerojatnosti *p()*
+
+Funkcija *p* (q, ...)   raèuna kumulativnu vjerojatnost do q P(x # q).  Kolika je kumulativna vjerojatnost na zadanom kvantilu raspodjele. Primjer koji slijedi, takoðer, je napravljen na standardnoj normalnoj distribuciju:
+
+```{r, eval=T,comment=NA, echo = T}
+#kumulativna distribucija za dosezanje Z vrijednosti P(Z<1.96)
+pnorm(1.96) 
+```
+
+
+#### Funkcija kvantila *q()*
+
+Funkcija *q* (p, ...) raèuna kvantil za zadanu kumulativnu vjerojatnost, zadani p
+
+```{r, eval=T,comment=NA, echo = T}
+#na kojem kvantilu standardne normalne raspodjele æe 
+#kumulativna vjerojatnost doseæi 0.89?
+qnorm(0.89) #89-ti percentil
+```
+
+#### Funkcija generiranja sluèajne varijable prema zadanoj raspodjeli *r()*
+
+Funkcija *r* (n, ...) generira sluèajnu varijablu zadane velièine
+
+```{r, eval=T,comment=NA, echo = T}
+#postavljamo generator sluèajnih brojeva na jednaku vrijednost
+#kako bismo svi imali jednake generirane vrijednosti
+set.seed(1)
+
+#generiramo sluèajnu varijablu iz standardne normalne distribucije
+#zadane velièine, 40
+rnorm(40)
+```
+
+Pokazan je primjer za normalnu distribuciju (norm), ali vrijedi za sve ranije nabrojane distribucije u sustavu.
+
+
+###Osnovno o petljama u sustavu R
+
+Unutar sustava R postoji nekoliko naèina petlji koje su veoma uèinkovite. Osim standardnih for i while petlji, sustav R ima razvijene i nestandardne petlje koje su izražene kako bi radile ponavljajuæe stvari u specifiènim sluèajevima. To je tzv. apply obitelj petlji, a osim funkcije *apply()* sadrži i funkcije *lapply()*, *sapply()* i *tapply()* te još nekoliko o kojima na ovome teèaju neæe biti rijeèi. Slijedi vrlo kratak osvrt na spomenute petlje, specifiène za sustav R.
+
+
+####Funkcija *apply()*
+
+Ovo je funkcija koja provodi drugu zadanu funkciju na zadanim marginama (redak ili stupac) matrice ili polja. Prisjetimo se naèina indeksiranja u R-u. Prvi indeks je indeks redka (margina 1), drugi indeks je indeks stupca/kolone (margina 2).
+
+Osnovni oblik petlje. Funkcija koju primjenjujemo može biti bilo koja ugraðena funkcija u R-u ili korisnièka funkcija koja odgovara podacima koje petlji dajemo.
+
+**apply(X, MARGIN, FUN, ...)**
+
+
+**Primjer:**
+
+U sljedeæem primjeru koristimo èetiri numerièke varijable iz skupa podataka *iris* koji dolazi instalacijom R-a.
+
+```{r, eval=T,comment=NA, echo = T}
+#izdvajamo numerièke varijable iz skupa podataka
+moji_podaci2 <- iris[,1:4]
+```
+
+Pogledajmo strukturu i prvih nekoliko podataka:
+```{r, eval=T,comment=NA, echo = T}
+str(moji_podaci2)
+head(moji_podaci2)
+```
+
+
+
+Raèunamo željene statistike, ovdje sredine, po željenoj margini, u našem primjeru redcima:
+
+```{r, eval=T,comment=NA, echo = T}
+#funkcija se provodi po redcima, margina 1
+apply(moji_podaci2, 1, max) 
+```
+
+
+Raèunamo željene statistike, ovdje mjere deskriptivne statistika, funkcija *summary()*, po željenoj margini, u našem primjeru redcima:
+
+```{r, eval=T,comment=NA, echo = T}
+#funkcija se provodi po stupcima, margina 2
+apply(moji_podaci2, 2, summary) 
+```
+
+
+####Funkcija *lapply()*
+
+Ovo je funkcija koja primjenjuje zadanu funkciju na svaki element liste. Rezultat funkcije je lista.
+
+Kako bismo demonstrirali rad funkcije radimo listu. Funkcija koju želimo primijeniti na sve elemente mora odgovarati tipu objekata u listi. Kako u primjeru koji slijedi primjenjujemo funkcije koje je logièno i jedino moguæe primjenjivati na numerièkim podacima tako nam svi elementi liste moraju biti numerièki.
+
+```{r, eval=T,comment=NA, echo = T}
+#izrada liste
+numerièka_lista <- list(var1 = 1:5, var2 = rnorm(10))
+
+#pogledajmo strukturu objekta
+str(numerièka_lista)
+```
+
+Primijenjujemo željenu funkciju na sveki element liste:
+
+```{r, eval=T,comment=NA, echo = T}
+#tražimo najveæu vrijednost u svakom pojedinom elementu liste
+lapply(numerièka_lista, max)
+
+#isprobajte razlièite funkcije, primjerice summary
+lapply(numerièka_lista, summary)
+```
+
+####Funkcija *sapply()*
+
+Ova je funkcija slièna funkciji *lapply()* s razlikom da rezultat pokušava strukturirati u jednostavniji oblik ako je to moguæe.
+
+####Funkcija *tapply()*
+
+Ovo je funkcija koja radi odreðeni proces na selekciji vektora te na poljima s promjenjivim duljinama. Grupiranje unutar petlje tapply definira se faktorskom varijablom.
+
+```{r, eval=T,comment=NA, echo = T}
+#osiguravamo reproducibilan primjer
+set.seed(1)
+
+#radimo podatke koji imaju jednu faktorsku varijablu (funkcija gl)
+podaci <-data.frame(osoba = 1:100,tlak = rnorm(100, mean = 120, sd = 20), 
+                    tretman = gl(2, 50, labels = c("Tretman", "Kontrola")))
+
+#pogledajmo strukturu nastalih podataka
+summary(podaci)
+#pogledajmo  stupaca/kolona/varijabli u skupu podataka
+names(podaci) 
+```
+
+Primijenimo funkciju *summary()* za varijablu *tlak* posebno za svaki nivo faktorske varijable *tretman*. Primjer koji slijedi je primjer s dva nivoa faktora ali mogli bismo imati skup podataka sa znatno veæim brojem nivoa, primjerice rezultati testa matematike državne mature s informacijom o školi ili razredu.
+
+```{r, eval=T,comment=NA, echo = T}
+tapply(podaci$tlak, podaci$tretman, summary)
+```
+
+
+#### Dodatne funkcije nužne za poèetak rada
+
+U nastavku dajemo skup naredbi koje je dobro poznavati prilikom poèetka rada u sustavu R.
+
+Pregled dostupnih moguænosti sustava:
+
+```{r, eval=F,comment=NA, echo = T}
+#ispis dostupnih moguænosti sustava - prvih 10
+help(options)
+```
+
+Pregled trenutnih postavki moguænosti sustava:
+```{r, eval=T,comment=NA, echo = T}
+options()[1:10]
+```
+
+Namještanje formata brojeva pri ispisu - tri decimale:
+
+```{r, eval=T,comment=NA, echo = T}
+options(digits=3)
+```
+
+Listanje svih datoteka u radnom direktoriju:
+```{r, eval=F,comment=NA, echo = T}
+dir()
+```
+
+ili
+```{r, eval=F,comment=NA, echo = T}
+list.files()
+```
+
+
+Pregled posljednjih 25 naredbi:
+```{r, eval=F, comment=NA, echo = T}
+history()
+```
+
+Prisjeæanje zadanih naredbi moguæe je i uz pomoæ strelica na tipkovnici raèunala.
+
+Pohranjivanje tijeka naredbi u datoteku (format .Rhistory):
+
+```{r, eval=F,comment=NA, echo = T}
+#spremamo na disk cijelu povijest rada tijekom jedne sesije
+#otvaranjem ove datoteke u novoj sesiji omoguæit æe nam nastavak rada
+#i primjerice, korištenje funkcije history() po otvaranju sesije
+savehistory(file="moja_povijest.Rhistory")
+```
+
+Unos tijeka naredbi u sustav (format .Rhistory):
+```{r, eval=F,comment=NA, echo = T}
+#uèitavamo povijest naredbi
+loadhistory(file="moja_povijest.Rhistory")
+```
+
+Spremanje cjelokupnog radnog prostora (format .Rdata):
+```{r, eval=F,comment=NA, echo = T}
+save.image("moj_radni_prostor.RData")
+```
+
+Uèitavanje radnog prostora u sustav:
+
+```{r, eval=F,comment=NA, echo = T}
+load("moj_radni_prostor.RData")
+```
+
+Spremanje odreðenog objekta u datoteku (na primjer tekstualnu datoteku):
+```{r, eval=F,comment=NA, echo = T}
+write.table(objekt, file = "ime_datoteke")
+```
+
+```{r, eval=F,comment=NA, echo = T}
+write.table(mydata, "c:/podaci.txt", sep="\t") #za windows definiranje kraja redka
+```
+
+Kada su podaci nepoznatog formata ili za uèitavanje s ekrana korisna je funkcija *scan().*
+
+**Napomena:**
+
+Ako nije navedena putanja u koju se datoteka snima, sustav R pretpostavlja da je tražen radni direktorij.
+
+```{r, eval=F,comment=NA, echo = T}
+save(object list,file="moj_radni_prostor_dio.RData")
+```
+
+Brisanje objekta iz radnog prostora:
+```{r, eval=F,comment=NA, echo = T}
+rm(ime objekta)
+```
+
+Brisanje svih objekata iz radnog prostora:
+
+```{r, eval=F,comment=NA, echo = T}
+rm(list=ls())
+```
+
+Brisanje odreðenog objekta ili njegovog dijela:
+
+```{r, eval=F,comment=NA, echo = T}
+ime objekta <- NULL
+```
+
+**Napomena:**
+
+Ako nije navedena putanja u koju se datoteka snima, sustav R pretpostavlja da je tražen radni direktorij.
+
+```{r, eval=F,comment=NA, echo = T}
+load("moja_datoteka.RData")
+```
+
+Izlaz iz konzole sustava R (korisnik je u tom trenutku upozoren na snimanje radnog prostora):
+
+```{r, eval=F,comment=NA, echo = T}
+q()
+```
+
+ili
+
+Izborom na grafièkom suèelju (GUI) File - Exit
+
+ili
+
+uobièajenim zatvaranjem programa operacijskog sustava Windows, klikom lijevom tipkom miša na znak x u gornjem desnom kutu.
+
+
+ 
+### Osnove o datumima u sustavu R
+
+Radi važnosti pravilnog definiranja datuma prilikom vizualizacije i analize podataka ovdje navodimo neophodne osnove.
+
+Datumi se unutar klase *Date* èuvaju (interno unutar sustava R) kao broj dana od 1.1.1970. godine. Ako je potrebno èuvati i vrijeme, koriste se POSIX klase koje se razlikuju po internom naèinu èuvanja. Klasa POSIXct èuva vrijeme kao broj sekundi od 1.1.1970. POSIXlt èuva vrijeme kao objekt klase *list* (sat, minuta, sekunda, engl. *hour, min, sec, mon*,..) èime se lakše dohvaæaju pojedini elementi, primjerice pojedini èlan zapisa, mjesec (engl. *mon*)n. 
+
+Ovaj naèin definiranja formata datuma omoguæava razlièite izraèune o protjeku vremena izmeðu dva datuma. Funkcija *as.Date()* prebacuje datum zapisan kao tekst (character) u datum klase *Date*. 
+
+#### Format zapisa datumskih varijabli 
+
+Ukoliko unosimo podatke ili ih stvaramo u sustavu R, predefinirani oblik karakternog zapisa koji sustav oèekuje kako bi pravilno karakter konvertirao u varijablu klase *Date* je u obliku YYYY-MM-DD. Èesto imamo informaciju o datumu zabilježenu u nekom drugom poredku i formatu. U takvom sluèaju moramo sustavu jasno reæi koji je ulazni oblik karakterne varijable koju želimo prebaciti u datumsku varijablu.
+
+Ukoliko otvorimo informacijsku karticu za funkciju *strftime()* kojom varijable tipa  *string* / *character* prebacujemo u varijable klase *POSIXlt* i *POSIXct* na naèina da im toèno definiramo strukturu ulaznog formata tipa *string* / *character*.
+
+
+
+Uz nekoliko promjera æemo se upoznati s naèinom rada s datumskim varijablama:
+
+```{r, eval=T,comment=NA, echo = T}
+#primjer datuma napisanog kao string te ga pretvaramo u klasu Date
+dat<- as.Date("1990-10-01")
+class(dat)
+
+#specificirajmo format datuma
+
+#definirajmo što znaèi koji dio katakternog zapisa
+as.Date("08/30/2016", format = "%m/%d/%Y")
+
+#ukoliko radimo unos podataka iz nekog drugok softwera, trebamo specificirati i origin
+#u primjeru koji slijedi, primjer je unosa iz excela koji za origin ima 01.01.1900.
+as.Date(41149, origin = "1900-01-01")
+
+#datumii su prave numerièke varijable te se s njima može raèunati
+#koliko je dana proteklo od odreðenog datuma do danas
+Sys.Date() - as.Date("2016-07-01")
+
+#prema želji odredimo i drugaèiju mjernu jedinicu koristeši funkciju difftime()
+difftime(Sys.Date(), as.Date("2016-07-01"), units = "hours")
+```
+
+#### Klase za èuvanje datumskih varijabli unutar sustava R
+
+Sustav R ima poseban naèin prezentacije vremena:
+
+*POSIXct* klasa za prikaz vremena - u pozadini velika cjelobrojna vrijednost, format koristan kada informaciju o datumu želite spremiti u objekt slièan skupu podataka.
+
+```{r, eval=T,comment=NA, echo = T}
+Sys.time()
+
+class(Sys.time())
+```
+
+Klasa za prikaz datuma *POSIXlt* u obliku liste koja nosi velik broj dodatnih informacija kao što su dan u tjednu, mjesec, dan u mjesecu.
+
+```{r, eval=T,comment=NA, echo = T}
+obj.lt <- as.POSIXlt (Sys.time())
+```
+
+
+```{r, eval=T,comment=NA, echo = T}
+#trenutno vrijeme, klasa POSIXct, sekunde protekle od 01.01.1990.
+unclass(Sys.time())
+
+# kao lista POSIXlt
+#jednostavniji dohvat velikog broja parametara
+unclass(as.POSIXlt(Sys.time()))
+```
+
+Neke korisne funkcije za rad s datumima:
+
+```{r, eval=T,comment=NA, echo = T}
+weekdays(dat) #01.10.1990.je bio ponedjeljak
+
+months(dat) #R prepoznaje regionalne postavke raèunala
+
+quarters(dat)  #spada u posljednji kvartal u godini
+```
+
+```{r, eval=T,comment=NA, echo = T}
+#pazite na dobiveni format podatka
+unclass(dat)
+```
+
+Ponekad postoji potreba da za svoja opažanja znate koji dan u godini su se dogodila. Ovaj oblik varijable veoma je važan u sluèajevima kada, na primjer, želite odvojiti svoja opažanja po sezonama ili radite predikcije u tzv. cirkularnim modelima (http://tgmstat.wordpress.com/2013/10/16/latent-gaussian-models-inla/) ili Markovljevim lancima gdje zakljuèivanje o jednom stanju ovisi o stanju sustava trenutak prije. Informaciju o rednom danu u godini možemo dobiti uporabom funkcije za ispis vremena klase POSIX, *strftime()* na naèina da pod argument format stavimo samo godinu:
+
+```{r, eval=T,comment=NA, echo = T}
+dat
+
+strftime(dat, format = "%j")  #01.10.1970. je 274 dan u godini
+```
+
+Funkcija *strptime()* omoguæava stvaranje vremena klase POSIX iz tekstualnog formata na naèin:
+
+```{r, eval=T,comment=NA, echo = T}
+mojPOSIX <- strptime("2014-07-19 20:26:22",format="%Y-%m-%d %H:%M:%S")
+```
+
+
+Prvi paket koji se bavio analitikom dnevnih podataka (financijskih) i koji je olakšao rad s vremenski referenciranim podacima je paket zoo s vlastitom klasom podataka istog . Objekti klase *zoo* naknadno su poboljšani paketom *xts* (engl. *exstensible time series*) za analize vremenskih serija koji je nadogradio strukturu i metode objekata *zoo*. 
+
+Veoma popularan paket za rad s datumskim varijablama je i paket *lubridate*.
+
+
+
+Tijekom ovog teèaja nemamo vremena detaljnije ulaziti u strukture i primjenu podataka o datumima prilikom statistièke obrade podataka.
+
+**ZA SAMOSTALNI RAD**
+
+Samostalno riješite zadatke u nastavku.
+
+```{r, eval=F,comment=NA, echo = T}
+#ZADATAK 1: Gledajuæi informacijsku karticu funkcije strptime na pravilan 
+#naèin unesite karakterni, alfanumerièki zapis u datumski tip varijable i 
+#dodijelite rezultat varijabli datum_1
+#a) Tue, 23 Mar 2010 14:36:38 -0400
+#b) "2006-01-08 10:07:52", "2006-08-07 19:33:02", vremenska zona EST5EDT
+
+datum_1 <- strptime("Tue, 23 Mar 2010 14:36:38 -0400",  "%a, %d %b %Y %H:%M:%S %z")
+
+datum_2 <- strptime(c("2006-01-08 10:07:52", 
+                      "2006-08-07 19:33:02"), "%Y-%m-%d %H:%M:%S", tz = "EST5EDT"))
+
+#ZADATAK 2: Izraèunajte vrijeme proteklo u danima i sekundama od prethodna dva datuma.
+
+#ZADATAK 3: Adekvatnom funkcijom ispitajte sljedeæe za 13.04.2006.
+#a) Koliko je dana proteklo do 15.07.2009.?
+#b) Koji je to bio dan u godini?
+#c) Ukoliko pripremate kvartalne izvještaje, u konaènici sa svim danima 2006. godine,
+#u koji æe kvartalni izvještaj ovaj datum biti ukljuèen?
+```
+
+
